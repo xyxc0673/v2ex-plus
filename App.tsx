@@ -9,7 +9,7 @@
  */
 
 import React from 'react';
-import { ApplicationNavigations } from './src/navigations/index';
+import { ApplicationNavigations } from '@navigations/index';
 
 declare const global: { HermesInternal: null | {} };
 

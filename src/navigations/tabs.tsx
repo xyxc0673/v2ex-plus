@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { TabbarIndex, TabbarNotice, TabbarMe } from '../screens';
+import { TabbarIndex, TabbarNotice, TabbarMe } from '@screens/index';
 import { Image } from 'react-native';
 
 const Tab = createBottomTabNavigator();
