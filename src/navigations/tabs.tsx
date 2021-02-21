@@ -29,8 +29,8 @@ const Tabs = () => {
           tabBarIcon: ({ focused }) =>
             renderIcon(
               focused,
-              require('../assets/home.png'),
-              require('../assets/home-inactive.png'),
+              require('../assets/images/home.png'),
+              require('../assets/images/home-inactive.png'),
             ),
         }}
       />
@@ -42,8 +42,8 @@ const Tabs = () => {
           tabBarIcon: ({ focused }) =>
             renderIcon(
               focused,
-              require('../assets/notification.png'),
-              require('../assets/notification-inactive.png'),
+              require('../assets/images/notification.png'),
+              require('../assets/images/notification-inactive.png'),
             ),
         }}
       />
@@ -55,8 +55,8 @@ const Tabs = () => {
           tabBarIcon: ({ focused }) =>
             renderIcon(
               focused,
-              require('../assets/profile.png'),
-              require('../assets/profile-inactive.png'),
+              require('../assets/images/profile.png'),
+              require('../assets/images/profile-inactive.png'),
             ),
         }}
       />
