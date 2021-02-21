@@ -1,3 +1,4 @@
+import images from '@/theme/images';
 import React from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 
@@ -10,11 +11,7 @@ interface IProps {
 const Logo = ({ width = 42, height = 24, resizeMode = 'contain' }: IProps) => {
   return (
     <View style={{ width, height }}>
-      <Image
-        style={styles.logo}
-        resizeMode={resizeMode}
-        source={require('../../../assets/images/logo.png')}
-      />
+      <Image style={styles.logo} resizeMode={resizeMode} source={images.logo} />
     </View>
   );
 };
