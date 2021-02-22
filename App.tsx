@@ -10,11 +10,17 @@
 
 import React from 'react';
 import { ApplicationNavigations } from '@/navigations';
+import { Provider } from 'react-redux';
+import store from '@/store';
 
 declare const global: { HermesInternal: null | {} };
 
 const App = () => {
-  return <ApplicationNavigations />;
+  return (
+    <Provider store={store}>
+      <ApplicationNavigations />
+    </Provider>
+  );
 };
 
 export default App;
