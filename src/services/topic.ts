@@ -5,16 +5,15 @@ export default {
 
   fetchLatestTopic: () => instance.get('api/topics/latest.json'),
 
-  fetchTopicById: () => (id: number) =>
-    instance.get(`api/topics/show.json?id=${id}`),
+  fetchTopicById: (id: number) => instance.get(`api/topics/show.json?id=${id}`),
 
-  fetchTopicByUsername: () => (username: string) =>
+  fetchTopicByUsername: (username: string) =>
     instance.get(`api/topics/show.json?username=${username}`),
 
-  fetchTopicByNodeName: () => (nodeName: string) =>
+  fetchTopicByNodeName: (nodeName: string) =>
     instance.get(`api/topics/show.json?node_name=${nodeName}`),
 
-  fetchTopicByNodeId: () => (nodeId: number) =>
+  fetchTopicByNodeId: (nodeId: number) =>
     instance.get(`api/topics/show.json?node_id=${nodeId}`),
 
   fetchReplyById: (id: number) =>
