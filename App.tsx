@@ -9,9 +9,16 @@
  */
 
 import React from 'react';
-import { ApplicationNavigations } from '@/navigations';
 import { Provider } from 'react-redux';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import zhCN from 'dayjs/locale/zh-cn';
+
+import { ApplicationNavigations } from '@/navigations';
 import store from '@/store';
+
+dayjs.extend(relativeTime);
+dayjs.locale(zhCN);
 
 declare const global: { HermesInternal: null | {} };
 

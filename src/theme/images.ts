@@ -6,6 +6,8 @@ const images = {
   notificationInactive: require('@/assets/images/notification-inactive.png'),
   profile: require('@/assets/images/profile.png'),
   profileInactive: require('@/assets/images/profile-inactive.png'),
+  moreCycleGrey: require('@/assets/images/more-circle-grey.png'),
+  timeCycleGrey: require('@/assets/images/time-circle-grey.png'),
 };
 
 export default images;
