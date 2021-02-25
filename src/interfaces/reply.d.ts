@@ -1,6 +1,6 @@
 import { IUser } from './user';
 
-export interface ITopic {
+export interface IReply {
   id: number;
   topic_id: number;
   content: string;
