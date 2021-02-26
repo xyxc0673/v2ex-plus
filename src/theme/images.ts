@@ -8,6 +8,7 @@ const images = {
   profileInactive: require('@/assets/images/profile-inactive.png'),
   moreCycleGrey: require('@/assets/images/more-circle-grey.png'),
   timeCycleGrey: require('@/assets/images/time-circle-grey.png'),
+  heartGrey: require('@/assets/images/heart-grey.png'),
 };
 
 export default images;

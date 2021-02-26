@@ -1,3 +1,4 @@
+import { IReply } from '@/interfaces/reply';
 import { ITopic } from '@/interfaces/topic';
 import { topicService } from '@/services';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
@@ -18,16 +19,46 @@ export const fetchLatestTopic = createAsyncThunk(
   },
 );
 
+export const fetchTopicById = createAsyncThunk(
+  'topic/fetchTopicById',
+  async (topicId: number) => {
+    const reponse = await topicService.fetchTopicById(topicId);
+    return reponse.data;
+  },
+);
+
+export const fetchRepliesById = createAsyncThunk(
+  'topic/fetchRepliesById',
+  async (topicId: number) => {
+    const reponse = await topicService.fetchReplyById(topicId);
+    return reponse.data;
+  },
+);
+
 export const topicSlice = createSlice({
   name: 'topic',
   initialState: {
     topicList: [] as Array<ITopic>,
+    currentTopic: {} as ITopic,
+    replyList: [] as Array<IReply>,
   },
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(fetchHottestTopic.fulfilled, (state, action) => {
-      state.topicList = action.payload;
-    });
+    builder
+      .addCase(fetchTopicById.pending, (state) => {
+        state.currentTopic = {} as ITopic;
+        state.replyList = [];
+      })
+      .addCase(fetchHottestTopic.fulfilled, (state, action) => {
+        state.topicList = action.payload;
+      })
+      .addCase(fetchTopicById.fulfilled, (state, action) => {
+        state.currentTopic = action.payload[0];
+      })
+      .addCase(fetchRepliesById.fulfilled, (state, action) => {
+        state.replyList = action.payload;
+      });
+    5;
   },
 });
 

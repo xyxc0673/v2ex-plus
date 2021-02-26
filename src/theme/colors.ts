@@ -9,6 +9,7 @@ export const colors = {
   grey: '#D8D8D8',
   lightGrey: '#F5F6FA',
   blue: '#0070C9',
+  thirdText: '#D8D8D8',
 };
 
 export const defaultTheme = {

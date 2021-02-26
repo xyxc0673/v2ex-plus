@@ -4,8 +4,8 @@ import {
   Text,
   StyleSheet,
   Image,
-  ScrollView,
   TouchableOpacity,
+  FlatList,
 } from 'react-native';
 import { Header } from '@/components';
 import { fetchHottestTopic } from '@/store/reducers/topic';
@@ -13,21 +13,34 @@ import { useAppDispatch, useAppSelector } from '@/utils/hooks';
 import images from '@/theme/images';
 import { colors } from '@/theme/colors';
 import dayjs from 'dayjs';
+import { useNavigation } from '@react-navigation/native';
+import Common from '@/theme/common';
 
 const TabbarIndex = () => {
+  const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const topicList = useAppSelector((state) => state.topicReducer.topicList);
 
   useEffect(() => {
     dispatch(fetchHottestTopic());
   }, [dispatch]);
+
+  const openTopic = (topicId: number, title: string) => {
+    navigation.navigate('topic', { topicId, title });
+  };
+
   return (
     <View style={styles.container}>
       <Header />
-      <ScrollView showsVerticalScrollIndicator={false} style={styles.topicList}>
-        {topicList.map((topic) => {
+      <FlatList
+        contentContainerStyle={styles.topicList}
+        data={topicList}
+        renderItem={({ item: topic }) => {
           return (
-            <TouchableOpacity key={topic.id} style={styles.topicItem}>
+            <TouchableOpacity
+              key={topic.id}
+              style={styles.topicItem}
+              onPress={() => openTopic(topic.id, topic.title)}>
               <View style={styles.topicTop}>
                 <View style={styles.topicTopLeft}>
                   <Image
@@ -37,7 +50,9 @@ const TabbarIndex = () => {
                   <View style={styles.topicInfo}>
                     <Text>{topic.member.username}</Text>
                     <View style={styles.topicInfoBottom}>
-                      <Text style={styles.node}>{topic.node.title}</Text>
+                      <Text style={[Common.node, Common.nodeSmall]}>
+                        {topic.node.title}
+                      </Text>
                       <View style={styles.topicAttr}>
                         <Image
                           style={styles.topicAttrIcon}
@@ -63,8 +78,8 @@ const TabbarIndex = () => {
               <Text style={styles.topicTitle}>{topic.title}</Text>
             </TouchableOpacity>
           );
-        })}
-      </ScrollView>
+        }}
+      />
     </View>
   );
 };
@@ -74,6 +89,7 @@ export default TabbarIndex;
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
+    flex: 1,
   },
   topicList: {
     marginHorizontal: 16,
@@ -91,9 +107,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   avatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 36,
+    width: 32,
+    height: 32,
+    borderRadius: 32,
   },
   topicInfo: {
     marginLeft: 8,
@@ -110,17 +126,10 @@ const styles = StyleSheet.create({
     fontSize: 8,
   },
   topicTitle: {
-    fontSize: 14,
+    fontSize: 16,
     marginTop: 8,
   },
-  node: {
-    fontSize: 10,
-    paddingVertical: 1,
-    paddingHorizontal: 8,
-    backgroundColor: colors.lightGrey,
-    borderRadius: 4,
-    color: colors.secondaryText,
-  },
+
   topicAttr: {
     flexDirection: 'row',
     alignItems: 'center',
