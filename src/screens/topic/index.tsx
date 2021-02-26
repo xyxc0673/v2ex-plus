@@ -6,6 +6,8 @@ import { useAppDispatch, useAppSelector } from '@/utils/hooks';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import dayjs from 'dayjs';
 import React, { useEffect } from 'react';
+import Markdown from 'react-native-markdown-display';
+
 import {
   FlatList,
   Image,
@@ -56,7 +58,7 @@ const Topic = () => {
         <Text style={Common.node}>{currentTopic.node?.title}</Text>
       </View>
       <View style={styles.divider} />
-      <Text style={styles.content}>{currentTopic.content}</Text>
+      <Markdown>{currentTopic.content}</Markdown>
       <View style={styles.divider} />
 
       <View style={styles.replyContainer}>
@@ -86,7 +88,7 @@ const Topic = () => {
                         </View>
                         <Text style={styles.replyIndex}>{`#${index}`}</Text>
                       </View>
-                      <Text style={styles.replyContent}>{reply.content}</Text>
+                      <Markdown>{reply.content}</Markdown>
                     </View>
                   </View>
                   <View style={styles.replyOpt}>
@@ -188,10 +190,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.secondaryText,
   },
-  replyContent: {
-    marginTop: 8,
-    lineHeight: 24,
-  },
+  replyContent: {},
   replyIndex: {
     fontSize: 12,
     color: colors.thirdText,
@@ -214,5 +213,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginLeft: 4,
     color: colors.secondaryText,
+  },
+  codeBlock: {
+    backgroundColor: 'red',
   },
 });
