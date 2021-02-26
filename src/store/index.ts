@@ -8,7 +8,7 @@ function createStore() {
   const enhancers = [middlewareEnhancers];
 
   const store = configureStore({
-    reducer: { topicReducer },
+    reducer: { topic: topicReducer },
     enhancers: enhancers,
   });
 

@@ -27,10 +27,8 @@ const Topic = () => {
   const route = useRoute<RouteProp<ParamList, 'Detail'>>();
 
   const dispatch = useAppDispatch();
-  const currentTopic = useAppSelector(
-    (state) => state.topicReducer.currentTopic,
-  );
-  const replyList = useAppSelector((state) => state.topicReducer.replyList);
+  const currentTopic = useAppSelector((state) => state.topic.currentTopic);
+  const replyList = useAppSelector((state) => state.topic.replyList);
 
   useEffect(() => {
     const { topicId } = route.params;

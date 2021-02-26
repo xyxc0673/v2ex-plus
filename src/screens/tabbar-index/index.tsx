@@ -19,7 +19,7 @@ import Common from '@/theme/common';
 const TabbarIndex = () => {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
-  const topicList = useAppSelector((state) => state.topicReducer.topicList);
+  const topicList = useAppSelector((state) => state.topic.topicList);
 
   useEffect(() => {
     dispatch(fetchHottestTopic());
