@@ -17,6 +17,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { Avatar } from '@/components';
 
 type ParamList = {
   Detail: {
@@ -47,9 +48,10 @@ const Topic = () => {
         </View>
       </View>
       <View style={styles.postInfo}>
-        <Image
-          style={styles.avatarPoster}
-          source={{ uri: currentTopic.member?.avatar_normal }}
+        <Avatar
+          userId={currentTopic.member.id}
+          size={24}
+          source={{ uri: currentTopic.member.avatar_normal }}
         />
         <Text style={styles.topicAuthor}>{currentTopic.member?.username}</Text>
         <Text style={styles.topicDesc}>
@@ -74,9 +76,10 @@ const Topic = () => {
               return (
                 <View key={`${reply.id}`} style={styles.reply}>
                   <View style={styles.replyHeader}>
-                    <Image
-                      style={styles.avatarReply}
-                      source={{ uri: reply.member.avatar_normal }}
+                    <Avatar
+                      userId={reply.member.id}
+                      size={36}
+                      source={{ uri: reply.member.avatar_large }}
                     />
                     <View style={styles.replyHeaderLeft}>
                       <View style={styles.replyHeaderLeftInfo}>

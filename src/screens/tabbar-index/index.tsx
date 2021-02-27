@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   FlatList,
 } from 'react-native';
-import { Header } from '@/components';
+import { Avatar, Header } from '@/components';
 import { fetchHottestTopic } from '@/store/reducers/topic';
 import { useAppDispatch, useAppSelector } from '@/utils/hooks';
 import images from '@/theme/images';
@@ -43,8 +43,9 @@ const TabbarIndex = () => {
               onPress={() => openTopic(topic.id, topic.title)}>
               <View style={styles.topicTop}>
                 <View style={styles.topicTopLeft}>
-                  <Image
-                    style={styles.avatar}
+                  <Avatar
+                    userId={topic.member.id}
+                    size={32}
                     source={{ uri: topic.member.avatar_normal }}
                   />
                   <View style={styles.topicInfo}>
