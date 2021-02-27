@@ -38,13 +38,13 @@ const TabbarIndex = () => {
         renderItem={({ item: topic }) => {
           return (
             <TouchableOpacity
-              key={topic.id}
+              key={`topic_${topic.id}`}
               style={styles.topicItem}
               onPress={() => openTopic(topic.id, topic.title)}>
               <View style={styles.topicTop}>
                 <View style={styles.topicTopLeft}>
                   <Avatar
-                    userId={topic.member.id}
+                    user={topic.member}
                     size={32}
                     source={{ uri: topic.member.avatar_normal }}
                   />

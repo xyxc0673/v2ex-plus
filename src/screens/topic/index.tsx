@@ -49,7 +49,7 @@ const Topic = () => {
       </View>
       <View style={styles.postInfo}>
         <Avatar
-          userId={currentTopic.member.id}
+          user={currentTopic.member}
           size={24}
           source={{ uri: currentTopic.member.avatar_normal }}
         />
@@ -77,7 +77,7 @@ const Topic = () => {
                 <View key={`${reply.id}`} style={styles.reply}>
                   <View style={styles.replyHeader}>
                     <Avatar
-                      userId={reply.member.id}
+                      user={reply.member}
                       size={36}
                       source={{ uri: reply.member.avatar_large }}
                     />

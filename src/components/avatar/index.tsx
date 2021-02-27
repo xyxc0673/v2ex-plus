@@ -1,20 +1,24 @@
+import { IUser } from '@/interfaces/user';
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { Image, ImageSourcePropType, Pressable } from 'react-native';
 
 interface IProps {
-  userId?: number;
+  user?: IUser;
   size?: number;
   source: ImageSourcePropType;
   onPress?: () => void;
 }
 
-const Avatar = ({ userId, size = 24, source, onPress }: IProps) => {
+const Avatar = ({ user, size = 24, source, onPress }: IProps) => {
   const navigation = useNavigation();
 
   const _handlePress = () => {
-    if (userId) {
-      navigation.navigate('profile', { userId });
+    if (user?.id) {
+      navigation.navigate('profile', {
+        userId: user?.id,
+        username: user?.username,
+      });
     }
     onPress && onPress();
   };
