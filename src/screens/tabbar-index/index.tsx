@@ -11,7 +11,7 @@ import { Avatar, Header } from '@/components';
 import { fetchHottestTopic } from '@/store/reducers/topic';
 import { useAppDispatch, useAppSelector } from '@/utils/hooks';
 import images from '@/theme/images';
-import { colors } from '@/theme/colors';
+import { Colors } from '@/theme/colors';
 import dayjs from 'dayjs';
 import { useNavigation } from '@react-navigation/native';
 import Common from '@/theme/common';
@@ -89,7 +89,7 @@ export default TabbarIndex;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
+    backgroundColor: Colors.white,
     flex: 1,
   },
   topicList: {
@@ -107,30 +107,18 @@ const styles = StyleSheet.create({
   topicTopLeft: {
     flexDirection: 'row',
   },
-  avatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 32,
-  },
   topicInfo: {
     marginLeft: 8,
     justifyContent: 'space-between',
-  },
-  username: {
-    fontSize: 12,
   },
   topicInfoBottom: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  replies: {
-    fontSize: 8,
-  },
   topicTitle: {
     fontSize: 16,
     marginTop: 8,
   },
-
   topicAttr: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -142,7 +130,7 @@ const styles = StyleSheet.create({
   },
   topicAttrText: {
     fontSize: 10,
-    color: colors.secondaryText,
+    color: Colors.secondaryText,
     marginLeft: 2,
   },
 });

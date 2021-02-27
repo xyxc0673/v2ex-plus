@@ -1,5 +1,5 @@
 import { fetchRepliesById, fetchTopicById } from '@/store/reducers/topic';
-import { colors } from '@/theme/colors';
+import { Colors } from '@/theme/colors';
 import Common from '@/theme/common';
 import images from '@/theme/images';
 import { useAppDispatch, useAppSelector } from '@/utils/hooks';
@@ -100,7 +100,7 @@ const Topic = () => {
                         style={styles.replyOptBtnIcon}
                         source={images.heartGrey}
                       />
-                      {/* <Text style={styles.replyThanksNumber}>2</Text> */}
+                      <Text style={styles.replyThanksNumber}>2</Text>
                     </TouchableOpacity>
                   </View>
                   <View style={styles.divider} />
@@ -119,7 +119,7 @@ export default Topic;
 const styles = StyleSheet.create({
   container: {
     padding: 12,
-    backgroundColor: colors.white,
+    backgroundColor: Colors.white,
     flex: 1,
   },
   titleContainer: {
@@ -133,28 +133,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  avatarPoster: {
-    width: 24,
-    height: 24,
-    borderRadius: 24,
-  },
   topicAuthor: {
     marginLeft: 8,
     fontSize: 14,
-    color: colors.black,
+    color: Colors.black,
   },
   topicDesc: {
     marginHorizontal: 8,
     fontSize: 12,
-    color: colors.secondaryText,
-  },
-  content: {
-    fontSize: 14,
+    color: Colors.secondaryText,
   },
   divider: {
     height: 1,
     width: '100%',
-    backgroundColor: colors.lightGrey,
+    backgroundColor: Colors.lightGrey,
     marginVertical: 8,
   },
   replyContainer: {
@@ -162,7 +154,7 @@ const styles = StyleSheet.create({
   },
   replyCount: {
     fontSize: 14,
-    color: colors.secondaryText,
+    color: Colors.secondaryText,
   },
   replyList: {
     width: '100%',
@@ -181,22 +173,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     flex: 1,
   },
-  avatarReply: {
-    width: 36,
-    height: 36,
-    borderRadius: 36,
-  },
-  replyAuthor: {
-    fontSize: 14,
-  },
   replyCreated: {
     fontSize: 12,
-    color: colors.secondaryText,
+    color: Colors.secondaryText,
   },
-  replyContent: {},
   replyIndex: {
     fontSize: 12,
-    color: colors.thirdText,
+    color: Colors.thirdText,
   },
   replyOpt: {
     marginTop: 8,
@@ -215,9 +198,6 @@ const styles = StyleSheet.create({
   replyThanksNumber: {
     fontSize: 14,
     marginLeft: 4,
-    color: colors.secondaryText,
-  },
-  codeBlock: {
-    backgroundColor: 'red',
+    color: Colors.secondaryText,
   },
 });
