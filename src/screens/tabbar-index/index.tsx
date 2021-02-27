@@ -10,7 +10,7 @@ import {
 import { Avatar, Header } from '@/components';
 import { fetchHottestTopic } from '@/store/reducers/topic';
 import { useAppDispatch, useAppSelector } from '@/utils/hooks';
-import images from '@/theme/images';
+import Images from '@/theme/images';
 import { Colors } from '@/theme/colors';
 import dayjs from 'dayjs';
 import { useNavigation } from '@react-navigation/native';
@@ -57,7 +57,7 @@ const TabbarIndex = () => {
                       <View style={styles.topicAttr}>
                         <Image
                           style={styles.topicAttrIcon}
-                          source={images.timeCycleGrey}
+                          source={Images.timeCycleGrey}
                         />
                         <Text style={styles.topicAttrText}>
                           {dayjs.unix(topic.created).fromNow()}
@@ -66,7 +66,7 @@ const TabbarIndex = () => {
                       <View style={styles.topicAttr}>
                         <Image
                           style={styles.topicAttrIcon}
-                          source={images.moreCycleGrey}
+                          source={Images.moreCycleGrey}
                         />
                         <Text style={styles.topicAttrText}>
                           {topic.replies}

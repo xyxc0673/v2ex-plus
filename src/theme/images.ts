@@ -1,4 +1,4 @@
-const images = {
+const Images = {
   logo: require('@/assets/images/logo.png'),
   home: require('@/assets/images/home.png'),
   homeInactive: require('@/assets/images/home-inactive.png'),
@@ -11,4 +11,4 @@ const images = {
   heartGrey: require('@/assets/images/heart-grey.png'),
 };
 
-export default images;
+export default Images;

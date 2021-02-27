@@ -1,7 +1,7 @@
 import { fetchRepliesById, fetchTopicById } from '@/store/reducers/topic';
 import { Colors } from '@/theme/colors';
 import Common from '@/theme/common';
-import images from '@/theme/images';
+import Images from '@/theme/images';
 import { useAppDispatch, useAppSelector } from '@/utils/hooks';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import dayjs from 'dayjs';
@@ -98,7 +98,7 @@ const Topic = () => {
                     <TouchableOpacity style={styles.replyOptBtn}>
                       <Image
                         style={styles.replyOptBtnIcon}
-                        source={images.heartGrey}
+                        source={Images.heartGrey}
                       />
                       <Text style={styles.replyThanksNumber}>2</Text>
                     </TouchableOpacity>
