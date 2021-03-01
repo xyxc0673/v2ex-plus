@@ -13,6 +13,12 @@ const Common = StyleSheet.create({
   nodeSmall: {
     fontSize: 10,
   },
+  divider: {
+    height: 1,
+    width: '100%',
+    backgroundColor: Colors.lightGrey,
+    marginVertical: 8,
+  },
 });
 
 export default Common;

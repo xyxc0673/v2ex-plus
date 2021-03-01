@@ -1,14 +1,14 @@
 import { applyMiddleware, configureStore } from '@reduxjs/toolkit';
 import thunkMiddleware from 'redux-thunk';
 import loggerMiddleware from 'redux-logger';
-import { topicReducer } from './reducers';
+import { topicReducer, userReducer } from './reducers';
 function createStore() {
   const middlewares = [thunkMiddleware, loggerMiddleware];
   const middlewareEnhancers = applyMiddleware(...middlewares);
   const enhancers = [middlewareEnhancers];
 
   const store = configureStore({
-    reducer: { topic: topicReducer },
+    reducer: { topic: topicReducer, user: userReducer },
     enhancers: enhancers,
   });
 
