@@ -11,7 +11,6 @@ import Markdown from 'react-native-markdown-display';
 import {
   FlatList,
   Image,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -39,78 +38,83 @@ const Topic = () => {
     dispatch(fetchRepliesById(topicId));
   }, [dispatch, route.params]);
 
-  console.log('currentTopic', currentTopic);
-  return (
-    <ScrollView style={styles.container}>
-      <View>
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>{currentTopic.title}</Text>
+  const renderHeader = () => {
+    return (
+      <>
+        <View>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>{currentTopic.title}</Text>
+          </View>
         </View>
-      </View>
-      <View style={styles.postInfo}>
-        <Avatar
-          user={currentTopic.member}
-          size={24}
-          source={{ uri: currentTopic.member.avatar_normal }}
-        />
-        <Text style={styles.topicAuthor}>{currentTopic.member?.username}</Text>
-        <Text style={styles.topicDesc}>
-          {currentTopic.created && dayjs.unix(currentTopic.created).fromNow()}
-        </Text>
-        <Text style={Common.node}>{currentTopic.node?.title}</Text>
-      </View>
-      <View style={styles.divider} />
-      <Markdown>{currentTopic.content}</Markdown>
-      <View style={styles.divider} />
-
-      <View style={styles.replyContainer}>
+        <View style={styles.postInfo}>
+          <Avatar
+            user={currentTopic.member}
+            size={24}
+            source={{ uri: currentTopic.member?.avatar_normal }}
+          />
+          <Text style={styles.topicAuthor}>
+            {currentTopic.member?.username}
+          </Text>
+          <Text style={styles.topicDesc}>
+            {currentTopic.created && dayjs.unix(currentTopic.created).fromNow()}
+          </Text>
+          <Text style={Common.node}>{currentTopic.node?.title}</Text>
+        </View>
+        <View style={styles.divider} />
+        <Markdown>{currentTopic.content}</Markdown>
+        <View style={styles.divider} />
         <Text style={styles.replyCount}>
           {`回复 ${currentTopic.replies || 0}`}
         </Text>
         <View style={styles.divider} />
-        <View style={styles.replyList}>
-          <FlatList
-            nestedScrollEnabled
-            data={replyList}
-            renderItem={({ item: reply, index }) => {
-              return (
-                <View key={`${reply.id}`} style={styles.reply}>
-                  <View style={styles.replyHeader}>
-                    <Avatar
-                      user={reply.member}
-                      size={36}
-                      source={{ uri: reply.member.avatar_large }}
-                    />
-                    <View style={styles.replyHeaderLeft}>
-                      <View style={styles.replyHeaderLeftInfo}>
-                        <View>
-                          <Text>{reply.member.username}</Text>
-                          <Text style={styles.replyCreated}>
-                            {dayjs.unix(reply.created).fromNow()}
-                          </Text>
-                        </View>
-                        <Text style={styles.replyIndex}>{`#${index}`}</Text>
-                      </View>
-                      <Markdown>{reply.content}</Markdown>
+      </>
+    );
+  };
+  return (
+    <View style={styles.container}>
+      <FlatList
+        nestedScrollEnabled
+        data={replyList}
+        keyExtractor={(item) => `reply_${item.id}`}
+        ListHeaderComponent={() => renderHeader()}
+        contentContainerStyle={styles.replyList}
+        renderItem={({ item: reply, index }) => {
+          return (
+            <View style={styles.reply}>
+              <View style={styles.replyHeader}>
+                <Avatar
+                  user={reply.member}
+                  size={36}
+                  source={{ uri: reply.member.avatar_large }}
+                />
+                <View style={styles.replyHeaderLeft}>
+                  <View style={styles.replyHeaderLeftInfo}>
+                    <View>
+                      <Text>{reply.member.username}</Text>
+                      <Text style={styles.replyCreated}>
+                        {dayjs.unix(reply.created).fromNow()}
+                      </Text>
                     </View>
+                    <Text style={styles.replyIndex}>{`#${index}`}</Text>
                   </View>
-                  <View style={styles.replyOpt}>
-                    <TouchableOpacity style={styles.replyOptBtn}>
-                      <Image
-                        style={styles.replyOptBtnIcon}
-                        source={Images.heartGrey}
-                      />
-                      <Text style={styles.replyThanksNumber}>2</Text>
-                    </TouchableOpacity>
-                  </View>
-                  <View style={styles.divider} />
+                  <Markdown>{reply.content}</Markdown>
                 </View>
-              );
-            }}
-          />
-        </View>
-      </View>
-    </ScrollView>
+              </View>
+              <View style={styles.replyOpt}>
+                <TouchableOpacity style={styles.replyOptBtn}>
+                  <Image
+                    style={styles.replyOptBtnIcon}
+                    source={Images.heartGrey}
+                  />
+                  <Text style={styles.replyThanksNumber}>2</Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.divider} />
+            </View>
+          );
+        }}
+      />
+    </View>
   );
 };
 
@@ -118,7 +122,6 @@ export default Topic;
 
 const styles = StyleSheet.create({
   container: {
-    padding: 12,
     backgroundColor: Colors.white,
     flex: 1,
   },
@@ -126,7 +129,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   title: {
-    fontSize: 14,
+    fontSize: 16,
   },
   postInfo: {
     marginTop: 8,
@@ -149,15 +152,13 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.lightGrey,
     marginVertical: 8,
   },
-  replyContainer: {
-    marginTop: 40,
-  },
   replyCount: {
     fontSize: 14,
     color: Colors.secondaryText,
+    marginTop: 40,
   },
   replyList: {
-    width: '100%',
+    padding: 12,
   },
   reply: {},
   replyHeader: {
