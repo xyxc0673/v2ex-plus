@@ -1,22 +1,15 @@
 import { fetchRepliesById, fetchTopicById } from '@/store/reducers/topic';
 import { Colors } from '@/theme/colors';
 import Common from '@/theme/common';
-import Images from '@/theme/images';
 import { useAppDispatch, useAppSelector } from '@/utils/hooks';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import dayjs from 'dayjs';
 import React, { useEffect } from 'react';
 import Markdown from 'react-native-markdown-display';
 
-import {
-  FlatList,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { Avatar } from '@/components';
+import Reply from './components/reply';
 
 type ParamList = {
   Detail: {
@@ -38,7 +31,10 @@ const Topic = () => {
     dispatch(fetchRepliesById(topicId));
   }, [dispatch, route.params]);
 
-  const renderHeader = () => {
+  const renderHeader = React.useMemo(() => {
+    if (!currentTopic.id) {
+      return <View />;
+    }
     return (
       <>
         <View>
@@ -60,59 +56,26 @@ const Topic = () => {
           </Text>
           <Text style={Common.node}>{currentTopic.node?.title}</Text>
         </View>
-        <View style={styles.divider} />
+        <View style={Common.divider} />
         <Markdown>{currentTopic.content}</Markdown>
-        <View style={styles.divider} />
+        <View style={Common.divider} />
         <Text style={styles.replyCount}>
           {`回复 ${currentTopic.replies || 0}`}
         </Text>
-        <View style={styles.divider} />
+        <View style={Common.divider} />
       </>
     );
-  };
+  }, [currentTopic]);
+
   return (
     <View style={styles.container}>
       <FlatList
         nestedScrollEnabled
         data={replyList}
         keyExtractor={(item) => `reply_${item.id}`}
-        ListHeaderComponent={() => renderHeader()}
+        ListHeaderComponent={renderHeader}
         contentContainerStyle={styles.replyList}
-        renderItem={({ item: reply, index }) => {
-          return (
-            <View style={styles.reply}>
-              <View style={styles.replyHeader}>
-                <Avatar
-                  user={reply.member}
-                  size={36}
-                  source={{ uri: reply.member.avatar_large }}
-                />
-                <View style={styles.replyHeaderLeft}>
-                  <View style={styles.replyHeaderLeftInfo}>
-                    <View>
-                      <Text>{reply.member.username}</Text>
-                      <Text style={styles.replyCreated}>
-                        {dayjs.unix(reply.created).fromNow()}
-                      </Text>
-                    </View>
-                    <Text style={styles.replyIndex}>{`#${index}`}</Text>
-                  </View>
-                  <Markdown>{reply.content}</Markdown>
-                </View>
-              </View>
-              <View style={styles.replyOpt}>
-                <TouchableOpacity style={styles.replyOptBtn}>
-                  <Image
-                    style={styles.replyOptBtnIcon}
-                    source={Images.heartGrey}
-                  />
-                  <Text style={styles.replyThanksNumber}>2</Text>
-                </TouchableOpacity>
-              </View>
-              <View style={styles.divider} />
-            </View>
-          );
-        }}
+        renderItem={({ item }) => <Reply item={item} />}
       />
     </View>
   );
@@ -146,12 +109,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: Colors.secondaryText,
   },
-  divider: {
-    height: 1,
-    width: '100%',
-    backgroundColor: Colors.lightGrey,
-    marginVertical: 8,
-  },
   replyCount: {
     fontSize: 14,
     color: Colors.secondaryText,
@@ -159,46 +116,5 @@ const styles = StyleSheet.create({
   },
   replyList: {
     padding: 12,
-  },
-  reply: {},
-  replyHeader: {
-    marginBottom: 8,
-    flexDirection: 'row',
-  },
-  replyHeaderLeft: {
-    flex: 1,
-    marginLeft: 8,
-  },
-  replyHeaderLeftInfo: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    flex: 1,
-  },
-  replyCreated: {
-    fontSize: 12,
-    color: Colors.secondaryText,
-  },
-  replyIndex: {
-    fontSize: 12,
-    color: Colors.thirdText,
-  },
-  replyOpt: {
-    marginTop: 8,
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-  },
-  replyOptBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  replyOptBtnIcon: {
-    width: 16,
-    height: 16,
-    marginLeft: 16,
-  },
-  replyThanksNumber: {
-    fontSize: 14,
-    marginLeft: 4,
-    color: Colors.secondaryText,
   },
 });
