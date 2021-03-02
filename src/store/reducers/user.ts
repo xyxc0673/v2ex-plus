@@ -32,6 +32,8 @@ export const userSlice = createSlice({
     builder
       .addCase(fetchUserInfoById.pending, (state) => {
         state.userInfo = {} as IUser;
+        state.userTopicList = [];
+        state.userReplyList = [];
       })
       .addCase(fetchUserInfoById.fulfilled, (state, action) => {
         state.userInfo = action.payload;

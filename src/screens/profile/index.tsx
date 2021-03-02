@@ -1,8 +1,6 @@
 import { Avatar } from '@/components';
 import { fetchUserInfoById, fetchUserTopics } from '@/store/reducers/user';
 import { Colors } from '@/theme/colors';
-import Common from '@/theme/common';
-import Images from '@/theme/images';
 import Layout from '@/theme/layout';
 import { useAppDispatch, useAppSelector } from '@/utils/hooks';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
@@ -10,12 +8,12 @@ import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
 import {
   FlatList,
-  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
+import Topic from './components/topic';
 
 type ParamList = {
   Detail: {
@@ -46,7 +44,6 @@ const Profile = () => {
   const dispatch = useAppDispatch();
   const userInfo = useAppSelector((state) => state.user.userInfo);
   const userTopicList = useAppSelector((state) => state.user.userTopicList);
-  // const userReplyList = useAppSelector((state) => state.user.userReplyList);
 
   const navigation = useNavigation();
 
@@ -60,7 +57,10 @@ const Profile = () => {
     dispatch(fetchUserTopics(username));
   }, [dispatch, route.params]);
 
-  const renderHeader = () => {
+  const renderHeader = React.useMemo(() => {
+    if (!userInfo.id) {
+      return <View />;
+    }
     return (
       <>
         <View style={[Layout.row, styles.userInfoHeader]}>
@@ -102,46 +102,16 @@ const Profile = () => {
         </View>
       </>
     );
-  };
+  }, [currTab, userInfo]);
 
   return (
     <View style={[Layout.fill, styles.container]}>
       <FlatList
         data={userTopicList}
         contentContainerStyle={[styles.tabContent]}
-        ListHeaderComponent={() => renderHeader()}
+        ListHeaderComponent={renderHeader}
         keyExtractor={(item) => `user_topic_${item.id}`}
-        renderItem={({ item: topic }) => {
-          return (
-            <TouchableOpacity
-              key={`user_topic_${topic.id}`}
-              style={styles.topic}
-              onPress={() =>
-                navigation.navigate('topic', { topicId: topic.id })
-              }>
-              <Text style={styles.topicTitle}>{topic.title}</Text>
-              <View style={[Layout.row, styles.topicInfo]}>
-                <Text style={Common.node}>{topic.node.title}</Text>
-                <View style={[Layout.row, styles.topicDesctem]}>
-                  <Image
-                    style={styles.topicDescIcon}
-                    source={Images.timeCycleGrey}
-                  />
-                  <Text style={styles.topicDescText}>
-                    {dayjs.unix(topic.created).fromNow()}
-                  </Text>
-                </View>
-                <View style={[Layout.row, styles.topicDesctem]}>
-                  <Image
-                    style={styles.topicDescIcon}
-                    source={Images.moreCycleGrey}
-                  />
-                  <Text style={styles.topicDescText}>{topic.replies}</Text>
-                </View>
-              </View>
-            </TouchableOpacity>
-          );
-        }}
+        renderItem={({ item }) => <Topic item={item} />}
       />
     </View>
   );
@@ -203,31 +173,5 @@ const styles = StyleSheet.create({
   tabContent: {
     backgroundColor: Colors.lightGrey,
     flexGrow: 1,
-  },
-  topic: {
-    padding: 12,
-    marginVertical: 8,
-    marginHorizontal: 8,
-    borderRadius: 8,
-    backgroundColor: Colors.white,
-  },
-  topicTitle: {
-    fontSize: 14,
-  },
-  topicInfo: {
-    marginTop: 8,
-  },
-  topicDesctem: {
-    marginLeft: 8,
-    alignItems: 'center',
-  },
-  topicDescIcon: {
-    width: 12,
-    height: 12,
-  },
-  topicDescText: {
-    fontSize: 12,
-    marginLeft: 2,
-    color: Colors.secondaryText,
   },
 });
