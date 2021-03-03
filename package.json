@@ -19,6 +19,7 @@
     "dayjs": "^1.10.4",
     "react": "16.13.1",
     "react-native": "0.63.4",
+    "react-native-fast-image": "^8.3.4",
     "react-native-gesture-handler": "^1.10.1",
     "react-native-markdown-display": "^7.0.0-alpha.2",
     "react-native-reanimated": "^1.13.2",

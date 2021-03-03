@@ -1,12 +1,13 @@
 import { IUser } from '@/interfaces/user';
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
-import { Image, ImageSourcePropType, Pressable } from 'react-native';
+import { Pressable } from 'react-native';
+import FastImage, { Source } from 'react-native-fast-image';
 
 interface IProps {
   user?: IUser;
   size?: number;
-  source: ImageSourcePropType;
+  source: Source | number;
   onPress?: () => void;
 }
 
@@ -25,7 +26,7 @@ const Avatar = ({ user, size = 24, source, onPress }: IProps) => {
 
   return (
     <Pressable onPress={_handlePress}>
-      <Image
+      <FastImage
         source={source}
         style={{ width: size, height: size, borderRadius: size }}
       />
