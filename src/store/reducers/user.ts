@@ -7,16 +7,16 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 export const fetchUserInfoById = createAsyncThunk(
   'user/fetchUserInfoById',
   async (userId: number) => {
-    const reponse = await userService.fetchUserInfoById(userId);
-    return reponse.data;
+    const response = await userService.fetchUserInfoById(userId);
+    return response.data;
   },
 );
 
 export const fetchUserTopics = createAsyncThunk(
   'user/fetchUserTopics',
   async (username: string) => {
-    const reponse = await topicService.fetchTopicByUsername(username);
-    return reponse.data;
+    const response = await topicService.fetchTopicByUsername(username);
+    return response.data;
   },
 );
 

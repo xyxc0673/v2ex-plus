@@ -22,16 +22,16 @@ export const fetchLatestTopic = createAsyncThunk(
 export const fetchTopicById = createAsyncThunk(
   'topic/fetchTopicById',
   async (topicId: number) => {
-    const reponse = await topicService.fetchTopicById(topicId);
-    return reponse.data;
+    const response = await topicService.fetchTopicById(topicId);
+    return response.data;
   },
 );
 
 export const fetchRepliesById = createAsyncThunk(
   'topic/fetchRepliesById',
   async (topicId: number) => {
-    const reponse = await topicService.fetchReplyById(topicId);
-    return reponse.data;
+    const response = await topicService.fetchReplyById(topicId);
+    return response.data;
   },
 );
 
