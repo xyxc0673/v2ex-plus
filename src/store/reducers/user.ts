@@ -5,7 +5,7 @@ import { topicService, userService } from '@/services';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 export const fetchUserInfoById = createAsyncThunk(
-  'topic/fetchUserInfoById',
+  'user/fetchUserInfoById',
   async (userId: number) => {
     const reponse = await userService.fetchUserInfoById(userId);
     return reponse.data;
@@ -13,7 +13,7 @@ export const fetchUserInfoById = createAsyncThunk(
 );
 
 export const fetchUserTopics = createAsyncThunk(
-  'topic/fetchUserTopics',
+  'user/fetchUserTopics',
   async (username: string) => {
     const reponse = await topicService.fetchTopicByUsername(username);
     return reponse.data;
