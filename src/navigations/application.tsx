@@ -6,13 +6,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Tabs from './tabs';
 import { defaultTheme } from '@/theme/colors';
 import { Profile, Topic } from '@/screens';
+import { navigationRef } from './root';
 
 const Stack = createStackNavigator();
 
 const ApplicationNavigations = () => {
   return (
     <SafeAreaView style={styles.container}>
-      <NavigationContainer theme={defaultTheme}>
+      <NavigationContainer theme={defaultTheme} ref={navigationRef}>
         <Stack.Navigator initialRouteName="TabNavigator">
           <Stack.Screen
             name="TabNavigator"
