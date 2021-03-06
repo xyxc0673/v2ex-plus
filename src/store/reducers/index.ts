@@ -1,2 +1,11 @@
-export { default as topicReducer } from './topic';
-export { default as userReducer } from './user';
+import { combineReducers } from 'redux';
+
+import topicReducer from './topic';
+import userReducer from './user';
+
+const rootReducer = combineReducers({
+  topic: topicReducer,
+  user: userReducer,
+});
+
+export default rootReducer;

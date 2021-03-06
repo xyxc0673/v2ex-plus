@@ -10,6 +10,7 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^1.14.1",
     "@react-native-community/masked-view": "^0.1.10",
     "@react-navigation/bottom-tabs": "^5.11.7",
     "@react-navigation/native": "^5.9.2",
@@ -27,6 +28,7 @@
     "react-native-screens": "^2.17.1",
     "react-redux": "^7.2.2",
     "redux-logger": "^3.0.6",
+    "redux-persist": "^6.0.0",
     "redux-thunk": "^2.3.0"
   },
   "devDependencies": {
@@ -38,6 +40,7 @@
     "@types/react-redux": "^7.1.16",
     "@types/react-test-renderer": "^16.9.2",
     "@types/redux-logger": "^3.0.8",
+    "@types/redux-persist": "^4.3.1",
     "babel-jest": "^25.1.0",
     "babel-plugin-module-resolver": "^4.1.0",
     "eslint": "^6.5.1",

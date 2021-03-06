@@ -15,7 +15,8 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import zhCN from 'dayjs/locale/zh-cn';
 
 import { ApplicationNavigations } from '@/navigations';
-import store from '@/store';
+import store, { persistor } from '@/store';
+import { PersistGate } from 'redux-persist/integration/react';
 
 dayjs.extend(relativeTime);
 dayjs.locale(zhCN);
@@ -25,7 +26,9 @@ declare const global: { HermesInternal: null | {} };
 const App = () => {
   return (
     <Provider store={store}>
-      <ApplicationNavigations />
+      <PersistGate loading={null} persistor={persistor}>
+        <ApplicationNavigations />
+      </PersistGate>
     </Provider>
   );
 };
