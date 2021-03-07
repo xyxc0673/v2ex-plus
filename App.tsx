@@ -17,9 +17,12 @@ import zhCN from 'dayjs/locale/zh-cn';
 import { ApplicationNavigations } from '@/navigations';
 import store, { persistor } from '@/store';
 import { PersistGate } from 'redux-persist/integration/react';
+import { setCookie } from '@/services/request';
 
 dayjs.extend(relativeTime);
 dayjs.locale(zhCN);
+
+setCookie(store);
 
 declare const global: { HermesInternal: null | {} };
 
