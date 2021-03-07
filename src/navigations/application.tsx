@@ -5,7 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Tabs from './tabs';
 import { defaultTheme } from '@/theme/colors';
-import { Profile, Topic } from '@/screens';
+import { Login, Profile, Topic } from '@/screens';
 import { navigationRef } from './root';
 
 const Stack = createStackNavigator();
@@ -26,6 +26,13 @@ const ApplicationNavigations = () => {
             component={Profile}
             options={{
               title: '',
+            }}
+          />
+          <Stack.Screen
+            name="login"
+            component={Login}
+            options={{
+              title: '登录',
             }}
           />
         </Stack.Navigator>
