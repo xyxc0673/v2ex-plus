@@ -15,3 +15,11 @@ export interface IUser {
   avatar_normal: string;
   avatar_large: string;
 }
+
+export interface ILoginParams {
+  username: string;
+  password: string;
+  captcha: string;
+  once: string;
+  next: string;
+}
