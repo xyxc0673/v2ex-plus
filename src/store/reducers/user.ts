@@ -1,5 +1,6 @@
 import { IReply } from '@/interfaces/reply';
 import { ITopic } from '@/interfaces/topic';
+import { IBalance } from '@/interfaces/balance';
 import { ILoginParams, IUser } from '@/interfaces/user';
 import { topicService, userService } from '@/services';
 import { userCrawler } from '@/services/crawler';
@@ -48,6 +49,11 @@ export const loginByUsername = createAsyncThunk(
   },
 );
 
+export const fetchBalance = createAsyncThunk('user/fetchBalance', async () => {
+  const response = await userCrawler.fetchBalance();
+  return response;
+});
+
 export const userSlice = createSlice({
   name: 'user',
   initialState: {
@@ -57,6 +63,7 @@ export const userSlice = createSlice({
     loginParams: {} as ILoginParams,
     isLogged: false,
     cookies: [] as Array<string>,
+    balance: {} as IBalance,
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -78,6 +85,9 @@ export const userSlice = createSlice({
       .addCase(loginByUsername.fulfilled, (state, action) => {
         state.isLogged = action.payload.isLogged;
         state.cookies = action.payload.cookies;
+      })
+      .addCase(fetchBalance.fulfilled, (state, action) => {
+        state.balance = action.payload;
       });
     5;
   },

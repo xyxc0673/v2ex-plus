@@ -1,4 +1,5 @@
 import { ILoginParams } from '@/interfaces/user';
+import { IBalance } from '@/interfaces/balance';
 import { typedKeys } from '@/utils/tools';
 import cheerio from 'cheerio';
 import instance from '../request';
@@ -56,4 +57,36 @@ export const login = async (
   const cookies = response.headers['set-cookie'] || '';
 
   return { isLogged, cookies };
+};
+
+/**
+ * Fetch user's balance
+ * @returns A object as IBalance
+ */
+export const fetchBalance = async (): Promise<IBalance> => {
+  const response = await instance.get('/balance');
+
+  const $ = cheerio.load(response.data);
+
+  const balanceArea = $('.balance_area.bigger');
+
+  const balanceText = balanceArea.text();
+
+  const balanceArray = balanceText
+    .split('  ')
+    .map((item) => parseInt(item.trim(), 10));
+
+  let balance = {
+    gold: 0,
+    silver: 0,
+    bronze: 0,
+  } as IBalance;
+
+  if (balanceArray.length === 3) {
+    balance.gold = balanceArray[0];
+    balance.silver = balanceArray[1];
+    balance.bronze = balanceArray[2];
+  }
+
+  return balance;
 };
