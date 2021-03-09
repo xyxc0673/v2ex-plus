@@ -54,6 +54,14 @@ export const fetchBalance = createAsyncThunk('user/fetchBalance', async () => {
   return response;
 });
 
+export const fetchUserInfo = createAsyncThunk(
+  'user/fetchUserInfo',
+  async () => {
+    const response = await userCrawler.fetchUserInfo();
+    return response;
+  },
+);
+
 export const userSlice = createSlice({
   name: 'user',
   initialState: {
@@ -64,6 +72,7 @@ export const userSlice = createSlice({
     isLogged: false,
     cookies: [] as Array<string>,
     balance: {} as IBalance,
+    user: {} as userCrawler.IUserInfo,
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -88,6 +97,9 @@ export const userSlice = createSlice({
       })
       .addCase(fetchBalance.fulfilled, (state, action) => {
         state.balance = action.payload;
+      })
+      .addCase(fetchUserInfo.fulfilled, (state, action) => {
+        state.user = action.payload;
       });
     5;
   },
