@@ -1,10 +1,11 @@
 import { Logo } from '@/components/atoms';
+import { config } from '@/config';
 import { goBack } from '@/navigations/root';
 import { fetchLoginParams, loginByUsername } from '@/store/reducers/user';
 import { Colors } from '@/theme/colors';
 import Layout from '@/theme/layout';
 import { useAppDispatch, useAppSelector } from '@/utils/hooks';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   Image,
   StyleSheet,
@@ -22,9 +23,13 @@ const Login = () => {
   const loginParams = useAppSelector((state) => state.user.loginParams);
   const isLogged = useAppSelector((state) => state.user.isLogged);
 
-  useEffect(() => {
+  const getLoginParams = useCallback(() => {
     dispatch(fetchLoginParams());
   }, [dispatch]);
+
+  useEffect(() => {
+    getLoginParams();
+  }, [getLoginParams]);
 
   const handleSubmit = () => {
     dispatch(loginByUsername({ username, password, captcha, loginParams }));
@@ -62,11 +67,11 @@ const Login = () => {
             placeholder={'请输入验证码'}
             onChangeText={(text) => setCaptcha(text)}
           />
-          <TouchableOpacity>
+          <TouchableOpacity onPress={getLoginParams}>
             <Image
               style={styles.captcha}
               source={{
-                uri: `https://v2ex.com/_captcha?once=${loginParams.once}`,
+                uri: `${config.V2EX_BASE_URL}_captcha?once=${loginParams.once}`,
               }}
             />
           </TouchableOpacity>
