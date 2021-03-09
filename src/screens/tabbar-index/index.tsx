@@ -5,18 +5,25 @@ import { fetchHottestTopic } from '@/store/reducers/topic';
 import { useAppDispatch, useAppSelector } from '@/utils/hooks';
 import { Colors } from '@/theme/colors';
 import Topic from './components/topic';
+import { fetchBalance, fetchUserInfo } from '@/store/reducers/user';
 
 const TabbarIndex = () => {
   const dispatch = useAppDispatch();
   const topicList = useAppSelector((state) => state.topic.topicList);
+  const isLogged = useAppSelector((state) => state.user.isLogged);
 
   useEffect(() => {
     dispatch(fetchHottestTopic());
-  }, [dispatch]);
+    if (isLogged) {
+      dispatch(fetchUserInfo());
+      dispatch(fetchBalance());
+    }
+  }, [dispatch, isLogged]);
 
   return (
     <View style={styles.container}>
       <Header />
+
       <FlatList
         contentContainerStyle={styles.topicList}
         data={topicList}
