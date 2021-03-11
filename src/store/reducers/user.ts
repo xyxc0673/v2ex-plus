@@ -5,6 +5,7 @@ import { ILoginParams, IUser } from '@/interfaces/user';
 import { topicService, userService } from '@/services';
 import { userCrawler } from '@/services/crawler';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { INotification } from '@/interfaces/notification';
 
 export const fetchUserInfoById = createAsyncThunk(
   'user/fetchUserInfoById',
@@ -62,6 +63,14 @@ export const fetchUserInfo = createAsyncThunk(
   },
 );
 
+export const fetchUserNotifications = createAsyncThunk(
+  'user/fetchUserNotifications',
+  async (page: number = 1) => {
+    const response = await userCrawler.fetchUserNotifications(page);
+    return response;
+  },
+);
+
 export const userSlice = createSlice({
   name: 'user',
   initialState: {
@@ -73,6 +82,8 @@ export const userSlice = createSlice({
     cookies: [] as Array<string>,
     balance: {} as IBalance,
     user: {} as userCrawler.IUserInfo,
+    notifications: [] as Array<INotification>,
+    notificationMaxPage: 0,
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -100,6 +111,10 @@ export const userSlice = createSlice({
       })
       .addCase(fetchUserInfo.fulfilled, (state, action) => {
         state.user = action.payload;
+      })
+      .addCase(fetchUserNotifications.fulfilled, (state, action) => {
+        state.notifications = action.payload.notifications;
+        state.notificationMaxPage = action.payload.maxPage;
       });
     5;
   },

@@ -4,6 +4,7 @@ import { typedKeys } from '@/utils/tools';
 import cheerio from 'cheerio';
 import instance from '../request';
 import { loginFormHeaders } from './config';
+import { INotification, TNotificationType } from '@/interfaces/notification';
 import { parser } from './index';
 
 export const getLoginParams = async (): Promise<ILoginParams> => {
@@ -102,4 +103,64 @@ export interface IUserInfo {
 export const fetchUserInfo = async () => {
   const response = await instance.get('');
   return parser.getUserInfo(response.data);
+};
+
+export const fetchUserNotifications = async (page: number = 1) => {
+  const response = await instance.get(`/notifications?p=${page}`);
+
+  const $ = cheerio.load(response.data);
+
+  const list = $('#notifications>.cell');
+
+  const notifications = [] as Array<INotification>;
+
+  list.each((_, elem) => {
+    const payload = $(elem).find('.payload').text().trim();
+    const avatar = $(elem).find('.avatar').attr('src') || '';
+
+    const fade = $(elem).find('.fade');
+
+    const username = $(fade).find('a:nth-child(1)').text();
+
+    const topicA = $(fade).find('a:nth-child(2)');
+    const topicTitle = topicA.text();
+    const topicId = parser.getTopicId(topicA.attr('href'));
+
+    const createdAt = $(elem).find('.snow').text();
+    const typeText = fade.children().remove().end().text();
+    const typeTextList = typeText.split('  ');
+
+    let type: TNotificationType = 'reply';
+
+    if (typeTextList.length >= 2) {
+      if (typeTextList[1].indexOf('回复') !== -1) {
+        type = 'reply';
+      } else if (typeTextList[1].indexOf('提到') !== -1) {
+        type = 'refer';
+      }
+    } else {
+      if (typeTextList[0].indexOf('收藏') !== -1) {
+        type = 'collect';
+      } else if (typeTextList[0].indexOf('感谢') !== -1) {
+        type = 'thanks';
+      }
+    }
+
+    notifications.push({
+      payload: payload,
+      topicTitle,
+      avatar,
+      username,
+      type,
+      topicId,
+      createdAt,
+    });
+  });
+
+  const maxPage = $('.page_input').attr('max');
+
+  return {
+    notifications,
+    maxPage: parseInt(maxPage || '0', 10),
+  };
 };
