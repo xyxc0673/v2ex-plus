@@ -19,7 +19,7 @@ export const fetchTopicByTab = async (
     const titleHref = selector.find('.topic-link').attr('href');
     const topicId = parser.getTopicId(titleHref);
 
-    const replyCount = selector.find('.count_livid').text();
+    const replyCount = selector.find('.count_livid').text() || '0';
     const avatar = selector.find('.avatar').attr('src') || '';
     const topicInfo = selector.find('.topic_info');
     const vote = $(topicInfo.find('.votes')).text() || '0';
