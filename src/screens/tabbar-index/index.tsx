@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { View, StyleSheet, FlatList } from 'react-native';
 import { Header } from '@/components';
-import { fetchHottestTopic } from '@/store/reducers/topic';
+import { fetchTopicByTab } from '@/store/reducers/topic';
 import { useAppDispatch, useAppSelector } from '@/utils/hooks';
 import { Colors } from '@/theme/colors';
 import Topic from './components/topic';
@@ -13,7 +13,7 @@ const TabbarIndex = () => {
   const isLogged = useAppSelector((state) => state.user.isLogged);
 
   useEffect(() => {
-    dispatch(fetchHottestTopic());
+    dispatch(fetchTopicByTab('all'));
     if (isLogged) {
       dispatch(fetchUserInfo());
       dispatch(fetchBalance());

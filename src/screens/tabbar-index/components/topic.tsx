@@ -26,15 +26,15 @@ const Topic = ({ item: topic }: IProps) => {
       <View style={styles.topicTop}>
         <View style={styles.topicTopLeft}>
           <Avatar
-            user={topic.member}
+            username={topic.author}
             size={32}
-            source={{ uri: topic.member.avatar_normal }}
+            source={{ uri: topic.avatar }}
           />
           <View style={styles.topicInfo}>
-            <Text>{topic.member.username}</Text>
+            <Text>{topic.author}</Text>
             <View style={styles.topicInfoBottom}>
               <Text style={[Common.node, Common.nodeSmall]}>
-                {topic.node.title}
+                {topic.nodeTitle}
               </Text>
               <View style={styles.topicAttr}>
                 <Image
@@ -42,7 +42,7 @@ const Topic = ({ item: topic }: IProps) => {
                   source={Images.timeCycleGrey}
                 />
                 <Text style={styles.topicAttrText}>
-                  {dayjs.unix(topic.created).fromNow()}
+                  {dayjs(topic.createdAt).fromNow()}
                 </Text>
               </View>
               <View style={styles.topicAttr}>
@@ -50,7 +50,7 @@ const Topic = ({ item: topic }: IProps) => {
                   style={styles.topicAttrIcon}
                   source={Images.moreCycleGrey}
                 />
-                <Text style={styles.topicAttrText}>{topic.replies}</Text>
+                <Text style={styles.topicAttrText}>{topic.replyCount}</Text>
               </View>
             </View>
           </View>

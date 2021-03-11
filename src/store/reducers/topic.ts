@@ -1,6 +1,7 @@
 import { IReply } from '@/interfaces/reply';
 import { ITopic } from '@/interfaces/topic';
 import { topicService } from '@/services';
+import { topicCrawler } from '@/services/crawler';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 export const fetchHottestTopic = createAsyncThunk(
@@ -27,6 +28,14 @@ export const fetchTopicById = createAsyncThunk(
   },
 );
 
+export const fetchTopicByTab = createAsyncThunk(
+  'topic/fetchTopicByTab',
+  async (tab: string) => {
+    const response = await topicCrawler.fetchTopicByTab(tab);
+    return response;
+  },
+);
+
 export const fetchRepliesById = createAsyncThunk(
   'topic/fetchRepliesById',
   async (topicId: number) => {
@@ -49,14 +58,14 @@ export const topicSlice = createSlice({
         state.currentTopic = {} as ITopic;
         state.replyList = [];
       })
-      .addCase(fetchHottestTopic.fulfilled, (state, action) => {
-        state.topicList = action.payload;
-      })
       .addCase(fetchTopicById.fulfilled, (state, action) => {
         state.currentTopic = action.payload[0];
       })
       .addCase(fetchRepliesById.fulfilled, (state, action) => {
         state.replyList = action.payload;
+      })
+      .addCase(fetchTopicByTab.fulfilled, (state, action) => {
+        state.topicList = action.payload;
       });
     5;
   },
