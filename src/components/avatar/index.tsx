@@ -1,25 +1,21 @@
-import { IUser } from '@/interfaces/user';
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { Pressable } from 'react-native';
 import FastImage, { Source } from 'react-native-fast-image';
 
 interface IProps {
-  user?: IUser;
+  username?: string;
   size?: number;
   source: Source | number;
   onPress?: () => void;
 }
 
-const Avatar = ({ user, size = 24, source, onPress }: IProps) => {
+const Avatar = ({ username, size = 24, source, onPress }: IProps) => {
   const navigation = useNavigation();
 
   const _handlePress = () => {
-    if (user?.id) {
-      navigation.navigate('profile', {
-        userId: user?.id,
-        username: user?.username,
-      });
+    if (username) {
+      navigation.navigate('profile', { username });
     }
     onPress && onPress();
   };
@@ -28,7 +24,11 @@ const Avatar = ({ user, size = 24, source, onPress }: IProps) => {
     <Pressable onPress={_handlePress}>
       <FastImage
         source={source}
-        style={{ width: size, height: size, borderRadius: size }}
+        style={{
+          width: size,
+          height: size,
+          borderRadius: size,
+        }}
       />
     </Pressable>
   );
