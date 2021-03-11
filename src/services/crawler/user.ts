@@ -4,6 +4,7 @@ import { typedKeys } from '@/utils/tools';
 import cheerio from 'cheerio';
 import instance from '../request';
 import { loginFormHeaders } from './config';
+import { parser } from './index';
 
 export const getLoginParams = async (): Promise<ILoginParams> => {
   const response = await instance.get('/signin', {
@@ -56,7 +57,7 @@ export const login = async (
 
   const cookies = response.headers['set-cookie'] || '';
 
-  const userInfo = parseUserInfo(response.data);
+  const userInfo = parser.getUserInfo(response.data);
 
   return { isLogged, cookies, userInfo };
 };
@@ -100,17 +101,5 @@ export interface IUserInfo {
 
 export const fetchUserInfo = async () => {
   const response = await instance.get('');
-  return parseUserInfo(response.data);
-};
-
-const parseUserInfo = (html: string) => {
-  const $ = cheerio.load(html);
-
-  const userBox = $('#Rightbar > .box').first();
-  const avatar = userBox.find('.avatar').attr('src') || '';
-  const username = userBox
-    .find('table:nth-child(1) > tbody > tr > td:nth-child(3) > span > a')
-    .text();
-
-  return { avatar, username };
+  return parser.getUserInfo(response.data);
 };

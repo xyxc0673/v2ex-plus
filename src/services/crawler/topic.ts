@@ -1,5 +1,6 @@
 import { ITopic } from '@/interfaces/topic';
 import cheerio from 'cheerio';
+import { parser } from '.';
 import instance from '../request';
 
 export const fetchTopicByTab = async (
@@ -16,11 +17,7 @@ export const fetchTopicByTab = async (
 
     const title = selector.find('.topic-link').text();
     const titleHref = selector.find('.topic-link').attr('href');
-    const id =
-      titleHref?.slice(
-        titleHref.lastIndexOf('/') + 1,
-        titleHref.lastIndexOf('#') + 1,
-      ) || '';
+    const topicId = parser.getTopicId(titleHref);
 
     const replyCount = selector.find('.count_livid').text();
     const avatar = selector.find('.avatar').attr('src') || '';
@@ -30,14 +27,14 @@ export const fetchTopicByTab = async (
     const node = $(topicInfo.find('.node'));
     const nodeTitle = node.text();
     const nodeHref = node.attr('href');
-    const nodeName = nodeHref?.slice(nodeHref.lastIndexOf('/') + 1) || '';
+    const nodeName = parser.getNodeName(nodeHref);
 
     const author = topicInfo.children(':nth-child(3)').text();
     const createdAt = topicInfo.children(':nth-child(4)').attr('title') || '';
     const lastRepliedBy = topicInfo.children(':nth-child(5)').text() || '';
 
     topicList.push({
-      id: parseInt(id, 10),
+      id: topicId,
       title,
       replyCount: parseInt(replyCount, 10),
       avatar,
