@@ -30,7 +30,9 @@ export const fetchTopicByTab = async (
     const nodeName = parser.getNodeName(nodeHref);
 
     const author = topicInfo.children(':nth-child(3)').text();
-    const createdAt = topicInfo.children(':nth-child(4)').attr('title') || '';
+    const createdAtOrigin = topicInfo.children(':nth-child(4)').attr('title');
+    const createdAt =
+      createdAtOrigin?.slice(0, createdAtOrigin.lastIndexOf(' ')) || '';
     const lastRepliedBy = topicInfo.children(':nth-child(5)').text() || '';
 
     topicList.push({
