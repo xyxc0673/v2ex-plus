@@ -82,7 +82,7 @@ export const userSlice = createSlice({
     cookies: [] as Array<string>,
     balance: {} as IBalance,
     user: {} as userCrawler.IUserInfo,
-    notifications: [] as Array<INotification>,
+    notificationList: [] as Array<INotification>,
     notificationMaxPage: 0,
   },
   reducers: {},
@@ -113,7 +113,7 @@ export const userSlice = createSlice({
         state.user = action.payload;
       })
       .addCase(fetchUserNotifications.fulfilled, (state, action) => {
-        state.notifications = action.payload.notifications;
+        state.notificationList = action.payload.notifications;
         state.notificationMaxPage = action.payload.maxPage;
       });
     5;
