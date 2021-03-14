@@ -22,3 +22,7 @@ export const getUserInfo = (html: string) => {
 
   return { avatar, username };
 };
+
+export const parseDatetime = (datetime: string) => {
+  return datetime.replace('+08:00', '').trim();
+};
