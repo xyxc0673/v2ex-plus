@@ -1,6 +1,6 @@
 import { Colors } from '@/theme/colors';
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StatusBar, StyleSheet, View } from 'react-native';
 import { Logo } from '../atoms';
 
 interface IProps {
@@ -10,6 +10,7 @@ interface IProps {
 const Header = ({ headerRight }: IProps) => {
   return (
     <View style={styles.header}>
+      <StatusBar backgroundColor="#fff" barStyle={'dark-content'} />
       <Logo width={42 * 1.5} height={24 * 1.5} />
       <View style={styles.headerRight}>{headerRight}</View>
     </View>
