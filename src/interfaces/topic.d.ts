@@ -16,15 +16,22 @@
 //   node: INode;
 // }
 
+export interface ISubtle {
+  content: string;
+  createdAt: string;
+}
+
 export interface ITopic {
   id: number;
   title: string;
   nodeName: string;
   nodeTitle: string;
   vote: number;
-  lastRepliedBy: string;
+  lastRepliedBy?: string;
   replyCount: number;
   avatar: string;
   author: string;
   createdAt: string;
+  content?: string;
+  subtleList?: Array<ISubtle>;
 }
