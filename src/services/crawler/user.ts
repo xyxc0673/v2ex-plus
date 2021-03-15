@@ -164,3 +164,22 @@ export const fetchUserNotifications = async (page: number = 1) => {
     maxPage: parseInt(maxPage || '0', 10),
   };
 };
+
+export const fetchUserTopics = async (username: string, page: number = 1) => {
+  const response = await instance.get(`/member/${username}/topics?p=${page}`);
+
+  const $ = cheerio.load(response.data);
+
+  const isHidden = $('.topic_content').text().indexOf('主题列表被隐藏') !== -1;
+
+  if (isHidden) {
+    return { topicList: [], topicCount: 0 };
+  }
+
+  const list = $('.cell.item');
+
+  const topicList = parser.parseTopicList($, list);
+  const topicCount = parseInt($('.header > .fr > .gray').text(), 10);
+
+  return { topicList, topicCount };
+};
