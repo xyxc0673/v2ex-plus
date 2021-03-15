@@ -1,11 +1,11 @@
-import { fetchRepliesById, fetchTopicById } from '@/store/reducers/topic';
+import { fetchTopicDetails } from '@/store/reducers/topic';
 import { Colors } from '@/theme/colors';
 import Common from '@/theme/common';
 import { useAppDispatch, useAppSelector } from '@/utils/hooks';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import dayjs from 'dayjs';
 import React, { useEffect } from 'react';
-import Markdown from 'react-native-markdown-display';
+import HTML from 'react-native-render-html';
 
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { Avatar } from '@/components';
@@ -14,7 +14,6 @@ import Reply from './components/reply';
 type ParamList = {
   Detail: {
     topicId: number;
-    title: string;
   };
 };
 
@@ -27,8 +26,12 @@ const Topic = () => {
 
   useEffect(() => {
     const { topicId } = route.params;
-    dispatch(fetchTopicById(topicId));
-    dispatch(fetchRepliesById(topicId));
+    dispatch(
+      fetchTopicDetails({
+        topicId: topicId,
+        page: 1,
+      }),
+    );
   }, [dispatch, route.params]);
 
   const renderHeader = React.useMemo(() => {
@@ -44,23 +47,22 @@ const Topic = () => {
         </View>
         <View style={styles.postInfo}>
           <Avatar
-            user={currentTopic.member}
+            username={currentTopic.author}
             size={24}
-            source={{ uri: currentTopic.member?.avatar_normal }}
+            source={{ uri: currentTopic.avatar }}
           />
-          <Text style={styles.topicAuthor}>
-            {currentTopic.member?.username}
-          </Text>
+          <Text style={styles.topicAuthor}>{currentTopic.author}</Text>
           <Text style={styles.topicDesc}>
-            {currentTopic.created && dayjs.unix(currentTopic.created).fromNow()}
+            {currentTopic.createdAt && dayjs(currentTopic.createdAt).fromNow()}
           </Text>
-          <Text style={Common.node}>{currentTopic.node?.title}</Text>
+          <Text style={styles.topicDesc}>{`${currentTopic.views}次访问`}</Text>
+          <Text style={Common.node}>{currentTopic.nodeTitle}</Text>
         </View>
         <View style={Common.divider} />
-        <Markdown>{currentTopic.content}</Markdown>
+        <HTML source={{ html: currentTopic.content || '<p></p>' }} />
         <View style={Common.divider} />
         <Text style={styles.replyCount}>
-          {`回复 ${currentTopic.replies || 0}`}
+          {`回复 ${currentTopic.replyCount || 0}`}
         </Text>
         <View style={Common.divider} />
       </>
@@ -72,7 +74,7 @@ const Topic = () => {
       <FlatList
         nestedScrollEnabled
         data={replyList}
-        keyExtractor={(item) => `reply_${item.id}`}
+        keyExtractor={(item) => `reply_${item.no}`}
         ListHeaderComponent={renderHeader}
         contentContainerStyle={styles.replyList}
         renderItem={({ item }) => <Reply item={item} />}

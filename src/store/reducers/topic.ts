@@ -44,6 +44,17 @@ export const fetchRepliesById = createAsyncThunk(
   },
 );
 
+export const fetchTopicDetails = createAsyncThunk(
+  'topic/fetchTopicDetails',
+  async (params: { topicId: number; page: number }) => {
+    const response = await topicCrawler.fetchTopicDetails(
+      params.topicId,
+      params.page,
+    );
+    return response;
+  },
+);
+
 export const topicSlice = createSlice({
   name: 'topic',
   initialState: {
@@ -58,14 +69,12 @@ export const topicSlice = createSlice({
         state.currentTopic = {} as ITopic;
         state.replyList = [];
       })
-      .addCase(fetchTopicById.fulfilled, (state, action) => {
-        state.currentTopic = action.payload[0];
-      })
-      .addCase(fetchRepliesById.fulfilled, (state, action) => {
-        state.replyList = action.payload;
-      })
       .addCase(fetchTopicByTab.fulfilled, (state, action) => {
         state.topicList = action.payload;
+      })
+      .addCase(fetchTopicDetails.fulfilled, (state, action) => {
+        state.currentTopic = action.payload.topic;
+        state.replyList = action.payload.replyList;
       });
     5;
   },

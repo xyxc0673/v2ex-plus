@@ -15,14 +15,12 @@ interface IProps {
 const Topic = ({ item: topic }: IProps) => {
   const navigation = useNavigation();
 
-  const openTopic = (topicId: number, title: string) => {
-    navigation.navigate('topic', { topicId, title });
+  const openTopic = () => {
+    navigation.navigate('topic', { topicId: topic.id });
   };
 
   return (
-    <TouchableOpacity
-      style={styles.topicItem}
-      onPress={() => openTopic(topic.id, topic.title)}>
+    <TouchableOpacity style={styles.topicItem} onPress={() => openTopic()}>
       <View style={styles.topicTop}>
         <View style={styles.topicTopLeft}>
           <Avatar

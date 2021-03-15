@@ -6,7 +6,7 @@ import Images from '@/theme/images';
 import dayjs from 'dayjs';
 import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import Markdown from 'react-native-markdown-display';
+import HTML from 'react-native-render-html';
 
 interface IProps {
   item: IReply;
@@ -17,27 +17,30 @@ const Reply = ({ item: reply }: IProps) => {
     <View style={styles.reply}>
       <View style={styles.replyHeader}>
         <Avatar
-          user={reply.member}
+          username={reply.author}
           size={36}
-          source={{ uri: reply.member.avatar_large }}
+          source={{ uri: reply.avatar }}
         />
         <View style={styles.replyHeaderLeft}>
           <View style={styles.replyHeaderLeftInfo}>
             <View>
-              <Text>{reply.member.username}</Text>
+              <Text>{reply.author}</Text>
               <Text style={styles.replyCreated}>
-                {dayjs.unix(reply.created).fromNow()}
+                {dayjs(reply.createdAt).fromNow()}
               </Text>
             </View>
-            {/* <Text style={styles.replyIndex}>{`#${index}`}</Text> */}
+            <Text style={styles.replyIndex}>{`#${reply.no}`}</Text>
           </View>
-          <Markdown>{reply.content}</Markdown>
+          <HTML
+            source={{ html: reply.content || '<p></p>' }}
+            containerStyle={styles.content}
+          />
         </View>
       </View>
       <View style={styles.replyOpt}>
         <TouchableOpacity style={styles.replyOptBtn}>
           <Image style={styles.replyOptBtnIcon} source={Images.heartGrey} />
-          {/* <Text style={styles.replyThanksNumber}>2</Text> */}
+          <Text style={styles.replyThanksNumber}>{reply.thanks || ''}</Text>
         </TouchableOpacity>
       </View>
       <View style={Common.divider} />
@@ -48,7 +51,9 @@ const Reply = ({ item: reply }: IProps) => {
 export default React.memo(Reply);
 
 const styles = StyleSheet.create({
-  reply: {},
+  reply: {
+    marginBottom: 8,
+  },
   replyHeader: {
     marginBottom: 8,
     flexDirection: 'row',
@@ -66,10 +71,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: Colors.secondaryText,
   },
-  //   replyIndex: {
-  //     fontSize: 12,
-  //     color: Colors.thirdText,
-  //   },
+  replyIndex: {
+    fontSize: 10,
+    color: Colors.thirdText,
+  },
   replyOpt: {
     marginTop: 8,
     flexDirection: 'row',
@@ -84,9 +89,12 @@ const styles = StyleSheet.create({
     height: 16,
     marginLeft: 16,
   },
-  //   replyThanksNumber: {
-  //     fontSize: 14,
-  //     marginLeft: 4,
-  //     color: Colors.secondaryText,
-  //   },
+  replyThanksNumber: {
+    fontSize: 12,
+    marginLeft: 4,
+    color: Colors.secondaryText,
+  },
+  content: {
+    marginTop: 8,
+  },
 });
