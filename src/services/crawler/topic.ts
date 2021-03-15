@@ -160,7 +160,7 @@ export const fetchTopicDetails = async (id: number, page: number = 1) => {
     replyList.push(reply);
   });
 
-  const topic = {
+  const topic: ITopic = {
     id,
     title,
     createdAt,

@@ -34,4 +34,10 @@ export interface ITopic {
   createdAt: string;
   content?: string;
   subtleList?: Array<ISubtle>;
+  via?: string;
+  isCollect?: boolean;
+  views?: number;
+  likes?: number;
+  thanks?: number;
+  lastReplyDatetime?: string;
 }
