@@ -22,16 +22,16 @@ const Topic = ({ item: topic }: IProps) => {
       onPress={() => navigation.navigate('topic', { topicId: topic.id })}>
       <Text style={styles.topicTitle}>{topic.title}</Text>
       <View style={[Layout.row, styles.topicInfo]}>
-        <Text style={Common.node}>{topic.node.title}</Text>
+        <Text style={Common.node}>{topic.nodeTitle}</Text>
         <View style={[Layout.row, styles.topicDesctem]}>
           <Image style={styles.topicDescIcon} source={Images.timeCycleGrey} />
           <Text style={styles.topicDescText}>
-            {dayjs.unix(topic.created).fromNow()}
+            {dayjs(topic.createdAt).fromNow()}
           </Text>
         </View>
         <View style={[Layout.row, styles.topicDesctem]}>
           <Image style={styles.topicDescIcon} source={Images.moreCycleGrey} />
-          <Text style={styles.topicDescText}>{topic.replies}</Text>
+          <Text style={styles.topicDescText}>{topic.replyCount}</Text>
         </View>
       </View>
     </TouchableOpacity>

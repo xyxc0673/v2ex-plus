@@ -1,5 +1,5 @@
 import { Avatar } from '@/components';
-import { fetchUserInfoById, fetchUserTopics } from '@/store/reducers/user';
+import { fetchUserTopics } from '@/store/reducers/user';
 import { Colors } from '@/theme/colors';
 import Layout from '@/theme/layout';
 import { useAppDispatch, useAppSelector } from '@/utils/hooks';
@@ -52,9 +52,8 @@ const Profile = () => {
   }, [navigation, userInfo]);
 
   useEffect(() => {
-    const { userId, username } = route.params;
-    dispatch(fetchUserInfoById(userId));
-    dispatch(fetchUserTopics(username));
+    const { username } = route.params;
+    dispatch(fetchUserTopics({ username, page: 1 }));
   }, [dispatch, route.params]);
 
   const renderHeader = React.useMemo(() => {

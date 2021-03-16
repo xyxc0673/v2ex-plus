@@ -2,7 +2,7 @@ import { IReply } from '@/interfaces/reply';
 import { ITopic } from '@/interfaces/topic';
 import { IBalance } from '@/interfaces/balance';
 import { ILoginParams, IUser } from '@/interfaces/user';
-import { topicService, userService } from '@/services';
+import { userService } from '@/services';
 import { userCrawler } from '@/services/crawler';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { INotification } from '@/interfaces/notification';
@@ -11,14 +11,6 @@ export const fetchUserInfoById = createAsyncThunk(
   'user/fetchUserInfoById',
   async (userId: number) => {
     const response = await userService.fetchUserInfoById(userId);
-    return response.data;
-  },
-);
-
-export const fetchUserTopics = createAsyncThunk(
-  'user/fetchUserTopics',
-  async (username: string) => {
-    const response = await topicService.fetchTopicByUsername(username);
     return response.data;
   },
 );
@@ -71,6 +63,17 @@ export const fetchUserNotifications = createAsyncThunk(
   },
 );
 
+export const fetchUserTopics = createAsyncThunk(
+  'user/fetchUserTopics',
+  async (params: { username: string; page: number }) => {
+    const response = await userCrawler.fetchUserTopics(
+      params.username,
+      params.page,
+    );
+    return response;
+  },
+);
+
 export const userSlice = createSlice({
   name: 'user',
   initialState: {
@@ -84,6 +87,7 @@ export const userSlice = createSlice({
     user: {} as userCrawler.IUserInfo,
     notificationList: [] as Array<INotification>,
     notificationMaxPage: 0,
+    userTopicCount: 0,
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -97,7 +101,8 @@ export const userSlice = createSlice({
         state.userInfo = action.payload;
       })
       .addCase(fetchUserTopics.fulfilled, (state, action) => {
-        state.userTopicList = action.payload;
+        state.userTopicList = action.payload.topicList;
+        state.userTopicCount = action.payload.topicCount;
       })
       .addCase(fetchLoginParams.fulfilled, (state, action) => {
         state.loginParams = action.payload;
