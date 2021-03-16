@@ -16,6 +16,12 @@ const persistConfig = {
 
 function createStore() {
   const middlewares = [thunkMiddleware, loggerMiddleware];
+
+  if (__DEV__) {
+    const reduxDebugger = require('redux-middleware-flipper').default;
+    middlewares.push(reduxDebugger({ actionsBlacklist: [] }));
+  }
+
   const middlewareEnhancers = applyMiddleware(...middlewares);
   const enhancers = [middlewareEnhancers];
 
