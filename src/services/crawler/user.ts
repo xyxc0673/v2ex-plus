@@ -6,6 +6,7 @@ import instance from '../request';
 import { loginFormHeaders } from './config';
 import { INotification, TNotificationType } from '@/interfaces/notification';
 import * as parser from './parser';
+import { IUserReply } from '@/interfaces/userReply';
 
 export const getLoginParams = async (): Promise<ILoginParams> => {
   const response = await instance.get('/signin', {
@@ -182,4 +183,50 @@ export const fetchUserTopics = async (username: string, page: number = 1) => {
   const topicCount = parseInt($('.header > .fr > .gray').text(), 10);
 
   return { topicList, topicCount };
+};
+
+export const fetchUserReplies = async (username: string, page: number = 1) => {
+  const response = await instance.get(`/member/${username}/replies?p=${page}`);
+
+  const $ = cheerio.load(response.data);
+
+  const replyCount = parseInt($('.header > .fr > .gray').text(), 10);
+
+  const replyInfoList = $('.dock_area');
+  const replyContentList = $('#Main > .box > .inner');
+
+  const replyList = [] as Array<IUserReply>;
+
+  replyInfoList.each((index, elem) => {
+    const createdAt = $(elem).find('.fr').text();
+
+    const aList = $(elem).find('.gray > a');
+
+    const author = aList.eq(0).text();
+
+    const nodeElem = aList.eq(1);
+    const nodeTitle = nodeElem.text();
+    const nodeName = parser.getNodeName(nodeElem.attr('href'));
+
+    const topicElem = aList.eq(2);
+    const topicTitle = topicElem.text();
+    const topicId = parser.getTopicId(topicElem.attr('href'));
+
+    const content =
+      replyContentList.eq(index).children('.reply_content').html() || '';
+
+    const reply: IUserReply = {
+      author,
+      nodeName,
+      nodeTitle,
+      topicId,
+      topicTitle,
+      content,
+      createdAt,
+    };
+
+    replyList.push(reply);
+  });
+
+  return { replyList, replyCount };
 };
