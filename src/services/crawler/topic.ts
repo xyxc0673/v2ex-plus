@@ -1,7 +1,7 @@
 import { IReply } from '@/interfaces/reply';
 import { ISubtle, ITopic } from '@/interfaces/topic';
 import cheerio from 'cheerio';
-import { parser } from '.';
+import * as parser from './parser';
 import instance from '../request';
 
 export const fetchTopicByTab = async (

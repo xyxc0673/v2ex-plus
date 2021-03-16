@@ -5,7 +5,7 @@ import cheerio from 'cheerio';
 import instance from '../request';
 import { loginFormHeaders } from './config';
 import { INotification, TNotificationType } from '@/interfaces/notification';
-import { parser } from './index';
+import * as parser from './parser';
 
 export const getLoginParams = async (): Promise<ILoginParams> => {
   const response = await instance.get('/signin', {
