@@ -1,4 +1,4 @@
-import { IReply } from '@/interfaces/reply';
+import { IUserReply } from '@/interfaces/userReply';
 import { ITopic } from '@/interfaces/topic';
 import { IBalance } from '@/interfaces/balance';
 import { ILoginParams, IUser } from '@/interfaces/user';
@@ -74,12 +74,23 @@ export const fetchUserTopics = createAsyncThunk(
   },
 );
 
+export const fetchUserReplies = createAsyncThunk(
+  'user/fetchUserReplies',
+  async (params: { username: string; page: number }) => {
+    const response = await userCrawler.fetchUserReplies(
+      params.username,
+      params.page,
+    );
+    return response;
+  },
+);
+
 export const userSlice = createSlice({
   name: 'user',
   initialState: {
     userInfo: {} as IUser,
     userTopicList: [] as Array<ITopic>,
-    userReplyList: [] as Array<IReply>,
+    userReplyList: [] as Array<IUserReply>,
     loginParams: {} as ILoginParams,
     isLogged: false,
     cookies: [] as Array<string>,
@@ -88,6 +99,7 @@ export const userSlice = createSlice({
     notificationList: [] as Array<INotification>,
     notificationMaxPage: 0,
     userTopicCount: 0,
+    userReplyCount: 0,
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -103,6 +115,10 @@ export const userSlice = createSlice({
       .addCase(fetchUserTopics.fulfilled, (state, action) => {
         state.userTopicList = action.payload.topicList;
         state.userTopicCount = action.payload.topicCount;
+      })
+      .addCase(fetchUserReplies.fulfilled, (state, action) => {
+        state.userReplyList = action.payload.replyList;
+        state.userReplyCount = action.payload.replyCount;
       })
       .addCase(fetchLoginParams.fulfilled, (state, action) => {
         state.loginParams = action.payload;
