@@ -5,14 +5,9 @@ import Layout from '@/theme/layout';
 import { useAppDispatch, useAppSelector } from '@/utils/hooks';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import dayjs from 'dayjs';
-import React, { useEffect, useState } from 'react';
-import {
-  FlatList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import React, { useEffect } from 'react';
+import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Topic from './components/topic';
 
 type ParamList = {
@@ -22,23 +17,7 @@ type ParamList = {
   };
 };
 
-const TAB = [
-  {
-    key: 'topic',
-    name: '主题',
-  },
-  {
-    key: 'reply',
-    name: '回复',
-  },
-  {
-    key: 'about',
-    name: '关于',
-  },
-];
-
 const Profile = () => {
-  const [currTab, setCurrTab] = useState(TAB[0].key);
   const route = useRoute<RouteProp<ParamList, 'Detail'>>();
 
   const dispatch = useAppDispatch();
@@ -57,9 +36,6 @@ const Profile = () => {
   }, [dispatch, route.params]);
 
   const renderHeader = React.useMemo(() => {
-    if (!userInfo.id) {
-      return <View />;
-    }
     return (
       <>
         <View style={[Layout.row, styles.userInfoHeader]}>
@@ -83,35 +59,34 @@ const Profile = () => {
             </View>
           </View>
         </View>
-        <View style={[Layout.row, styles.tabs]}>
-          {TAB.map((tab) => (
-            <TouchableOpacity
-              key={tab.key}
-              style={[styles.tab, currTab === tab.key && styles.tabActive]}
-              onPress={() => setCurrTab(tab.key)}>
-              <Text
-                style={[
-                  styles.tabTitle,
-                  currTab === tab.key && styles.tabTitleActive,
-                ]}>
-                {tab.name}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
       </>
     );
-  }, [currTab, userInfo]);
+  }, [userInfo]);
 
   return (
     <View style={[Layout.fill, styles.container]}>
-      <FlatList
-        data={userTopicList}
-        contentContainerStyle={[styles.tabContent]}
-        ListHeaderComponent={renderHeader}
-        keyExtractor={(item) => `user_topic_${item.id}`}
-        renderItem={({ item }) => <Topic item={item} />}
-      />
+      <Tabs.Container
+        HeaderComponent={() => renderHeader}
+        headerContainerStyle={styles.tabHeaderContainer}
+        initialTabName="Topic"
+        TabBarComponent={(props) => (
+          <MaterialTabBar {...props} indicatorStyle={styles.tabIndicator} />
+        )}>
+        <Tabs.Tab name="Info" label="资料">
+          <View />
+        </Tabs.Tab>
+        <Tabs.Tab name="Topic" label="帖子">
+          <Tabs.FlatList
+            data={userTopicList}
+            contentContainerStyle={[styles.tabContent]}
+            keyExtractor={(item) => `user_topic_${item.id}`}
+            renderItem={({ item }) => <Topic item={item} />}
+          />
+        </Tabs.Tab>
+        <Tabs.Tab name="Reply" label="回复">
+          <View />
+        </Tabs.Tab>
+      </Tabs.Container>
     </View>
   );
 };
@@ -151,23 +126,15 @@ const styles = StyleSheet.create({
     color: Colors.black,
     fontSize: 12,
   },
-  tabs: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    backgroundColor: Colors.white,
+  tabHeaderContainer: {
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    elevation: 0,
   },
-  tab: {
-    paddingVertical: 2,
-    marginRight: 32,
-    justifyContent: 'center',
-  },
-  tabActive: {},
-  tabTitle: {
-    fontSize: 16,
-  },
-  tabTitleActive: {
-    fontSize: 18,
-    fontWeight: 'bold',
+  tabIndicator: {
+    backgroundColor: Colors.vi,
   },
   tabContent: {
     backgroundColor: Colors.lightGrey,
