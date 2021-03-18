@@ -1,5 +1,5 @@
 import { Avatar } from '@/components';
-import { fetchUserTopics } from '@/store/reducers/user';
+import { fetchUserReplies, fetchUserTopics } from '@/store/reducers/user';
 import { Colors } from '@/theme/colors';
 import Layout from '@/theme/layout';
 import { useAppDispatch, useAppSelector } from '@/utils/hooks';
@@ -9,6 +9,7 @@ import React, { useEffect } from 'react';
 import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Topic from './components/topic';
+import Reply from './components/reply';
 
 type ParamList = {
   Detail: {
@@ -23,6 +24,7 @@ const Profile = () => {
   const dispatch = useAppDispatch();
   const userInfo = useAppSelector((state) => state.user.userInfo);
   const userTopicList = useAppSelector((state) => state.user.userTopicList);
+  const userReplyList = useAppSelector((state) => state.user.userReplyList);
 
   const navigation = useNavigation();
 
@@ -33,6 +35,7 @@ const Profile = () => {
   useEffect(() => {
     const { username } = route.params;
     dispatch(fetchUserTopics({ username, page: 1 }));
+    dispatch(fetchUserReplies({ username, page: 1 }));
   }, [dispatch, route.params]);
 
   const renderHeader = React.useMemo(() => {
@@ -68,12 +71,13 @@ const Profile = () => {
       <Tabs.Container
         HeaderComponent={() => renderHeader}
         headerContainerStyle={styles.tabHeaderContainer}
-        initialTabName="Topic"
         TabBarComponent={(props) => (
           <MaterialTabBar {...props} indicatorStyle={styles.tabIndicator} />
         )}>
         <Tabs.Tab name="Info" label="资料">
-          <View />
+          <Tabs.ScrollView>
+            <Text>资料</Text>
+          </Tabs.ScrollView>
         </Tabs.Tab>
         <Tabs.Tab name="Topic" label="帖子">
           <Tabs.FlatList
@@ -84,7 +88,12 @@ const Profile = () => {
           />
         </Tabs.Tab>
         <Tabs.Tab name="Reply" label="回复">
-          <View />
+          <Tabs.FlatList
+            data={userReplyList}
+            contentContainerStyle={[styles.tabContent]}
+            keyExtractor={(item, index) => `user_topic_${index}`}
+            renderItem={({ item }) => <Reply item={item} />}
+          />
         </Tabs.Tab>
       </Tabs.Container>
     </View>
