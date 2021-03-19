@@ -1,4 +1,4 @@
-import { ILoginParams } from '@/interfaces/user';
+import { ILoginParams, IUser } from '@/interfaces/user';
 import { IBalance } from '@/interfaces/balance';
 import { typedKeys } from '@/utils/tools';
 import cheerio from 'cheerio';
@@ -7,6 +7,8 @@ import { loginFormHeaders } from './config';
 import { INotification, TNotificationType } from '@/interfaces/notification';
 import * as parser from './parser';
 import { IUserReply } from '@/interfaces/userReply';
+import { ISocial } from '@/interfaces/social';
+import { config } from '@/config';
 
 export const getLoginParams = async (): Promise<ILoginParams> => {
   const response = await instance.get('/signin', {
@@ -229,4 +231,100 @@ export const fetchUserReplies = async (username: string, page: number = 1) => {
   });
 
   return { replyList, replyCount };
+};
+
+export const fetchUserProfile = async (username: string) => {
+  const response = await instance.get(`/member/${username}`);
+  const $ = cheerio.load(response.data);
+
+  const box = $('#Main > .box').first();
+
+  const avatar = box.find('.avatar').attr('src') || '';
+
+  const dau = box.find('a[href="/top/dau"]').text();
+
+  const tagLine = box.find('.bigger').first().text() || '';
+
+  let company = '';
+  let workTitle = '';
+
+  const companyInfo =
+    box
+      .find('.cell > table > tbody > tr > td:nth-child(3) > span:nth-child(5)')
+      .text() || '';
+
+  const companyArray = companyInfo.split(' / ');
+
+  if (companyArray.length > 1) {
+    company = companyArray[0];
+    workTitle = companyArray[1];
+  }
+
+  const gray = box.find('.gray').first().text() || '';
+
+  const noReg = /V2EX 第 (\d+) 号会员/.exec(gray);
+  const createdAtReg = /(\d{4}-\d{1,2}-\d{1,2}\s\d{1,2}:\d{1,2}:\d{1,2})/.exec(
+    gray,
+  );
+
+  const no = noReg && noReg.length > 0 ? noReg[1] : '';
+  const createdAt =
+    createdAtReg && createdAtReg.length > 0 ? createdAtReg[1] : '';
+
+  const bio = box.find('.cell:nth-child(3)').text().trim();
+
+  const followed = box.find('.super.inverse.button').attr('onclick') || '';
+
+  const follow = box.find('.super.special.button').attr('onclick') || '';
+
+  const isFollowed = followed || follow;
+
+  const onceReg = /once=(\d+)/.exec(isFollowed);
+  const once = onceReg && onceReg.length > 0 ? onceReg[1] : '';
+
+  const isOnline = box.find('.online').text() === 'ONLINE';
+
+  const widgets = box.find('.widgets');
+
+  const socialSelector = widgets.find('.social_label');
+
+  const block = box.find('.super.normal.button').attr('onclick') || '';
+
+  const blockReg = /t=(\d+)/.exec(block);
+
+  const blockToken = blockReg && blockReg.length > 0 ? blockReg[1] : '';
+
+  const socialList = [] as Array<ISocial>;
+
+  socialSelector.each((index, elem) => {
+    const url = $(elem).attr('href') || '';
+    const name = $(elem).text().trim() || '';
+    const icon = $(elem).find('img').attr('src') || '';
+    const id = `${username}_${index}_${name}`;
+    socialList.push({
+      id,
+      url,
+      name,
+      icon: `${config.V2EX_BASE_URL}${icon}`,
+    });
+  });
+
+  const id = parseInt(no, 10);
+
+  const profile: IUser = {
+    id,
+    username,
+    avatar,
+    dau,
+    createdAt,
+    bio,
+    isOnline,
+    blockToken,
+    socialList,
+    tagLine,
+    company,
+    workTitle,
+  };
+
+  return { once, profile };
 };
