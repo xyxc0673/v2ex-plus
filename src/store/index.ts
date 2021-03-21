@@ -4,7 +4,6 @@ import {
   getDefaultMiddleware,
 } from '@reduxjs/toolkit';
 import thunkMiddleware from 'redux-thunk';
-import loggerMiddleware from 'redux-logger';
 import rootReducer from './reducers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { persistStore, persistReducer } from 'redux-persist';
@@ -15,7 +14,7 @@ const persistConfig = {
 };
 
 function createStore() {
-  const middlewares = [thunkMiddleware, loggerMiddleware];
+  const middlewares = [thunkMiddleware];
 
   if (__DEV__) {
     const reduxDebugger = require('redux-middleware-flipper').default;
