@@ -85,6 +85,14 @@ export const fetchUserReplies = createAsyncThunk(
   },
 );
 
+export const fetchUserProfile = createAsyncThunk(
+  'user/fetchUserProfile',
+  async (username: string) => {
+    const response = await userCrawler.fetchUserProfile(username);
+    return response;
+  },
+);
+
 export const userSlice = createSlice({
   name: 'user',
   initialState: {
@@ -100,6 +108,7 @@ export const userSlice = createSlice({
     notificationMaxPage: 0,
     userTopicCount: 0,
     userReplyCount: 0,
+    once: '',
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -109,8 +118,9 @@ export const userSlice = createSlice({
         state.userTopicList = [];
         state.userReplyList = [];
       })
-      .addCase(fetchUserInfoById.fulfilled, (state, action) => {
-        state.userInfo = action.payload;
+      .addCase(fetchUserProfile.fulfilled, (state, action) => {
+        state.userInfo = action.payload.profile;
+        state.once = action.payload.once;
       })
       .addCase(fetchUserTopics.fulfilled, (state, action) => {
         state.userTopicList = action.payload.topicList;

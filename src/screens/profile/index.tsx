@@ -1,15 +1,19 @@
 import { Avatar } from '@/components';
-import { fetchUserReplies, fetchUserTopics } from '@/store/reducers/user';
+import {
+  fetchUserProfile,
+  fetchUserReplies,
+  fetchUserTopics,
+} from '@/store/reducers/user';
 import { Colors } from '@/theme/colors';
 import Layout from '@/theme/layout';
 import { useAppDispatch, useAppSelector } from '@/utils/hooks';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
-import dayjs from 'dayjs';
 import React, { useEffect } from 'react';
 import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Topic from './components/topic';
 import Reply from './components/reply';
+import Information from './components/Information';
 
 type ParamList = {
   Detail: {
@@ -25,6 +29,7 @@ const Profile = () => {
   const userInfo = useAppSelector((state) => state.user.userInfo);
   const userTopicList = useAppSelector((state) => state.user.userTopicList);
   const userReplyList = useAppSelector((state) => state.user.userReplyList);
+  const user = useAppSelector((state) => state.user.user);
 
   const navigation = useNavigation();
 
@@ -34,6 +39,7 @@ const Profile = () => {
 
   useEffect(() => {
     const { username } = route.params;
+    dispatch(fetchUserProfile(username));
     dispatch(fetchUserTopics({ username, page: 1 }));
     dispatch(fetchUserReplies({ username, page: 1 }));
   }, [dispatch, route.params]);
@@ -43,40 +49,42 @@ const Profile = () => {
       <>
         <View style={[Layout.row, styles.userInfoHeader]}>
           <View style={[Layout.row, Layout.fullWidth]}>
-            <Avatar size={60} source={{ uri: userInfo.avatar_large }} />
+            <View style={styles.userInfoHeaderLeft}>
+              <Avatar size={60} source={{ uri: userInfo.avatar }} />
+              {userInfo.isOnline && <View style={styles.online} />}
+            </View>
             <View style={styles.userInfoHeaderCenter}>
               <Text style={styles.username}>{userInfo.username}</Text>
-              <View>
-                <Text style={styles.created}>{`${userInfo.id} 号会员`}</Text>
-                <Text style={styles.created}>
-                  {`加入于 ${dayjs
-                    .unix(userInfo.created)
-                    .format('YYYY-MM-DD HH:mm:ss')}`}
-                </Text>
-              </View>
+              <Text style={styles.bio}>{userInfo.bio}</Text>
+              <View />
             </View>
             <View>
-              <TouchableOpacity style={styles.follow}>
-                <Text style={styles.followText}>关注</Text>
-              </TouchableOpacity>
+              {userInfo.username !== user.username && (
+                <>
+                  <TouchableOpacity style={[styles.btn, styles.btnFollow]}>
+                    <Text style={styles.btnText}>关注</Text>
+                  </TouchableOpacity>
+                </>
+              )}
             </View>
           </View>
         </View>
       </>
     );
-  }, [userInfo]);
+  }, [user, userInfo]);
 
   return (
     <View style={[Layout.fill, styles.container]}>
       <Tabs.Container
         HeaderComponent={() => renderHeader}
         headerContainerStyle={styles.tabHeaderContainer}
+        initialTabName="Topic"
         TabBarComponent={(props) => (
           <MaterialTabBar {...props} indicatorStyle={styles.tabIndicator} />
         )}>
         <Tabs.Tab name="Info" label="资料">
-          <Tabs.ScrollView>
-            <Text>资料</Text>
+          <Tabs.ScrollView contentContainerStyle={[styles.tabContent]}>
+            <Information data={userInfo} />
           </Tabs.ScrollView>
         </Tabs.Tab>
         <Tabs.Tab name="Topic" label="帖子">
@@ -108,33 +116,54 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   userInfoHeader: {
-    paddingHorizontal: 8,
-    paddingVertical: 16,
+    padding: 16,
+    paddingTop: 24,
     backgroundColor: Colors.white,
   },
+  userInfoHeaderLeft: {
+    alignItems: 'center',
+  },
   userInfoHeaderCenter: {
-    marginLeft: 8,
-    justifyContent: 'space-between',
+    marginLeft: 12,
+    justifyContent: 'flex-start',
     flex: 1,
   },
   username: {
     fontSize: 18,
   },
-  created: {
-    fontSize: 12,
+  bio: {
+    fontSize: 14,
+    marginTop: 4,
     color: Colors.secondaryText,
-    marginRight: 8,
   },
-  follow: {
+  online: {
+    fontSize: 12,
+    marginTop: 4,
+    width: 16,
+    height: 16,
+    borderRadius: 16,
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    borderWidth: 2,
+    borderColor: Colors.white,
+    backgroundColor: Colors.green,
+  },
+
+  btn: {
     backgroundColor: Colors.vi,
-    paddingVertical: 4,
+    paddingVertical: 6,
     paddingHorizontal: 16,
     borderRadius: 4,
   },
-  followText: {
-    color: Colors.black,
-    fontSize: 12,
+  btnText: {
+    color: Colors.white,
+    fontSize: 14,
   },
+  btnFollow: {
+    backgroundColor: Colors.vi,
+  },
+
   tabHeaderContainer: {
     shadowOffset: {
       width: 0,
@@ -148,5 +177,6 @@ const styles = StyleSheet.create({
   tabContent: {
     backgroundColor: Colors.lightGrey,
     flexGrow: 1,
+    marginTop: 8,
   },
 });
