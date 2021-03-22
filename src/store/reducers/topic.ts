@@ -1,3 +1,4 @@
+import { TPending } from '@/interfaces/pending';
 import { IReply } from '@/interfaces/reply';
 import { ITopic } from '@/interfaces/topic';
 import { topicService } from '@/services';
@@ -30,7 +31,8 @@ export const fetchTopicById = createAsyncThunk(
 
 export const fetchTopicByTab = createAsyncThunk(
   'topic/fetchTopicByTab',
-  async (tab: string) => {
+  async (params: { tab: string; refresh: boolean }) => {
+    const { tab } = params;
     const response = await topicCrawler.fetchTopicByTab(tab);
     return response;
   },
@@ -55,26 +57,50 @@ export const fetchTopicDetails = createAsyncThunk(
   },
 );
 
+interface TopicState {
+  topicList: Array<ITopic>;
+  currentTopic: ITopic;
+  replyList: Array<IReply>;
+  pending: TPending;
+  isRefreshing: boolean;
+}
+
+const initialState: TopicState = {
+  topicList: [] as Array<ITopic>,
+  currentTopic: {} as ITopic,
+  replyList: [] as Array<IReply>,
+  pending: 'idle',
+  isRefreshing: false,
+};
+
 export const topicSlice = createSlice({
   name: 'topic',
-  initialState: {
-    topicList: [] as Array<ITopic>,
-    currentTopic: {} as ITopic,
-    replyList: [] as Array<IReply>,
-  },
+  initialState: initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchTopicById.pending, (state) => {
+      .addCase(fetchTopicByTab.pending, (state, action) => {
+        if (!action.meta.arg.refresh) {
+          state.pending = 'pending';
+          state.topicList = [];
+        }
+        state.isRefreshing = action.meta.arg.refresh;
+      })
+      .addCase(fetchTopicDetails.pending, (state, _) => {
         state.currentTopic = {} as ITopic;
         state.replyList = [];
+        state.pending = 'pending';
       })
       .addCase(fetchTopicByTab.fulfilled, (state, action) => {
         state.topicList = action.payload;
+        state.pending = 'succeeded';
+        state.isRefreshing = false;
       })
+
       .addCase(fetchTopicDetails.fulfilled, (state, action) => {
         state.currentTopic = action.payload.topic;
         state.replyList = action.payload.replyList;
+        state.pending = 'succeeded';
       });
     5;
   },
