@@ -56,9 +56,9 @@ export const parseTopicList = (
     const nodeName = getNodeName(nodeHref);
 
     const author = topicInfo.children(':nth-child(3)').text();
-    const createdAtOrigin = topicInfo.children(':nth-child(4)').attr('title');
-    const createdAt =
-      createdAtOrigin?.slice(0, createdAtOrigin.lastIndexOf(' ')) || '';
+    const datetime = topicInfo.children(':nth-child(4)').attr('title');
+    const lastReplyDatetime =
+      datetime?.slice(0, datetime.lastIndexOf(' ')) || '';
     const lastRepliedBy = topicInfo.children(':nth-child(5)').text() || '';
 
     topicList.push({
@@ -70,7 +70,7 @@ export const parseTopicList = (
       nodeName,
       nodeTitle,
       author,
-      createdAt,
+      lastReplyDatetime,
       lastRepliedBy,
     });
   });

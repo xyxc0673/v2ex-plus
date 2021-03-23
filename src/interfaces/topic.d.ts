@@ -31,7 +31,7 @@ export interface ITopic {
   replyCount: number;
   avatar: string;
   author: string;
-  createdAt: string;
+  createdAt?: string;
   content?: string;
   subtleList?: Array<ISubtle>;
   via?: string;
