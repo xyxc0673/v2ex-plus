@@ -3,6 +3,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { INotification } from '@/interfaces/notification';
 import { TPending } from '@/interfaces/pending';
 import { INotificationResponse } from '@/services/crawler/user';
+import { RootState } from '..';
 
 interface IParams {
   refresh: boolean;
@@ -11,9 +12,10 @@ interface IParams {
 export const fetchUserNotifications = createAsyncThunk<
   INotificationResponse,
   IParams,
-  { state: NotificationState }
+  { state: RootState }
 >('user/fetchUserNotifications', async (params, thunkApi) => {
-  const { currentPage } = thunkApi.getState();
+  const { notification } = thunkApi.getState();
+  const { currentPage } = notification;
   const response = await userCrawler.fetchUserNotifications(currentPage + 1);
   return response;
 });
