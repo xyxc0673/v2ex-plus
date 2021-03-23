@@ -10,7 +10,7 @@ interface IProps {
   onPress?: () => void;
 }
 
-const Avatar = ({ username, size = 24, source, onPress }: IProps) => {
+const AvatarComponent = ({ username, size = 24, source, onPress }: IProps) => {
   const navigation = useNavigation();
 
   const _handlePress = () => {
@@ -34,4 +34,6 @@ const Avatar = ({ username, size = 24, source, onPress }: IProps) => {
   );
 };
 
-export default Avatar;
+const avatar = React.memo(AvatarComponent);
+
+export default avatar;
