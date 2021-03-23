@@ -108,7 +108,14 @@ export const fetchUserInfo = async () => {
   return parser.getUserInfo(response.data);
 };
 
-export const fetchUserNotifications = async (page: number = 1) => {
+export interface INotificationResponse {
+  notifications: INotification[];
+  maxPage: number;
+}
+
+export const fetchUserNotifications = async (
+  page: number = 1,
+): Promise<INotificationResponse> => {
   const response = await instance.get(`/notifications?p=${page}`);
 
   const $ = cheerio.load(response.data);

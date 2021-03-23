@@ -1,5 +1,5 @@
 import { Header } from '@/components';
-import { fetchUserNotifications } from '@/store/reducers/user';
+import { fetchUserNotifications } from '@/store/reducers/notification';
 import { Colors } from '@/theme/colors';
 import Layout from '@/theme/layout';
 import { useAppDispatch, useAppSelector } from '@/utils/hooks';
@@ -9,12 +9,10 @@ import Notification from './components/notification';
 
 const TabbarNotice = () => {
   const dispatch = useAppDispatch();
-  const notificationList = useAppSelector(
-    (state) => state.user.notificationList,
-  );
+  const notificationList = useAppSelector((state) => state.notification.list);
 
   useEffect(() => {
-    dispatch(fetchUserNotifications(1));
+    dispatch(fetchUserNotifications({ refresh: false }));
   }, [dispatch]);
 
   return (
