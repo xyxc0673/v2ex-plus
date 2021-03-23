@@ -57,6 +57,7 @@ export const notificationSlice = createSlice({
         }
         state.list = action.payload.notifications;
         state.maxPage = action.payload.maxPage;
+        state.isRefreshing = false;
       });
     5;
   },
