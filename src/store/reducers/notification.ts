@@ -7,6 +7,7 @@ import { RootState } from '..';
 
 interface IParams {
   refresh: boolean;
+  isFirstFetching?: boolean;
 }
 
 export const fetchUserNotifications = createAsyncThunk<
@@ -16,7 +17,9 @@ export const fetchUserNotifications = createAsyncThunk<
 >('user/fetchUserNotifications', async (params, thunkApi) => {
   const { notification } = thunkApi.getState();
   const { currentPage } = notification;
-  const response = await userCrawler.fetchUserNotifications(currentPage + 1);
+  const nextPage =
+    params.refresh || params.isFirstFetching ? 1 : currentPage + 1;
+  const response = await userCrawler.fetchUserNotifications(nextPage);
   return response;
 });
 
@@ -26,6 +29,7 @@ type NotificationState = {
   currentPage: number;
   pending: TPending;
   isRefreshing: boolean;
+  isFirstFetching: boolean;
 };
 
 const initialState: NotificationState = {
@@ -34,6 +38,7 @@ const initialState: NotificationState = {
   currentPage: 0,
   pending: 'idle',
   isRefreshing: false,
+  isFirstFetching: true,
 };
 
 export const notificationSlice = createSlice({
@@ -43,23 +48,30 @@ export const notificationSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchUserNotifications.pending, (state, action) => {
-        if (!action.meta.arg.refresh) {
-          state.pending = 'pending';
+        const { refresh, isFirstFetching } = action.meta.arg;
+        if (isFirstFetching) {
           state.list = [];
         }
-        state.isRefreshing = action.meta.arg.refresh;
+        state.isFirstFetching = isFirstFetching || false;
+        state.pending = 'pending';
+        state.isRefreshing = refresh;
       })
       .addCase(fetchUserNotifications.rejected, (state, _) => {
         state.pending = 'failed';
         state.isRefreshing = false;
       })
       .addCase(fetchUserNotifications.fulfilled, (state, action) => {
-        if (!action.meta.arg.refresh) {
+        const { isFirstFetching, refresh } = action.meta.arg;
+        if (isFirstFetching || refresh) {
+          state.currentPage = 1;
+          state.list = action.payload.notifications;
+        } else {
           state.currentPage += 1;
+          state.list = state.list.concat(action.payload.notifications);
         }
-        state.list = action.payload.notifications;
         state.maxPage = action.payload.maxPage;
         state.isRefreshing = false;
+        state.pending = 'succeeded';
       });
     5;
   },

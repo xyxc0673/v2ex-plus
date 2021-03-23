@@ -17,7 +17,7 @@ const TabbarNotice = () => {
   );
 
   useEffect(() => {
-    dispatch(fetchUserNotifications({ refresh: false }));
+    dispatch(fetchUserNotifications({ refresh: false, isFirstFetching: true }));
   }, [dispatch]);
 
   const listEmptyComponent = React.useMemo(() => {
