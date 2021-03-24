@@ -10,10 +10,11 @@ import HTML from 'react-native-render-html';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { Avatar } from '@/components';
 import Reply from './components/reply';
+import { ITopic } from '@/interfaces/topic';
 
 type ParamList = {
   Detail: {
-    topicId: number;
+    topic: ITopic;
   };
 };
 
@@ -21,14 +22,16 @@ const Topic = () => {
   const route = useRoute<RouteProp<ParamList, 'Detail'>>();
 
   const dispatch = useAppDispatch();
-  const currentTopic = useAppSelector((state) => state.topic.currentTopic);
+  const topicDetails = useAppSelector((state) => state.topic.currentTopic);
   const replyList = useAppSelector((state) => state.topic.replyList);
 
+  const currentTopic = { ...route.params.topic, ...topicDetails };
+
   useEffect(() => {
-    const { topicId } = route.params;
+    const { topic } = route.params;
     dispatch(
       fetchTopicDetails({
-        topicId: topicId,
+        topicId: topic.id,
         page: 1,
       }),
     );
@@ -55,7 +58,10 @@ const Topic = () => {
           <Text style={styles.topicDesc}>
             {currentTopic.createdAt && dayjs(currentTopic.createdAt).fromNow()}
           </Text>
-          <Text style={styles.topicDesc}>{`${currentTopic.views}次访问`}</Text>
+          {currentTopic.views && (
+            <Text
+              style={styles.topicDesc}>{`${currentTopic.views}次访问`}</Text>
+          )}
           <Text style={Common.node}>{currentTopic.nodeTitle}</Text>
         </View>
         <View style={Common.divider} />
@@ -102,12 +108,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   topicAuthor: {
-    marginLeft: 8,
+    marginHorizontal: 8,
     fontSize: 14,
     color: Colors.black,
   },
   topicDesc: {
-    marginHorizontal: 8,
+    marginRight: 8,
     fontSize: 12,
     color: Colors.secondaryText,
   },

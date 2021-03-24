@@ -19,7 +19,7 @@ const TYPE = {
 
 const Notification = ({ item: notification }: IProps) => {
   const openTopic = (topicId: number) => {
-    navigate('topic', { topicId });
+    navigate('topic', { topic: { id: topicId } });
   };
 
   return (

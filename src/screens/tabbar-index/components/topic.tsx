@@ -16,7 +16,7 @@ const Topic = ({ item: topic }: IProps) => {
   const navigation = useNavigation();
 
   const openTopic = () => {
-    navigation.navigate('topic', { topicId: topic.id });
+    navigation.navigate('topic', { topic });
   };
 
   return (

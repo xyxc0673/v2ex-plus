@@ -26,7 +26,7 @@ const Reply = ({ item: reply }: IProps) => {
       <TouchableOpacity
         style={styles.topic}
         onPress={() =>
-          navigation.navigate('topic', { topicId: reply.topicId })
+          navigation.navigate('topic', { topic: { id: reply.topicId } })
         }>
         <View style={[Layout.row, styles.topicInfo]}>
           <Text style={styles.topicAuthor}>{reply.author}</Text>

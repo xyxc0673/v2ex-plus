@@ -19,7 +19,7 @@ const Topic = ({ item: topic }: IProps) => {
     <TouchableOpacity
       key={`user_topic_${topic.id}`}
       style={styles.topic}
-      onPress={() => navigation.navigate('topic', { topicId: topic.id })}>
+      onPress={() => navigation.navigate('topic', { topic: { id: topic.id } })}>
       <Text style={styles.topicTitle}>{topic.title}</Text>
       <View style={[Layout.row, styles.topicInfo]}>
         <Text style={Common.node}>{topic.nodeTitle}</Text>
