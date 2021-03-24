@@ -40,7 +40,7 @@ const Topic = ({ item: topic }: IProps) => {
                   source={Images.timeCycleGrey}
                 />
                 <Text style={styles.topicAttrText}>
-                  {dayjs(topic.createdAt).fromNow()}
+                  {dayjs(topic.lastReplyDatetime).fromNow()}
                 </Text>
               </View>
               <View style={styles.topicAttr}>

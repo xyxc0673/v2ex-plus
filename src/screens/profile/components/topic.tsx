@@ -26,7 +26,7 @@ const Topic = ({ item: topic }: IProps) => {
         <View style={[Layout.row, styles.topicDesctem]}>
           <Image style={styles.topicDescIcon} source={Images.timeCycleGrey} />
           <Text style={styles.topicDescText}>
-            {dayjs(topic.createdAt).fromNow()}
+            {dayjs(topic.lastReplyDatetime).fromNow()}
           </Text>
         </View>
         <View style={[Layout.row, styles.topicDesctem]}>
