@@ -1,3 +1,8 @@
+export interface IBaseNode {
+  name: string;
+  title: string;
+}
+
 export interface INode {
   id: number;
   name: string;
