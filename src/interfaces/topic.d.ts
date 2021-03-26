@@ -16,7 +16,7 @@
 //   node: INode;
 // }
 
-export interface ISubtle {
+export interface ISupplement {
   content: string;
   createdAt: string;
 }
@@ -33,7 +33,7 @@ export interface ITopic {
   author: string;
   createdAt?: string;
   content?: string;
-  subtleList?: Array<ISubtle>;
+  supplementList?: Array<ISupplement>;
   via?: string;
   isCollect?: boolean;
   views?: number;

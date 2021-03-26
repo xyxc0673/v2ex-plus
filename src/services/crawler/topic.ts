@@ -1,5 +1,5 @@
 import { IReply } from '@/interfaces/reply';
-import { ISubtle, ITopic } from '@/interfaces/topic';
+import { ISupplement, ITopic } from '@/interfaces/topic';
 import cheerio from 'cheerio';
 import * as parser from './parser';
 import instance from '../request';
@@ -74,18 +74,18 @@ export const fetchTopicDetails = async (id: number, page: number = 1) => {
     }
   });
 
-  const subtlesSelector = $('.subtle');
+  const supplementsSelector = $('.subtle');
 
-  const subtleList = [] as Array<ISubtle>;
+  const supplementList = [] as Array<ISupplement>;
 
-  subtlesSelector.each((_, elem) => {
-    const subtle = {
+  supplementsSelector.each((_, elem) => {
+    const supplement = {
       createdAt: parser.parseDatetime(
         $(elem).find('.fade>span').attr('title') || '',
       ),
       content: $(elem).find('.topic_content').html() || '',
     };
-    subtleList.push(subtle);
+    supplementList.push(supplement);
   });
 
   const replyList = [] as Array<IReply>;
@@ -136,7 +136,7 @@ export const fetchTopicDetails = async (id: number, page: number = 1) => {
     thanks,
     replyCount,
     lastReplyDatetime,
-    subtleList,
+    supplementList,
     nodeName,
     nodeTitle,
     avatar,
