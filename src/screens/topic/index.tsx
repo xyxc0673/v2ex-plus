@@ -11,6 +11,7 @@ import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { Avatar } from '@/components';
 import Reply from './components/reply';
 import { ITopic } from '@/interfaces/topic';
+import Layout from '@/theme/layout';
 
 type ParamList = {
   Detail: {
@@ -65,7 +66,28 @@ const Topic = () => {
           <Text style={Common.node}>{currentTopic.nodeTitle}</Text>
         </View>
         <View style={Common.divider} />
+
         <HTML source={{ html: currentTopic.content || '<p></p>' }} />
+        {currentTopic.supplementList && (
+          <View style={styles.supplementList}>
+            {currentTopic.supplementList?.map((supplement, index) => (
+              <>
+                <View
+                  style={styles.supplement}
+                  key={`topic-${currentTopic.id}-supplement-${index}`}>
+                  <View style={[styles.supplementHeader, Layout.row]}>
+                    <Text style={styles.supplementInfo}>
+                      {`附言 ${index + 1} · ${dayjs(
+                        supplement.createdAt,
+                      ).fromNow()}`}
+                    </Text>
+                  </View>
+                  <HTML source={{ html: supplement.content || '<p></p>' }} />
+                </View>
+              </>
+            ))}
+          </View>
+        )}
         <View style={Common.divider} />
         <Text style={styles.replyCount}>
           {`回复 ${currentTopic.replyCount || 0}`}
@@ -124,5 +146,21 @@ const styles = StyleSheet.create({
   },
   replyList: {
     padding: 12,
+  },
+  supplementList: {
+    marginTop: 8,
+    backgroundColor: Colors.grey10,
+    borderRadius: 4,
+  },
+  supplement: {
+    padding: 8,
+  },
+  supplementHeader: {
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  supplementInfo: {
+    fontSize: 12,
+    color: Colors.secondaryText,
   },
 });
