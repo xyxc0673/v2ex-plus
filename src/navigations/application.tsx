@@ -20,7 +20,13 @@ const ApplicationNavigations = () => {
             component={Tabs}
             options={{ headerShown: false }}
           />
-          <Stack.Screen name="topic" component={Topic} />
+          <Stack.Screen
+            name="topic"
+            component={Topic}
+            options={{
+              title: '主题正文',
+            }}
+          />
           <Stack.Screen
             name="profile"
             component={Profile}
