@@ -1,6 +1,11 @@
 import * as React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { TabbarIndex, TabbarNotice, TabbarMe } from '@/screens/index';
+import {
+  TabbarIndex,
+  TabbarNotice,
+  TabbarMe,
+  TabbarNode,
+} from '@/screens/index';
 import { Image } from 'react-native';
 import Images from '@/theme/images';
 
@@ -29,6 +34,15 @@ const Tabs = () => {
           title: '帖子',
           tabBarIcon: ({ focused }) =>
             renderIcon(focused, Images.home, Images.homeInactive),
+        }}
+      />
+      <Tab.Screen
+        name="node"
+        component={TabbarNode}
+        options={{
+          title: '节点',
+          tabBarIcon: ({ focused }) =>
+            renderIcon(focused, Images.discovery, Images.discoveryInactive),
         }}
       />
       <Tab.Screen
