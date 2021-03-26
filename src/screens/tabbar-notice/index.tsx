@@ -2,6 +2,7 @@ import { Header } from '@/components';
 import Loading from '@/components/loading';
 import { fetchUserNotifications } from '@/store/reducers/notification';
 import { Colors } from '@/theme/colors';
+import Common from '@/theme/common';
 import Layout from '@/theme/layout';
 import { useAppDispatch, useAppSelector } from '@/utils/hooks';
 import React, { useEffect } from 'react';
@@ -47,7 +48,12 @@ const TabbarNotice = () => {
         contentContainerStyle={styles.container}
         data={notificationList}
         keyExtractor={(_, index) => `notification_${index}`}
-        renderItem={({ item }) => <Notification item={item} />}
+        renderItem={({ item }) => (
+          <>
+            <Notification item={item} />
+            <View style={Common.divider} />
+          </>
+        )}
         refreshControl={
           <RefreshControl
             refreshing={isRefreshing}

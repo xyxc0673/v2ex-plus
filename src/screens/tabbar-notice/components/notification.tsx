@@ -50,7 +50,7 @@ export default React.memo(Notification);
 
 const styles = StyleSheet.create({
   notification: {
-    marginBottom: 24,
+    marginVertical: 4,
   },
   notificationInfo: {
     flex: 1,
