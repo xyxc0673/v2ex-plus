@@ -15,7 +15,7 @@ export const fetchIndexNodes = async (): Promise<TIndexNodesResponse> => {
 
   const box = $('#Main > .box:last-child');
 
-  const cateSelector = box.find('.cell');
+  const cateSelector = box.children('div');
 
   const list = [] as Array<ICateNodes>;
 
