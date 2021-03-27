@@ -11,6 +11,7 @@ const TabbarMe = () => {
   const isLogged = useAppSelector((state) => state.user.isLogged);
   const balance = useAppSelector((state) => state.user.balance);
   const user = useAppSelector((state) => state.user.user);
+  const historyList = useAppSelector((state) => state.history.list);
 
   return (
     <View>
@@ -64,11 +65,13 @@ const TabbarMe = () => {
           </TouchableOpacity>
           <TouchableOpacity style={styles.gridItem}>
             <Text style={styles.gridItemValue}>0</Text>
-            <Text style={styles.gridItemTitle}>收藏帖子</Text>
+            <Text style={styles.gridItemTitle}>收藏主题</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.gridItem}>
-            <Text style={styles.gridItemValue}>0</Text>
-            <Text style={styles.gridItemTitle}>已读帖子</Text>
+          <TouchableOpacity
+            style={styles.gridItem}
+            onPress={() => navigate('history', {})}>
+            <Text style={styles.gridItemValue}>{historyList.length}</Text>
+            <Text style={styles.gridItemTitle}>已读主题</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.list}>

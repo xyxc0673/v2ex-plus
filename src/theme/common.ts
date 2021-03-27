@@ -19,6 +19,13 @@ const Common = StyleSheet.create({
     backgroundColor: Colors.lightGrey,
     marginVertical: 8,
   },
+  headerRight: {
+    marginRight: 16,
+    alignItems: 'center',
+  },
+  headerRightText: {
+    fontSize: 16,
+  },
 });
 
 export default Common;

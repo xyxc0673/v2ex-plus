@@ -5,7 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Tabs from './tabs';
 import { defaultTheme } from '@/theme/colors';
-import { Login, Profile, Topic } from '@/screens';
+import { History, Login, Profile, Topic } from '@/screens';
 import { navigationRef } from './root';
 
 const Stack = createStackNavigator();
@@ -19,6 +19,13 @@ const ApplicationNavigations = () => {
             name="TabNavigator"
             component={Tabs}
             options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="login"
+            component={Login}
+            options={{
+              title: '登录',
+            }}
           />
           <Stack.Screen
             name="topic"
@@ -35,10 +42,10 @@ const ApplicationNavigations = () => {
             }}
           />
           <Stack.Screen
-            name="login"
-            component={Login}
+            name="history"
+            component={History}
             options={{
-              title: '登录',
+              title: '已读主题',
             }}
           />
         </Stack.Navigator>

@@ -87,7 +87,7 @@ const Profile = () => {
             <Information data={userInfo} />
           </Tabs.ScrollView>
         </Tabs.Tab>
-        <Tabs.Tab name="Topic" label="帖子">
+        <Tabs.Tab name="Topic" label="主题">
           <Tabs.FlatList
             data={userTopicList}
             contentContainerStyle={[styles.tabContent]}

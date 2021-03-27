@@ -5,3 +5,4 @@ export { default as TabbarMe } from './tabbar-me';
 export { default as Topic } from './topic';
 export { default as Profile } from './profile';
 export { default as Login } from './login';
+export { default as History } from './history';
