@@ -75,10 +75,10 @@ const History = () => {
   // group items in an array by date
   useEffect(() => {
     const group: IGroupMap = {};
-    const today = dayjs().format('ll');
+    const today = dayjs().format('YYYY-MM-DD');
 
     list.forEach((item) => {
-      const date = dayjs(item.recordedAt).format('ll');
+      const date = dayjs(item.recordedAt).format('YYYY-MM-DD');
 
       if (!group[date]) {
         group[date] = [];
