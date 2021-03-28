@@ -37,6 +37,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.8.4",
+    "@babel/plugin-proposal-export-namespace-from": "^7.12.13",
     "@babel/runtime": "^7.8.4",
     "@react-native-community/eslint-config": "^1.1.0",
     "@types/cheerio": "^0.22.27",
