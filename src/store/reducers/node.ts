@@ -1,4 +1,5 @@
-import { nodeCrawler } from '@/services/crawler';
+import { ICateNodes, IMyNode } from '@/interfaces/node';
+import { nodeCrawler, userCrawler } from '@/services/crawler';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 export const fetchIndexNodes = createAsyncThunk(
@@ -12,15 +13,13 @@ export const fetchIndexNodes = createAsyncThunk(
 export const nodeSlice = createSlice({
   name: 'node',
   initialState: {
-    cateNodeList: [] as Array<nodeCrawler.ICateNodes>,
+    cateNodeList: [] as Array<ICateNodes>,
   },
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(fetchIndexNodes.fulfilled, (state, action) => {
       state.cateNodeList = action.payload;
     });
-
-    5;
   },
 });
 

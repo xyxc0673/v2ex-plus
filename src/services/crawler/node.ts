@@ -1,11 +1,6 @@
-import { IBaseNode } from '@/interfaces/node';
+import { IBaseNode, ICateNodes } from '@/interfaces/node';
 import cheerio from 'cheerio';
 import instance from '../request';
-
-export interface ICateNodes {
-  category: string;
-  nodeList: Array<IBaseNode>;
-}
 
 export type TIndexNodesResponse = Array<ICateNodes>;
 

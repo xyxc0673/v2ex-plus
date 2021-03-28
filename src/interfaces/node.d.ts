@@ -3,6 +3,16 @@ export interface IBaseNode {
   title: string;
 }
 
+export interface IMyNode extends IBaseNode {
+  id: string;
+  icon: string;
+}
+
+export interface ICateNodes {
+  category: string;
+  nodeList: Array<IBaseNode>;
+}
+
 export interface INode {
   id: number;
   name: string;

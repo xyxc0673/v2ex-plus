@@ -9,6 +9,7 @@ import * as parser from './parser';
 import { IUserReply } from '@/interfaces/userReply';
 import { ISocial } from '@/interfaces/social';
 import { config } from '@/config';
+import { IMyNode } from '@/interfaces/node';
 
 export const getLoginParams = async (): Promise<ILoginParams> => {
   const response = await instance.get('/signin', {
@@ -334,4 +335,29 @@ export const fetchUserProfile = async (username: string) => {
   };
 
   return { once, profile };
+};
+
+export const fetchMyNodes = async () => {
+  const response = await instance.get(`/my/nodes`);
+  const $ = cheerio.load(response.data);
+
+  const favouriteNodeSelector = $('.fav-node');
+
+  const favNodeList: Array<IMyNode> = [];
+
+  favouriteNodeSelector.each((_, elem) => {
+    const id = $(elem).attr('id') || '';
+    const icon = $(elem).find('img').attr('src') || '';
+    const title = $(elem).find('.fav-node-name').text();
+    const name = parser.getNodeName($(elem).attr('href'));
+
+    favNodeList.push({
+      id,
+      icon,
+      name,
+      title,
+    });
+  });
+
+  return favNodeList;
 };

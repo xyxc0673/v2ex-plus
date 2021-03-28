@@ -5,6 +5,7 @@ import { ILoginParams, IUser } from '@/interfaces/user';
 import { userService } from '@/services';
 import { userCrawler } from '@/services/crawler';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { IMyNode } from '@/interfaces/node';
 
 export const fetchUserInfoById = createAsyncThunk(
   'user/fetchUserInfoById',
@@ -84,6 +85,11 @@ export const fetchUserProfile = createAsyncThunk(
   },
 );
 
+export const fetchMyNodes = createAsyncThunk('user/fetchMyNodes', async () => {
+  const response = await userCrawler.fetchMyNodes();
+  return response;
+});
+
 export const userSlice = createSlice({
   name: 'user',
   initialState: {
@@ -98,6 +104,7 @@ export const userSlice = createSlice({
     userTopicCount: 0,
     userReplyCount: 0,
     once: '',
+    myNodeList: [] as Array<IMyNode>,
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -131,6 +138,9 @@ export const userSlice = createSlice({
       })
       .addCase(fetchUserInfo.fulfilled, (state, action) => {
         state.user = action.payload;
+      })
+      .addCase(fetchMyNodes.fulfilled, (state, action) => {
+        state.myNodeList = action.payload;
       });
 
     5;
