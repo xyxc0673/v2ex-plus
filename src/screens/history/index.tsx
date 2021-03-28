@@ -104,11 +104,12 @@ const History = () => {
     <View style={styles.container}>
       <SectionList
         sections={groups}
+        renderItem={({ item }) => <Record item={item} />}
+        keyExtractor={(item) => `history_${item.id}`}
         renderSectionHeader={({ section }) => (
           <Text style={styles.sectionTitle}>{section.title}</Text>
         )}
-        keyExtractor={(item) => `history_${item.id}`}
-        renderItem={({ item }) => <Record item={item} />}
+        contentContainerStyle={styles.sectionContainer}
       />
     </View>
   );
@@ -118,10 +119,12 @@ export default History;
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 12,
-    paddingBottom: 16,
     backgroundColor: Colors.lightGrey,
     flex: 1,
+  },
+  sectionContainer: {
+    paddingHorizontal: 12,
+    paddingBottom: 16,
   },
   sectionTitle: {
     marginTop: 16,
