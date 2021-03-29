@@ -1,17 +1,11 @@
 import React, { useEffect } from 'react';
-import {
-  View,
-  StyleSheet,
-  FlatList,
-  ActivityIndicator,
-  RefreshControl,
-} from 'react-native';
+import { View, StyleSheet, ActivityIndicator } from 'react-native';
 import { Header } from '@/components';
 import { fetchTopicByTab } from '@/store/reducers/topic';
 import { useAppDispatch, useAppSelector } from '@/utils/hooks';
 import { Colors } from '@/theme/colors';
-import Topic from './components/topic';
 import { fetchBalance, fetchUserInfo } from '@/store/reducers/user';
+import Topics from './components/topics';
 
 const TabbarIndex = () => {
   const dispatch = useAppDispatch();
@@ -41,23 +35,10 @@ const TabbarIndex = () => {
   return (
     <View style={styles.container}>
       <Header />
-
-      <FlatList
-        contentContainerStyle={styles.topicList}
+      <Topics
         data={topicList}
-        keyExtractor={(item) => `topic_${item.id}`}
-        renderItem={({ item }) => <Topic item={item} />}
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefreshing}
-            onRefresh={() => {
-              dispatch(fetchTopicByTab({ tab: 'all', refresh: true }));
-            }}
-            colors={[Colors.vi]}
-            tintColor={Colors.vi}
-          />
-        }
-        ListEmptyComponent={() => listEmptyComponent}
+        isRefreshing={isRefreshing}
+        listEmptyComponent={listEmptyComponent}
       />
     </View>
   );
@@ -70,9 +51,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     flex: 1,
   },
-  topicList: {
-    marginHorizontal: 16,
-  },
+
   loading: {
     marginTop: '50%',
   },
