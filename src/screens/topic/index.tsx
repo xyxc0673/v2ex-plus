@@ -78,7 +78,7 @@ const Topic = () => {
           <Text style={styles.topicDesc}>
             {currentTopic.createdAt && dayjs(currentTopic.createdAt).fromNow()}
           </Text>
-          {currentTopic.views && (
+          {currentTopic.views !== undefined && (
             <Text
               style={styles.topicDesc}>{`${currentTopic.views}次访问`}</Text>
           )}
