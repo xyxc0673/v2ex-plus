@@ -12,7 +12,6 @@ import { Avatar } from '@/components';
 import Reply from './components/reply';
 import { ITopic } from '@/interfaces/topic';
 import Layout from '@/theme/layout';
-import { historyActions } from '@/store/reducers/history';
 
 type ParamList = {
   Detail: {
@@ -38,24 +37,6 @@ const Topic = () => {
       }),
     );
   }, [dispatch, route.params]);
-
-  useEffect(() => {
-    // calling add action only once
-    if (currentTopic.views && currentTopic.views > 0) {
-      return;
-    }
-
-    dispatch(
-      historyActions.add({
-        id: currentTopic.id,
-        title: currentTopic.title,
-        author: currentTopic.author,
-        avatar: currentTopic.avatar,
-        nodeTitle: currentTopic.nodeTitle,
-        recordedAt: new Date().getTime(),
-      }),
-    );
-  }, [dispatch, currentTopic]);
 
   const renderHeader = React.useMemo(() => {
     if (!currentTopic.id) {

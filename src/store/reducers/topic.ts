@@ -4,6 +4,7 @@ import { ITopic } from '@/interfaces/topic';
 import { topicService } from '@/services';
 import { topicCrawler } from '@/services/crawler';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { historyActions } from './history';
 
 export const fetchHottestTopic = createAsyncThunk(
   'topic/fetchHottestTopic',
@@ -48,10 +49,21 @@ export const fetchRepliesById = createAsyncThunk(
 
 export const fetchTopicDetails = createAsyncThunk(
   'topic/fetchTopicDetails',
-  async (params: { topicId: number; page: number }) => {
+  async (params: { topicId: number; page: number }, thunkApi) => {
     const response = await topicCrawler.fetchTopicDetails(
       params.topicId,
       params.page,
+    );
+    const { topic: currentTopic } = response;
+    thunkApi.dispatch(
+      historyActions.add({
+        id: currentTopic.id,
+        title: currentTopic.title,
+        author: currentTopic.author,
+        avatar: currentTopic.avatar,
+        nodeTitle: currentTopic.nodeTitle,
+        recordedAt: new Date().getTime(),
+      }),
     );
     return response;
   },
