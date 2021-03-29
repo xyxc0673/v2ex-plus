@@ -60,11 +60,24 @@ export const login = async (
 
   const isLogged = response.data?.indexOf('确定要从 V2EX 登出？') !== -1;
 
-  const cookies = response.headers['set-cookie'] || '';
+  let cookies = [] as Array<string>;
+  let userInfo = parser.getUserInfo(response.data);
+  const problemList: Array<string> = [];
 
-  const userInfo = parser.getUserInfo(response.data);
+  if (isLogged) {
+    cookies = response.headers['set-cookie'];
+    userInfo = parser.getUserInfo(response.data);
+  } else {
+    const $ = cheerio.load(response.data);
 
-  return { isLogged, cookies, userInfo };
+    const problemSelector = $('.problem > ul > li');
+
+    problemSelector.each((_, elem) => {
+      problemList.push($(elem).text());
+    });
+  }
+
+  return { isLogged, cookies, userInfo, problemList };
 };
 
 /**

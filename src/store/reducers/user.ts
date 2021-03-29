@@ -6,6 +6,8 @@ import { userService } from '@/services';
 import { userCrawler } from '@/services/crawler';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { IMyNode } from '@/interfaces/node';
+import { Alert } from '@/utils';
+import { goBack } from '@/navigations/root';
 
 export const fetchUserInfoById = createAsyncThunk(
   'user/fetchUserInfoById',
@@ -25,12 +27,15 @@ export const fetchLoginParams = createAsyncThunk(
 
 export const loginByUsername = createAsyncThunk(
   'user/loginByUsername',
-  async (loginData: {
-    username: string;
-    password: string;
-    captcha: string;
-    loginParams: ILoginParams;
-  }) => {
+  async (
+    loginData: {
+      username: string;
+      password: string;
+      captcha: string;
+      loginParams: ILoginParams;
+    },
+    thunkApi,
+  ) => {
     const { username, password, captcha, loginParams } = loginData;
     const response = await userCrawler.login(
       username,
@@ -38,6 +43,19 @@ export const loginByUsername = createAsyncThunk(
       captcha,
       loginParams,
     );
+    if (response.isLogged) {
+      goBack();
+    } else {
+      const problemText = response.problemList.reduce(
+        (prev, curr) => `${prev}\n${curr}`,
+      );
+      Alert.alert({
+        message: `登录失败，请检查以下问题:\n${problemText}`,
+        onPress: () => {
+          thunkApi.dispatch(fetchLoginParams());
+        },
+      });
+    }
     return response;
   },
 );
@@ -105,6 +123,7 @@ export const userSlice = createSlice({
     userReplyCount: 0,
     once: '',
     myNodeList: [] as Array<IMyNode>,
+    loginProblemList: [] as Array<string>,
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -132,6 +151,7 @@ export const userSlice = createSlice({
       .addCase(loginByUsername.fulfilled, (state, action) => {
         state.isLogged = action.payload.isLogged;
         state.cookies = action.payload.cookies;
+        state.loginProblemList = action.payload.problemList;
       })
       .addCase(fetchBalance.fulfilled, (state, action) => {
         state.balance = action.payload;

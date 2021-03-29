@@ -1,9 +1,9 @@
 import { Logo } from '@/components/atoms';
 import { config } from '@/config';
-import { goBack } from '@/navigations/root';
 import { fetchLoginParams, loginByUsername } from '@/store/reducers/user';
 import { Colors } from '@/theme/colors';
 import Layout from '@/theme/layout';
+import { Alert } from '@/utils';
 import { useAppDispatch, useAppSelector } from '@/utils/hooks';
 import React, { useEffect, useState, useCallback } from 'react';
 import {
@@ -21,7 +21,6 @@ const Login = () => {
   const [captcha, setCaptcha] = useState('');
   const dispatch = useAppDispatch();
   const loginParams = useAppSelector((state) => state.user.loginParams);
-  const isLogged = useAppSelector((state) => state.user.isLogged);
 
   const getLoginParams = useCallback(() => {
     dispatch(fetchLoginParams());
@@ -32,15 +31,12 @@ const Login = () => {
   }, [getLoginParams]);
 
   const handleSubmit = () => {
+    if (username === '' || password === '' || captcha === '') {
+      Alert.alert({ message: '请检查输入信息' });
+      return;
+    }
     dispatch(loginByUsername({ username, password, captcha, loginParams }));
   };
-
-  useEffect(() => {
-    console.log('isLogged', isLogged);
-    if (isLogged) {
-      goBack();
-    }
-  }, [isLogged]);
 
   return (
     <View style={[Layout.fill, styles.container]}>
