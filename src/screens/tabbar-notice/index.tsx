@@ -11,6 +11,7 @@ import Notification from './components/notification';
 
 const TabbarNotice = () => {
   const dispatch = useAppDispatch();
+  const isLogged = useAppSelector((state) => state.user.isLogged);
   const notificationList = useAppSelector((state) => state.notification.list);
   const pending = useAppSelector((state) => state.notification.pending);
   const isRefreshing = useAppSelector(
@@ -22,8 +23,12 @@ const TabbarNotice = () => {
   const noMore = maxPage === currentPage;
 
   useEffect(() => {
-    dispatch(fetchUserNotifications({ refresh: false, isFirstFetching: true }));
-  }, [dispatch]);
+    if (isLogged) {
+      dispatch(
+        fetchUserNotifications({ refresh: false, isFirstFetching: true }),
+      );
+    }
+  }, [isLogged, dispatch]);
 
   const listEmptyComponent = React.useMemo(() => {
     return (
@@ -42,35 +47,38 @@ const TabbarNotice = () => {
   }, [noMore]);
 
   return (
-    <View style={Layout.fill}>
+    <View style={[Layout.fill, styles.screen]}>
       <Header />
-      <FlatList
-        contentContainerStyle={styles.container}
-        data={notificationList}
-        keyExtractor={(_, index) => `notification_${index}`}
-        renderItem={({ item }) => (
-          <>
-            <Notification item={item} />
-            <View style={Common.divider} />
-          </>
-        )}
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefreshing}
-            onRefresh={() => {
-              dispatch(fetchUserNotifications({ refresh: true }));
-            }}
-            colors={[Colors.vi]}
-            tintColor={Colors.vi}
-          />
-        }
-        ListEmptyComponent={() => listEmptyComponent}
-        onEndReached={() =>
-          dispatch(fetchUserNotifications({ refresh: false }))
-        }
-        onEndReachedThreshold={noMore ? null : 0.1}
-        ListFooterComponent={() => ListFooterComponent}
-      />
+      {!isLogged && <Text style={styles.notLogged}>请登录后再查看</Text>}
+      {isLogged && (
+        <FlatList
+          contentContainerStyle={styles.container}
+          data={notificationList}
+          keyExtractor={(_, index) => `notification_${index}`}
+          renderItem={({ item }) => (
+            <>
+              <Notification item={item} />
+              <View style={Common.divider} />
+            </>
+          )}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefreshing}
+              onRefresh={() => {
+                dispatch(fetchUserNotifications({ refresh: true }));
+              }}
+              colors={[Colors.vi]}
+              tintColor={Colors.vi}
+            />
+          }
+          ListEmptyComponent={() => listEmptyComponent}
+          onEndReached={() =>
+            dispatch(fetchUserNotifications({ refresh: false }))
+          }
+          onEndReachedThreshold={noMore ? null : 0.1}
+          ListFooterComponent={() => ListFooterComponent}
+        />
+      )}
     </View>
   );
 };
@@ -78,6 +86,10 @@ const TabbarNotice = () => {
 export default TabbarNotice;
 
 const styles = StyleSheet.create({
+  screen: {
+    backgroundColor: Colors.white,
+    flexGrow: 1,
+  },
   container: {
     backgroundColor: Colors.white,
     padding: 16,
@@ -90,5 +102,9 @@ const styles = StyleSheet.create({
     marginTop: 8,
     marginBottom: 16,
     alignItems: 'center',
+  },
+  notLogged: {
+    marginTop: '50%',
+    alignSelf: 'center',
   },
 });

@@ -25,7 +25,7 @@ export const fetchUserNotifications = createAsyncThunk<
 
 type NotificationState = {
   list: Array<INotification>;
-  maxPage: number;
+  maxPage: number | undefined;
   currentPage: number;
   pending: TPending;
   isRefreshing: boolean;
@@ -34,7 +34,7 @@ type NotificationState = {
 
 const initialState: NotificationState = {
   list: [],
-  maxPage: 0,
+  maxPage: undefined,
   currentPage: 0,
   pending: 'idle',
   isRefreshing: false,
