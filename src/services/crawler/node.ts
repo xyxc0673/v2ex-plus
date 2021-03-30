@@ -1,5 +1,6 @@
 import { IBaseNode, ICateNodes } from '@/interfaces/node';
 import cheerio from 'cheerio';
+import { parser } from '.';
 import instance from '../request';
 
 export type TIndexNodesResponse = Array<ICateNodes>;
@@ -28,7 +29,7 @@ export const fetchIndexNodes = async (): Promise<TIndexNodesResponse> => {
 
     nodeListSelector.each((_, nodeSelector) => {
       nodeList.push({
-        name: $(nodeSelector).attr('href') || '',
+        name: parser.getNodeName($(nodeSelector).attr('href')),
         title: $(nodeSelector).text(),
       });
     });
