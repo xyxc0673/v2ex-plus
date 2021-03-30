@@ -55,8 +55,17 @@ export const parseTopicList = (
     const nodeHref = node.attr('href');
     const nodeName = getNodeName(nodeHref);
 
-    const author = topicInfo.children(':nth-child(3)').text();
-    const datetime = topicInfo.children(':nth-child(4)').attr('title');
+    let datetime = '';
+    let author = '';
+
+    if (nodeName) {
+      author = topicInfo.children(':nth-child(3)').text();
+      datetime = topicInfo.children(':nth-child(4)').attr('title') || '';
+    } else {
+      author = topicInfo.children(':nth-child(1)').text();
+      datetime = topicInfo.children(':nth-child(2)').attr('title') || '';
+    }
+
     const lastReplyDatetime =
       datetime?.slice(0, datetime.lastIndexOf(' ')) || '';
     const lastRepliedBy = topicInfo.children(':nth-child(5)').text() || '';
