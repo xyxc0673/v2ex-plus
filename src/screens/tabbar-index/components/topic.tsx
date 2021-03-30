@@ -6,13 +6,22 @@ import Images from '@/theme/images';
 import { useNavigation } from '@react-navigation/native';
 import dayjs from 'dayjs';
 import React from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Image,
+  StyleProp,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from 'react-native';
 
 interface IProps {
   item: ITopic;
+  style?: StyleProp<ViewStyle>;
 }
 
-const Topic = ({ item: topic }: IProps) => {
+const Topic = ({ item: topic, style = {} }: IProps) => {
   const navigation = useNavigation();
 
   const openTopic = () => {
@@ -20,7 +29,9 @@ const Topic = ({ item: topic }: IProps) => {
   };
 
   return (
-    <TouchableOpacity style={styles.topicItem} onPress={() => openTopic()}>
+    <TouchableOpacity
+      style={[styles.topicItem, style]}
+      onPress={() => openTopic()}>
       <View style={styles.topicTop}>
         <View style={styles.topicTopLeft}>
           <Avatar
@@ -31,9 +42,11 @@ const Topic = ({ item: topic }: IProps) => {
           <View style={styles.topicInfo}>
             <Text>{topic.author}</Text>
             <View style={styles.topicInfoBottom}>
-              <Text style={[Common.node, Common.nodeSmall]}>
-                {topic.nodeTitle}
-              </Text>
+              {topic.nodeTitle !== '' && (
+                <Text style={[Common.node, Common.nodeSmall, styles.node]}>
+                  {topic.nodeTitle}
+                </Text>
+              )}
               <View style={styles.topicAttr}>
                 <Image
                   style={styles.topicAttrIcon}
@@ -85,10 +98,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 8,
   },
+  node: {
+    marginRight: 8,
+  },
   topicAttr: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginLeft: 8,
+    marginRight: 8,
   },
   topicAttrIcon: {
     width: 12,
