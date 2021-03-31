@@ -5,6 +5,7 @@ import userReducer from './user';
 import notificationReducer from './notification';
 import nodeReducer from './node';
 import historyReducer from './history';
+import nodeTopicReducer from './node-topic';
 
 const rootReducer = combineReducers({
   topic: topicReducer,
@@ -12,6 +13,7 @@ const rootReducer = combineReducers({
   notification: notificationReducer,
   node: nodeReducer,
   history: historyReducer,
+  nodeTopic: nodeTopicReducer,
 });
 
 export default rootReducer;
