@@ -16,6 +16,27 @@ export const fetchTopicByTab = async (
   return topicList;
 };
 
+export const fetchTopicsByNode = async (
+  tab: string = 'all',
+  page: number = 1,
+) => {
+  const response = await instance.get(`/go/${tab}?p=${page}`);
+  const $ = cheerio.load(response.data);
+  const list = $('#TopicsNode > .cell');
+
+  const topicList = parser.parseTopicList($, list);
+
+  const topicCount = parseInt($('.topic-count > strong').text(), 10);
+
+  const nodeIcon = $('.cell.page-content-header>img').attr('src') || '';
+
+  const nodeIntro = $('.intro').text();
+
+  const maxPage = parseInt($('.page_input').attr('max') || '1', 10);
+
+  return { topicList, topicCount, nodeIcon, nodeIntro, maxPage };
+};
+
 export const fetchTopicDetails = async (id: number, page: number = 1) => {
   const response = await instance.get(`/t/${id}?p=${page}`);
 
