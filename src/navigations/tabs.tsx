@@ -31,7 +31,7 @@ const Tabs = () => {
         name="index"
         component={TabbarIndex}
         options={{
-          title: '帖子',
+          title: '首页',
           tabBarIcon: ({ focused }) =>
             renderIcon(focused, Images.home, Images.homeInactive),
         }}
