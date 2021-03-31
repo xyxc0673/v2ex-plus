@@ -1,5 +1,6 @@
 import { Header } from '@/components';
 import { ICateNodes } from '@/interfaces/node';
+import { navigate } from '@/navigations/root';
 import { fetchIndexNodes } from '@/store/reducers/node';
 import { fetchMyNodes } from '@/store/reducers/user';
 import { Colors } from '@/theme/colors';
@@ -48,7 +49,14 @@ const TabbarNode = () => {
                 <Text>{group.category}</Text>
                 <View style={[Layout.row, styles.nodeList]}>
                   {group.nodeList.map((node) => (
-                    <TouchableOpacity key={node.name}>
+                    <TouchableOpacity
+                      key={node.name}
+                      onPress={() =>
+                        navigate('nodeTopic', {
+                          nodeName: node.name,
+                          nodeTitle: node.title,
+                        })
+                      }>
                       <Text style={[Common.node, styles.node]}>
                         {node.title}
                       </Text>

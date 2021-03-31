@@ -6,3 +6,4 @@ export { default as Topic } from './topic';
 export { default as Profile } from './profile';
 export { default as Login } from './login';
 export { default as History } from './history';
+export { default as nodeTopic } from './node-topic';
