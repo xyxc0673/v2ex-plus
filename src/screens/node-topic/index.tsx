@@ -4,7 +4,10 @@ import { useAppDispatch, useAppSelector } from '@/utils/hooks';
 import { Colors } from '@/theme/colors';
 import Topics from '../tabbar-index/components/topics';
 import { RouteProp, useRoute } from '@react-navigation/core';
-import { fetchTopicsByNode } from '@/store/reducers/node-topic';
+import {
+  fetchTopicsByNode,
+  nodeTopicAction,
+} from '@/store/reducers/node-topic';
 import Layout from '@/theme/layout';
 
 type ParamList = {
@@ -28,6 +31,10 @@ const NodeTopic = () => {
   useEffect(() => {
     const { nodeName } = route.params;
     dispatch(fetchTopicsByNode({ tab: nodeName, refresh: false }));
+
+    return () => {
+      dispatch(nodeTopicAction.resetNodeTopic());
+    };
   }, [dispatch, route]);
 
   const listEmptyComponent = React.useMemo(() => {
@@ -55,7 +62,7 @@ const NodeTopic = () => {
             <Text style={styles.topicCount}>{`${topicCount}主题`}</Text>
           </View>
         </View>
-        <Text style={styles.nodeIntro}>{nodeIntro}</Text>
+        {nodeIntro !== '' && <Text style={styles.nodeIntro}>{nodeIntro}</Text>}
       </View>
     );
   }, [nodeIntro, topicCount, nodeIcon, route]);

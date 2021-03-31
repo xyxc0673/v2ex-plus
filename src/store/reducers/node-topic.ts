@@ -37,7 +37,9 @@ const initialState: TopicState = {
 export const nodeTopicSlice = createSlice({
   name: 'topic',
   initialState: initialState,
-  reducers: {},
+  reducers: {
+    resetNodeTopic: () => initialState,
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchTopicsByNode.pending, (state, action) => {
@@ -66,5 +68,7 @@ export const nodeTopicSlice = createSlice({
     5;
   },
 });
+
+export const nodeTopicAction = nodeTopicSlice.actions;
 
 export default nodeTopicSlice.reducer;
