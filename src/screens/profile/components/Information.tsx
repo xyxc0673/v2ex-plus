@@ -55,15 +55,13 @@ const Information = ({ data: profile }: IProps) => {
 
         {profile.socialList?.map((item) => {
           return (
-            <>
-              <TouchableOpacity
-                key={item.id}
-                style={[Layout.row, styles.socialItem]}
-                onPress={() => Linking.openURL(item.url)}>
-                <Image style={styles.socialIcon} source={{ uri: item.icon }} />
-                <Text style={styles.socialTitle}>{item.name}</Text>
-              </TouchableOpacity>
-            </>
+            <TouchableOpacity
+              key={item.id}
+              style={[Layout.row, styles.socialItem]}
+              onPress={() => Linking.openURL(item.url)}>
+              <Image style={styles.socialIcon} source={{ uri: item.icon }} />
+              <Text style={styles.socialTitle}>{item.name}</Text>
+            </TouchableOpacity>
           );
         })}
       </View>
@@ -113,10 +111,5 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     fontSize: 16,
     color: Colors.secondaryText,
-  },
-  divider: {
-    height: 0.5,
-    backgroundColor: Colors.lightGrey,
-    marginTop: 8,
   },
 });
