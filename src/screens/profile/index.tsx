@@ -3,7 +3,7 @@ import {
   fetchUserProfile,
   fetchUserReplies,
   fetchUserTopics,
-} from '@/store/reducers/user';
+} from '@/store/reducers/profile';
 import { Colors } from '@/theme/colors';
 import Layout from '@/theme/layout';
 import { useAppDispatch, useAppSelector } from '@/utils/hooks';
@@ -26,9 +26,9 @@ const Profile = () => {
   const route = useRoute<RouteProp<ParamList, 'Detail'>>();
 
   const dispatch = useAppDispatch();
-  const userInfo = useAppSelector((state) => state.user.userInfo);
-  const userTopicList = useAppSelector((state) => state.user.userTopicList);
-  const userReplyList = useAppSelector((state) => state.user.userReplyList);
+  const userInfo = useAppSelector((state) => state.profile.userInfo);
+  const userTopicList = useAppSelector((state) => state.profile.userTopicList);
+  const userReplyList = useAppSelector((state) => state.profile.userReplyList);
   const user = useAppSelector((state) => state.user.user);
 
   const navigation = useNavigation();

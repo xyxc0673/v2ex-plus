@@ -49,11 +49,11 @@ const Information = ({ data: profile }: IProps) => {
 
       <View style={styles.block}>
         <Text style={styles.infoBlockTitle}>社交信息</Text>
-        {profile.socialList.length === 0 && (
+        {profile.socialList?.length === 0 && (
           <Text style={styles.infoBlockValue}>空空如也</Text>
         )}
 
-        {profile.socialList.map((item) => {
+        {profile.socialList?.map((item) => {
           return (
             <>
               <TouchableOpacity

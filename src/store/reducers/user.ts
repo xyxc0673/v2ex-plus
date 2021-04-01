@@ -1,7 +1,5 @@
-import { IUserReply } from '@/interfaces/userReply';
-import { ITopic } from '@/interfaces/topic';
 import { IBalance } from '@/interfaces/balance';
-import { ILoginParams, IUser } from '@/interfaces/user';
+import { ILoginParams } from '@/interfaces/user';
 import { userService } from '@/services';
 import { userCrawler } from '@/services/crawler';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
@@ -73,36 +71,6 @@ export const fetchUserInfo = createAsyncThunk(
   },
 );
 
-export const fetchUserTopics = createAsyncThunk(
-  'user/fetchUserTopics',
-  async (params: { username: string; page: number }) => {
-    const response = await userCrawler.fetchUserTopics(
-      params.username,
-      params.page,
-    );
-    return response;
-  },
-);
-
-export const fetchUserReplies = createAsyncThunk(
-  'user/fetchUserReplies',
-  async (params: { username: string; page: number }) => {
-    const response = await userCrawler.fetchUserReplies(
-      params.username,
-      params.page,
-    );
-    return response;
-  },
-);
-
-export const fetchUserProfile = createAsyncThunk(
-  'user/fetchUserProfile',
-  async (username: string) => {
-    const response = await userCrawler.fetchUserProfile(username);
-    return response;
-  },
-);
-
 export const fetchMyNodes = createAsyncThunk('user/fetchMyNodes', async () => {
   const response = await userCrawler.fetchMyNodes();
   return response;
@@ -111,16 +79,11 @@ export const fetchMyNodes = createAsyncThunk('user/fetchMyNodes', async () => {
 export const userSlice = createSlice({
   name: 'user',
   initialState: {
-    userInfo: {} as IUser,
-    userTopicList: [] as Array<ITopic>,
-    userReplyList: [] as Array<IUserReply>,
     loginParams: {} as ILoginParams,
     isLogged: false,
     cookies: [] as Array<string>,
     balance: {} as IBalance,
     user: {} as userCrawler.IUserInfo,
-    userTopicCount: 0,
-    userReplyCount: 0,
     once: '',
     myNodeList: [] as Array<IMyNode>,
     loginProblemList: [] as Array<string>,
@@ -128,23 +91,6 @@ export const userSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchUserInfoById.pending, (state) => {
-        state.userInfo = {} as IUser;
-        state.userTopicList = [];
-        state.userReplyList = [];
-      })
-      .addCase(fetchUserProfile.fulfilled, (state, action) => {
-        state.userInfo = action.payload.profile;
-        state.once = action.payload.once;
-      })
-      .addCase(fetchUserTopics.fulfilled, (state, action) => {
-        state.userTopicList = action.payload.topicList;
-        state.userTopicCount = action.payload.topicCount;
-      })
-      .addCase(fetchUserReplies.fulfilled, (state, action) => {
-        state.userReplyList = action.payload.replyList;
-        state.userReplyCount = action.payload.replyCount;
-      })
       .addCase(fetchLoginParams.fulfilled, (state, action) => {
         state.loginParams = action.payload;
       })
