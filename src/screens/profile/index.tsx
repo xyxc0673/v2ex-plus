@@ -3,6 +3,7 @@ import {
   fetchUserProfile,
   fetchUserReplies,
   fetchUserTopics,
+  profileActions,
 } from '@/store/reducers/profile';
 import { Colors } from '@/theme/colors';
 import Layout from '@/theme/layout';
@@ -42,6 +43,10 @@ const Profile = () => {
     dispatch(fetchUserProfile(username));
     dispatch(fetchUserTopics({ username, page: 1 }));
     dispatch(fetchUserReplies({ username, page: 1 }));
+
+    return () => {
+      dispatch(profileActions.reset());
+    };
   }, [dispatch, route.params]);
 
   const renderHeader = React.useMemo(() => {

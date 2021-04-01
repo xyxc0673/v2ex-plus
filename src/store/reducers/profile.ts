@@ -55,7 +55,9 @@ const initialState: ProfileState = {
 export const profileSlice = createSlice({
   name: 'profile',
   initialState: initialState,
-  reducers: {},
+  reducers: {
+    reset: () => initialState,
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchUserProfile.fulfilled, (state, action) => {
@@ -74,4 +76,5 @@ export const profileSlice = createSlice({
   },
 });
 
+export const profileActions = profileSlice.actions;
 export default profileSlice.reducer;
