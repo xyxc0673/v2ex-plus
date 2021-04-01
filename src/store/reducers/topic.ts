@@ -75,6 +75,7 @@ interface TopicState {
   replyList: Array<IReply>;
   pending: TPending;
   isRefreshing: boolean;
+  once: string;
 }
 
 const initialState: TopicState = {
@@ -83,6 +84,7 @@ const initialState: TopicState = {
   replyList: [] as Array<IReply>,
   pending: 'idle',
   isRefreshing: false,
+  once: '',
 };
 
 export const topicSlice = createSlice({
@@ -112,6 +114,7 @@ export const topicSlice = createSlice({
       .addCase(fetchTopicDetails.fulfilled, (state, action) => {
         state.currentTopic = action.payload.topic;
         state.replyList = action.payload.replyList;
+        state.once = action.payload.once;
         state.pending = 'succeeded';
       });
     5;

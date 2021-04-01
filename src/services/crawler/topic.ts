@@ -144,6 +144,8 @@ export const fetchTopicDetails = async (id: number, page: number = 1) => {
     replyList.push(reply);
   });
 
+  const once = $(`input[name='once']`).attr('value') || '';
+
   const topic: ITopic = {
     id,
     title,
@@ -164,5 +166,5 @@ export const fetchTopicDetails = async (id: number, page: number = 1) => {
     author,
   };
 
-  return { topic, replyList };
+  return { topic, replyList, once };
 };
