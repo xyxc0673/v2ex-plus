@@ -3,7 +3,9 @@ import { IReply } from '@/interfaces/reply';
 import { ITopic } from '@/interfaces/topic';
 import { topicService } from '@/services';
 import { topicCrawler } from '@/services/crawler';
+import { IThanksReplyResponse } from '@/services/topic';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { RootState } from '..';
 import { historyActions } from './history';
 
 export const fetchHottestTopic = createAsyncThunk(
@@ -69,6 +71,22 @@ export const fetchTopicDetails = createAsyncThunk(
   },
 );
 
+interface IThanksReplyThunkResponse extends IThanksReplyResponse {
+  index: number;
+}
+
+export const thanksReplyById = createAsyncThunk<
+  IThanksReplyThunkResponse,
+  { replyId: number; index: number },
+  { state: RootState }
+>('topic/thanksReplyById', async (params, thunkApi) => {
+  const response = await topicService.thanksReplyById(
+    params.replyId,
+    thunkApi.getState().topic.once,
+  );
+  return { ...response.data, index: params.index };
+});
+
 interface TopicState {
   topicList: Array<ITopic>;
   currentTopic: ITopic;
@@ -110,12 +128,19 @@ export const topicSlice = createSlice({
         state.pending = 'succeeded';
         state.isRefreshing = false;
       })
-
       .addCase(fetchTopicDetails.fulfilled, (state, action) => {
         state.currentTopic = action.payload.topic;
         state.replyList = action.payload.replyList;
         state.once = action.payload.once;
         state.pending = 'succeeded';
+      })
+      .addCase(thanksReplyById.fulfilled, (state, action) => {
+        const { index, success, once } = action.payload;
+        if (success) {
+          state.replyList[index].thanked = true;
+          state.replyList[index].thanks += 1;
+        }
+        state.once = once;
       });
     5;
   },

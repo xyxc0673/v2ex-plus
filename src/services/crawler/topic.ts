@@ -141,6 +141,13 @@ export const fetchTopicDetails = async (id: number, page: number = 1) => {
 
     reply.content = $(elem).find('.reply_content').html() || '';
 
+    reply.thanked =
+      $(elem).find('.thank_area.thanked').text().indexOf('感谢已发送') !== -1;
+
+    const idTextArray = $(elem).attr('id')?.split('_');
+
+    reply.id = parseInt(idTextArray?.length === 2 ? idTextArray[1] : '0', 10);
+
     replyList.push(reply);
   });
 

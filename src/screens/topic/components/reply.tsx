@@ -10,9 +10,11 @@ import HTML from 'react-native-render-html';
 
 interface IProps {
   item: IReply;
+  onThanks: () => void;
+  topicAuthor: string;
 }
 
-const Reply = ({ item: reply }: IProps) => {
+const Reply = ({ item: reply, onThanks, topicAuthor }: IProps) => {
   return (
     <View style={styles.reply}>
       <View style={styles.replyHeader}>
@@ -38,8 +40,13 @@ const Reply = ({ item: reply }: IProps) => {
         </View>
       </View>
       <View style={styles.replyOpt}>
-        <TouchableOpacity style={styles.replyOptBtn}>
-          <Image style={styles.replyOptBtnIcon} source={Images.heartGrey} />
+        <TouchableOpacity
+          style={styles.replyOptBtn}
+          onPress={() => (reply.author !== topicAuthor ? onThanks() : null)}>
+          <Image
+            style={styles.replyOptBtnIcon}
+            source={reply.thanked ? Images.heartRed : Images.heartGrey}
+          />
           <Text style={styles.replyThanksNumber}>{reply.thanks || ''}</Text>
         </TouchableOpacity>
       </View>

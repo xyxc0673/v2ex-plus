@@ -1,4 +1,4 @@
-import { fetchTopicDetails } from '@/store/reducers/topic';
+import { fetchTopicDetails, thanksReplyById } from '@/store/reducers/topic';
 import { Colors } from '@/theme/colors';
 import Common from '@/theme/common';
 import { useAppDispatch, useAppSelector } from '@/utils/hooks';
@@ -12,6 +12,7 @@ import { Avatar } from '@/components';
 import Reply from './components/reply';
 import { ITopic } from '@/interfaces/topic';
 import Layout from '@/theme/layout';
+import { Alert } from '@/utils';
 
 type ParamList = {
   Detail: {
@@ -25,6 +26,7 @@ const Topic = () => {
   const dispatch = useAppDispatch();
   const topicDetails = useAppSelector((state) => state.topic.currentTopic);
   const replyList = useAppSelector((state) => state.topic.replyList);
+  const user = useAppSelector((state) => state.user.user);
 
   const currentTopic = { ...route.params.topic, ...topicDetails };
 
@@ -102,10 +104,22 @@ const Topic = () => {
       <FlatList
         nestedScrollEnabled
         data={replyList}
-        keyExtractor={(item) => `reply_${item.no}`}
+        keyExtractor={(item) => `reply_${item.id}`}
         ListHeaderComponent={renderHeader}
         contentContainerStyle={styles.replyList}
-        renderItem={({ item }) => <Reply item={item} />}
+        renderItem={({ item, index }) => (
+          <Reply
+            item={item}
+            topicAuthor={user.username}
+            onThanks={() =>
+              Alert.confirm({
+                message: `确认花费 10 个铜币向 @${item.author} 的这条回复发送感谢？`,
+                onConfirm: () =>
+                  dispatch(thanksReplyById({ replyId: item.id, index })),
+              })
+            }
+          />
+        )}
       />
     </View>
   );

@@ -1,4 +1,11 @@
+import { AxiosResponse } from 'axios';
 import instance from './request';
+
+export interface IThanksReplyResponse {
+  message?: string;
+  success: boolean;
+  once: string;
+}
 
 export default {
   fetchHottestTopic: () => instance.get('api/topics/hot.json'),
@@ -18,4 +25,10 @@ export default {
 
   fetchReplyById: (id: number) =>
     instance.get(`api/replies/show.json?topic_id=${id}`),
+
+  thanksReplyById: (
+    id: number,
+    once: string,
+  ): Promise<AxiosResponse<IThanksReplyResponse>> =>
+    instance.post(`thank/reply/${id}?once=${once}`),
 };
