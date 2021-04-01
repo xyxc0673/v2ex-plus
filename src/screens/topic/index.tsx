@@ -26,7 +26,6 @@ const Topic = () => {
   const dispatch = useAppDispatch();
   const topicDetails = useAppSelector((state) => state.topic.currentTopic);
   const replyList = useAppSelector((state) => state.topic.replyList);
-  const user = useAppSelector((state) => state.user.user);
 
   const currentTopic = { ...route.params.topic, ...topicDetails };
 
@@ -110,7 +109,7 @@ const Topic = () => {
         renderItem={({ item, index }) => (
           <Reply
             item={item}
-            topicAuthor={user.username}
+            topicAuthor={topicDetails.author}
             onThanks={() =>
               Alert.confirm({
                 message: `确认花费 10 个铜币向 @${item.author} 的这条回复发送感谢？`,
