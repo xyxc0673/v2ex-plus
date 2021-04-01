@@ -1,6 +1,6 @@
 import { IBaseNode, ICateNodes } from '@/interfaces/node';
 import cheerio from 'cheerio';
-import { parser } from '.';
+import * as parser from './parser';
 import instance from '../request';
 
 export type TIndexNodesResponse = Array<ICateNodes>;
