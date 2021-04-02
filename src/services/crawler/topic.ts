@@ -173,5 +173,9 @@ export const fetchTopicDetails = async (id: number, page: number = 1) => {
     author,
   };
 
-  return { topic, replyList, once };
+  const userBox = $('#Rightbar > .box');
+
+  const userBoxInfo = parser.parseUserBox(userBox);
+
+  return { topic, replyList, once, ...userBoxInfo };
 };

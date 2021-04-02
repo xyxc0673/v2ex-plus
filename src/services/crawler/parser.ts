@@ -86,3 +86,29 @@ export const parseTopicList = (
 
   return topicList;
 };
+
+export interface IUserBox {
+  unread: number;
+  myFavNodeCount: number;
+  myFavTopicCount: number;
+  myFollowingCount: number;
+}
+
+export const parseUserBox = (box: cheerio.Cheerio): IUserBox => {
+  const unreadText = box.find('a[href="/notifications"]').text();
+
+  const unread = unreadText.split(' ')[0];
+
+  const myFavNodeCount = box.find('a[href="/my/nodes"] > .bigger').text();
+
+  const myFavTopicCount = box.find('a[href="/my/topics"] > .bigger').text();
+
+  const myFollowingCount = box.find('a[href="/my/following"] > .bigger').text();
+
+  return {
+    unread: parseInt(unread, 10),
+    myFavNodeCount: parseInt(myFavNodeCount, 10),
+    myFavTopicCount: parseInt(myFavTopicCount, 10),
+    myFollowingCount: parseInt(myFollowingCount, 10),
+  };
+};

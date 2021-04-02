@@ -84,7 +84,7 @@ export const login = async (
  * Fetch user's balance
  * @returns A object as IBalance
  */
-export const fetchBalance = async (): Promise<IBalance> => {
+export const fetchBalance = async () => {
   const response = await instance.get('/balance');
 
   const $ = cheerio.load(response.data);
@@ -109,7 +109,14 @@ export const fetchBalance = async (): Promise<IBalance> => {
     balance.bronze = balanceArray[2];
   }
 
-  return balance;
+  const box = $('#Rightbar > .box');
+
+  const boxInfo = parser.parseUserBox(box);
+
+  return {
+    balance,
+    ...boxInfo,
+  };
 };
 
 export interface IUserInfo {
