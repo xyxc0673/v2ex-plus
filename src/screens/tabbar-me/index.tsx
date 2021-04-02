@@ -12,6 +12,10 @@ const TabbarMe = () => {
   const balance = useAppSelector((state) => state.user.balance);
   const user = useAppSelector((state) => state.user.user);
   const historyList = useAppSelector((state) => state.history.list);
+  const myFollowingCount = useAppSelector(
+    (state) => state.user.myFollowingCount,
+  );
+  const myFavTopicCount = useAppSelector((state) => state.user.myFavTopicCount);
 
   return (
     <View>
@@ -60,11 +64,11 @@ const TabbarMe = () => {
         </TouchableOpacity>
         <View style={styles.grid}>
           <TouchableOpacity style={styles.gridItem}>
-            <Text style={styles.gridItemValue}>0</Text>
+            <Text style={styles.gridItemValue}>{myFollowingCount}</Text>
             <Text style={styles.gridItemTitle}>关注的人</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.gridItem}>
-            <Text style={styles.gridItemValue}>0</Text>
+            <Text style={styles.gridItemValue}>{myFavTopicCount}</Text>
             <Text style={styles.gridItemTitle}>收藏主题</Text>
           </TouchableOpacity>
           <TouchableOpacity
