@@ -6,8 +6,9 @@ import {
   TabbarMe,
   TabbarNode,
 } from '@/screens/index';
-import { Image } from 'react-native';
+import { Image, StyleSheet } from 'react-native';
 import Images from '@/theme/images';
+import { useAppSelector } from '@/utils/hooks';
 
 const Tab = createBottomTabNavigator();
 
@@ -21,6 +22,8 @@ const renderIcon = (
 };
 
 const Tabs = () => {
+  const unread = useAppSelector((state) => state.user.unread);
+
   return (
     <Tab.Navigator
       tabBarOptions={{
@@ -56,6 +59,8 @@ const Tabs = () => {
               Images.notification,
               Images.notificationInactive,
             ),
+          tabBarBadge: unread > 0 ? unread : undefined,
+          tabBarBadgeStyle: styles.badge,
         }}
       />
       <Tab.Screen
@@ -72,3 +77,15 @@ const Tabs = () => {
 };
 
 export default Tabs;
+
+const badgeSize = 18;
+
+const styles = StyleSheet.create({
+  badge: {
+    width: badgeSize,
+    height: badgeSize,
+    fontSize: badgeSize - 6,
+    fontWeight: 'bold',
+    borderRadius: badgeSize,
+  },
+});

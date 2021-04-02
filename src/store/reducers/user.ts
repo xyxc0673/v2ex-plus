@@ -1,8 +1,8 @@
 import { IBalance } from '@/interfaces/balance';
 import { ILoginParams } from '@/interfaces/user';
 import { userService } from '@/services';
-import { userCrawler } from '@/services/crawler';
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { parser, userCrawler } from '@/services/crawler';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IMyNode } from '@/interfaces/node';
 import { Alert } from '@/utils';
 import { goBack } from '@/navigations/root';
@@ -87,8 +87,26 @@ export const userSlice = createSlice({
     once: '',
     myNodeList: [] as Array<IMyNode>,
     loginProblemList: [] as Array<string>,
+    unread: 0,
+    myFavNodeCount: 0,
+    myFavTopicCount: 0,
+    myFollowingCount: 0,
   },
-  reducers: {},
+  reducers: {
+    setUserBox: (state, action: PayloadAction<parser.IUserBox>) => {
+      const {
+        unread,
+        myFavNodeCount,
+        myFavTopicCount,
+        myFollowingCount,
+      } = action.payload;
+
+      state.unread = unread;
+      state.myFavNodeCount = myFavNodeCount;
+      state.myFavTopicCount = myFavTopicCount;
+      state.myFollowingCount = myFollowingCount;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchLoginParams.fulfilled, (state, action) => {
@@ -100,7 +118,19 @@ export const userSlice = createSlice({
         state.loginProblemList = action.payload.problemList;
       })
       .addCase(fetchBalance.fulfilled, (state, action) => {
-        state.balance = action.payload;
+        const {
+          balance,
+          unread,
+          myFavNodeCount,
+          myFavTopicCount,
+          myFollowingCount,
+        } = action.payload;
+
+        state.balance = balance;
+        state.unread = unread;
+        state.myFavNodeCount = myFavNodeCount;
+        state.myFavTopicCount = myFavTopicCount;
+        state.myFollowingCount = myFollowingCount;
       })
       .addCase(fetchUserInfo.fulfilled, (state, action) => {
         state.user = action.payload;
@@ -112,5 +142,7 @@ export const userSlice = createSlice({
     5;
   },
 });
+
+export const userActions = userSlice.actions;
 
 export default userSlice.reducer;

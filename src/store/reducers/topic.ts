@@ -7,6 +7,7 @@ import { IThanksReplyResponse } from '@/services/topic';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '..';
 import { historyActions } from './history';
+import { userActions } from './user';
 
 export const fetchHottestTopic = createAsyncThunk(
   'topic/fetchHottestTopic',
@@ -56,7 +57,14 @@ export const fetchTopicDetails = createAsyncThunk(
       params.topicId,
       params.page,
     );
-    const { topic: currentTopic } = response;
+    const {
+      topic: currentTopic,
+      unread,
+      myFavNodeCount,
+      myFavTopicCount,
+      myFollowingCount,
+    } = response;
+
     thunkApi.dispatch(
       historyActions.add({
         id: currentTopic.id,
@@ -65,6 +73,14 @@ export const fetchTopicDetails = createAsyncThunk(
         avatar: currentTopic.avatar,
         nodeTitle: currentTopic.nodeTitle,
         recordedAt: new Date().getTime(),
+      }),
+    );
+    thunkApi.dispatch(
+      userActions.setUserBox({
+        unread,
+        myFavNodeCount,
+        myFavTopicCount,
+        myFollowingCount,
       }),
     );
     return response;
