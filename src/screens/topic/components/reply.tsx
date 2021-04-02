@@ -3,6 +3,7 @@ import { IReply } from '@/interfaces/reply';
 import { Colors } from '@/theme/colors';
 import Common from '@/theme/common';
 import Images from '@/theme/images';
+import Layout from '@/theme/layout';
 import dayjs from 'dayjs';
 import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -26,7 +27,12 @@ const Reply = ({ item: reply, onThanks, topicAuthor }: IProps) => {
         <View style={styles.replyHeaderLeft}>
           <View style={styles.replyHeaderLeftInfo}>
             <View>
-              <Text>{reply.author}</Text>
+              <View style={[Layout.row, styles.authorWrapper]}>
+                <Text>{reply.author}</Text>
+                {reply.author === topicAuthor && (
+                  <Text style={styles.isTopicAuthor}>楼主</Text>
+                )}
+              </View>
               <Text style={styles.replyCreated}>
                 {dayjs(reply.createdAt).fromNow()}
               </Text>
@@ -103,5 +109,18 @@ const styles = StyleSheet.create({
   },
   content: {
     marginTop: 8,
+  },
+  authorWrapper: {
+    alignItems: 'center',
+  },
+  isTopicAuthor: {
+    paddingVertical: 1,
+    paddingHorizontal: 2,
+    borderRadius: 4,
+    fontSize: 8,
+    fontWeight: 'bold',
+    color: Colors.white,
+    backgroundColor: Colors.vi,
+    marginLeft: 4,
   },
 });
