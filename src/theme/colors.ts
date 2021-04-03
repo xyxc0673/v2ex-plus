@@ -13,6 +13,7 @@ export const Colors = {
   thirdText: '#D8D8D8',
   green: '#99e08b',
   grey10: '#FAFAFA',
+  modalBackground: 'rgba(0, 0, 0, 0.1)',
 };
 
 export const defaultTheme = {
