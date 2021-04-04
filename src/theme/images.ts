@@ -16,6 +16,7 @@ const Images = {
   silver: require('@/assets/images/silver.png'),
   bronze: require('@/assets/images/bronze.png'),
   arrowRightGrey: require('@/assets/images/arrow-right-grey.png'),
+  send: require('@/assets/images/send.png'),
 };
 
 export default Images;

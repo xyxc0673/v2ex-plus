@@ -1,18 +1,32 @@
-import { fetchTopicDetails, thanksReplyById } from '@/store/reducers/topic';
+import {
+  fetchTopicDetails,
+  replyTopic,
+  thanksReplyById,
+  topicActions,
+} from '@/store/reducers/topic';
 import { Colors } from '@/theme/colors';
 import Common from '@/theme/common';
 import { useAppDispatch, useAppSelector } from '@/utils/hooks';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import dayjs from 'dayjs';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import HTML from 'react-native-render-html';
 
-import { FlatList, StyleSheet, Text, View } from 'react-native';
-import { Avatar } from '@/components';
+import {
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { Avatar, LoadingModal } from '@/components';
 import Reply from './components/reply';
 import { ITopic } from '@/interfaces/topic';
 import Layout from '@/theme/layout';
 import { Alert } from '@/utils';
+import Images from '@/theme/images';
 
 type ParamList = {
   Detail: {
@@ -26,6 +40,9 @@ const Topic = () => {
   const dispatch = useAppDispatch();
   const topicDetails = useAppSelector((state) => state.topic.currentTopic);
   const replyList = useAppSelector((state) => state.topic.replyList);
+  const isLogged = useAppSelector((state) => state.user.isLogged);
+  const replyContent = useAppSelector((state) => state.topic.replyContent);
+  const isReplying = useAppSelector((state) => state.topic.isReplying);
 
   const currentTopic = { ...route.params.topic, ...topicDetails };
 
@@ -38,6 +55,19 @@ const Topic = () => {
       }),
     );
   }, [dispatch, route.params]);
+
+  const [contentHeight, setContentHeight] = useState(42);
+
+  useEffect(() => {
+    // reset content height
+    if (replyContent === '') {
+      setContentHeight(42);
+    }
+  }, [replyContent]);
+
+  const handleReply = useCallback(() => {
+    dispatch(replyTopic({ topicId: topicDetails.id }));
+  }, [dispatch, topicDetails]);
 
   const renderHeader = React.useMemo(() => {
     if (!currentTopic.id) {
@@ -100,6 +130,8 @@ const Topic = () => {
 
   return (
     <View style={styles.container}>
+      <LoadingModal visible={isReplying} />
+
       <FlatList
         nestedScrollEnabled
         data={replyList}
@@ -120,6 +152,25 @@ const Topic = () => {
           />
         )}
       />
+      {isLogged && (
+        <View style={[Layout.row, styles.bottomBar]}>
+          <TextInput
+            style={[styles.input, { height: contentHeight }]}
+            placeholder="请尽量让自己的回复能够对别人有帮助"
+            multiline
+            value={replyContent}
+            onChangeText={(value) =>
+              dispatch(topicActions.setReplyContent(value))
+            }
+            onContentSizeChange={(e) => {
+              setContentHeight(e.nativeEvent.contentSize.height);
+            }}
+          />
+          <TouchableOpacity style={styles.sendButton} onPress={handleReply}>
+            <Image source={Images.send} />
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 };
@@ -175,5 +226,31 @@ const styles = StyleSheet.create({
   supplementInfo: {
     fontSize: 12,
     color: Colors.secondaryText,
+  },
+  bottomBar: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 4,
+    backgroundColor: Colors.white,
+    alignItems: 'center',
+
+    shadowColor: Colors.vi,
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.29,
+    shadowRadius: 4.65,
+
+    elevation: 8,
+  },
+  input: {
+    flex: 1,
+    backgroundColor: Colors.lightGrey,
+    borderRadius: 8,
+    padding: 8,
+  },
+  sendButton: {
+    marginLeft: 8,
   },
 });

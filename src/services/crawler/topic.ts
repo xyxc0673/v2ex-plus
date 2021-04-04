@@ -37,11 +37,7 @@ export const fetchTopicsByNode = async (
   return { topicList, topicCount, nodeIcon, nodeIntro, maxPage };
 };
 
-export const fetchTopicDetails = async (id: number, page: number = 1) => {
-  const response = await instance.get(`/t/${id}?p=${page}`);
-
-  const $ = cheerio.load(response.data);
-
+const parseTopicDetails = ($: cheerio.Root) => {
   const title = $('h1').text();
   const content = $('.topic_content').html() || '';
   const createdAt = parser.parseDatetime(
@@ -72,8 +68,6 @@ export const fetchTopicDetails = async (id: number, page: number = 1) => {
   const collectUrl = $('.topic_buttons').find('.tb').eq(0).attr('href') || '';
 
   const isCollect = collectUrl.indexOf('unfavourite') !== -1;
-
-  const box = $('#Main > .box:nth-child(4)');
 
   const votes = $('.votes').find('a');
 
@@ -109,6 +103,26 @@ export const fetchTopicDetails = async (id: number, page: number = 1) => {
     supplementList.push(supplement);
   });
 
+  return {
+    title,
+    createdAt,
+    content,
+    via,
+    isCollect,
+    vote,
+    views,
+    likes,
+    thanks,
+    supplementList,
+    nodeName,
+    nodeTitle,
+    avatar,
+    author,
+  };
+};
+
+const parseReplyInfo = ($: cheerio.Root) => {
+  const box = $('#Main > .box:nth-child(4)');
   const replyList = [] as Array<IReply>;
   const replyHtml = $(box).find('.cell');
 
@@ -151,26 +165,24 @@ export const fetchTopicDetails = async (id: number, page: number = 1) => {
     replyList.push(reply);
   });
 
+  return { replyList, replyCount, lastReplyDatetime };
+};
+
+export const fetchTopicDetails = async (id: number, page: number = 1) => {
+  const response = await instance.get(`/t/${id}?p=${page}`);
+
+  const $ = cheerio.load(response.data);
+
+  const topicDetails = parseTopicDetails($);
+  const { replyList, replyCount, lastReplyDatetime } = parseReplyInfo($);
+
   const once = $(`input[name='once']`).attr('value') || '';
 
   const topic: ITopic = {
     id,
-    title,
-    createdAt,
-    content,
-    via,
-    isCollect,
-    vote,
-    views,
-    likes,
-    thanks,
     replyCount,
     lastReplyDatetime,
-    supplementList,
-    nodeName,
-    nodeTitle,
-    avatar,
-    author,
+    ...topicDetails,
   };
 
   const userBox = $('#Rightbar > .box');
@@ -178,4 +190,45 @@ export const fetchTopicDetails = async (id: number, page: number = 1) => {
   const userBoxInfo = parser.parseUserBox(userBox);
 
   return { topic, replyList, once, ...userBoxInfo };
+};
+
+export interface IReplyResponse {
+  problemList: Array<string>;
+  replyList: Array<IReply>;
+  once: string;
+  topic: ITopic;
+}
+
+export const replyByTopicId = async (
+  topicId: number,
+  content: string,
+  once: string,
+): Promise<IReplyResponse> => {
+  const response = await instance.post(`t/${topicId}`, null, {
+    params: { content, once },
+  });
+
+  const $ = cheerio.load(response.data);
+
+  const problemList: Array<string> = [];
+
+  const problemSelector = $('.problem > ul > li');
+
+  problemSelector.each((_, elem) => {
+    problemList.push($(elem).text());
+  });
+
+  const newOnce = $(`input[name='once']`).attr('value') || '';
+
+  const topicDetails = parseTopicDetails($);
+  const { replyList, replyCount, lastReplyDatetime } = parseReplyInfo($);
+
+  const topic: ITopic = {
+    id: topicId,
+    replyCount,
+    lastReplyDatetime,
+    ...topicDetails,
+  };
+
+  return { problemList, replyList, topic, once: newOnce };
 };

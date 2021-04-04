@@ -4,7 +4,8 @@ import { ITopic } from '@/interfaces/topic';
 import { topicService } from '@/services';
 import { topicCrawler } from '@/services/crawler';
 import { IThanksReplyResponse } from '@/services/topic';
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { Alert } from '@/utils';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '..';
 import { historyActions } from './history';
 import { userActions } from './user';
@@ -103,6 +104,30 @@ export const thanksReplyById = createAsyncThunk<
   return { ...response.data, index: params.index };
 });
 
+export const replyTopic = createAsyncThunk<
+  topicCrawler.IReplyResponse,
+  { topicId: number },
+  { state: RootState }
+>('topic/replyTopic', async (params, thunkApi) => {
+  const { once, replyContent } = thunkApi.getState().topic;
+  const response = await topicCrawler.replyByTopicId(
+    params.topicId,
+    replyContent,
+    once,
+  );
+  const { problemList } = response;
+  if (problemList.length > 0) {
+    const problemText = response.problemList.reduce(
+      (prev, curr) => `${prev}\n${curr}`,
+    );
+    Alert.alert({
+      message: `回复失败，请检查以下问题:\n${problemText}`,
+      onPress: () => {},
+    });
+  }
+  return response;
+});
+
 interface TopicState {
   topicList: Array<ITopic>;
   currentTopic: ITopic;
@@ -110,6 +135,8 @@ interface TopicState {
   pending: TPending;
   isRefreshing: boolean;
   once: string;
+  replyContent: string;
+  isReplying: boolean;
 }
 
 const initialState: TopicState = {
@@ -119,12 +146,18 @@ const initialState: TopicState = {
   pending: 'idle',
   isRefreshing: false,
   once: '',
+  replyContent: '',
+  isReplying: false,
 };
 
 export const topicSlice = createSlice({
   name: 'topic',
   initialState: initialState,
-  reducers: {},
+  reducers: {
+    setReplyContent: (state, action: PayloadAction<string>) => {
+      state.replyContent = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchTopicByTab.pending, (state, action) => {
@@ -157,9 +190,25 @@ export const topicSlice = createSlice({
           state.replyList[index].thanks += 1;
         }
         state.once = once;
+      })
+      .addCase(replyTopic.pending, (state, _) => {
+        state.isReplying = true;
+      })
+      .addCase(replyTopic.fulfilled, (state, action) => {
+        const { topic, replyList } = action.payload;
+        // only replace list when less than 100 replies
+        if (topic.replyCount <= 100) {
+          state.replyList = replyList;
+          state.currentTopic = topic;
+        }
+        state.once = action.payload.once;
+        state.isReplying = false;
+        state.replyContent = '';
       });
     5;
   },
 });
+
+export const topicActions = topicSlice.actions;
 
 export default topicSlice.reducer;
