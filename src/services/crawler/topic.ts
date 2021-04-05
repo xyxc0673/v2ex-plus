@@ -138,9 +138,11 @@ const parseReplyInfo = ($: cheerio.Root) => {
       return;
     }
 
-    // 帖子大于 100 条回复时，第二行为页码
-    if (index === 1 && replyCount > 100) {
-      return;
+    // 帖子大于 100 条回复时，第二行以及倒数第一行为页码
+    if (replyCount > 100) {
+      if (index === 1 || index === replyHtml.length - 1) {
+        return;
+      }
     }
 
     const reply = {} as IReply;
