@@ -7,6 +7,7 @@ import nodeReducer from './node';
 import historyReducer from './history';
 import nodeTopicReducer from './node-topic';
 import profileReducer from './profile';
+import homeTopicReducer from './home-topic';
 
 const rootReducer = combineReducers({
   topic: topicReducer,
@@ -16,6 +17,7 @@ const rootReducer = combineReducers({
   history: historyReducer,
   nodeTopic: nodeTopicReducer,
   profile: profileReducer,
+  homeTopic: homeTopicReducer,
 });
 
 export default rootReducer;
