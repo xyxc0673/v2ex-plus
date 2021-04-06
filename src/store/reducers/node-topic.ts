@@ -4,7 +4,7 @@ import { topicCrawler } from '@/services/crawler';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 export const fetchTopicsByNode = createAsyncThunk(
-  'topic/fetchTopicsByNode',
+  'nodeTopic/fetchTopicsByNode',
   async (params: { tab: string; refresh: boolean }) => {
     const { tab } = params;
     const response = await topicCrawler.fetchTopicsByNode(tab);
@@ -35,7 +35,7 @@ const initialState: TopicState = {
 };
 
 export const nodeTopicSlice = createSlice({
-  name: 'topic',
+  name: 'nodeTopic',
   initialState: initialState,
   reducers: {
     resetNodeTopic: () => initialState,
