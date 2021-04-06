@@ -128,6 +128,8 @@ const parseReplyInfo = ($: cheerio.Root) => {
 
   let replyCount = 0;
   let lastReplyDatetime = '';
+  let maxPage = 1;
+  let currPage = 1;
 
   replyHtml.each((index, elem) => {
     // 第一行为帖子信息
@@ -141,6 +143,10 @@ const parseReplyInfo = ($: cheerio.Root) => {
     // 帖子大于 100 条回复时，第二行以及倒数第一行为页码
     if (replyCount > 100) {
       if (index === 1 || index === replyHtml.length - 1) {
+        const pageInput = $('.page_input');
+        maxPage = parseInt(pageInput.attr('max') || '1', 10);
+        currPage = parseInt(pageInput.attr('value') || '1', 10);
+
         return;
       }
     }
@@ -167,16 +173,37 @@ const parseReplyInfo = ($: cheerio.Root) => {
     replyList.push(reply);
   });
 
-  return { replyList, replyCount, lastReplyDatetime };
+  return { replyList, replyCount, lastReplyDatetime, maxPage, currPage };
 };
 
-export const fetchTopicDetails = async (id: number, page: number = 1) => {
+export interface ITopicDetailsResponse {
+  unread: number;
+  myFavNodeCount: number;
+  myFavTopicCount: number;
+  myFollowingCount: number;
+  topic: ITopic;
+  replyList: IReply[];
+  maxPage: number;
+  currPage: number;
+  once: string;
+}
+
+export const fetchTopicDetails = async (
+  id: number,
+  page: number = 1,
+): Promise<ITopicDetailsResponse> => {
   const response = await instance.get(`/t/${id}?p=${page}`);
 
   const $ = cheerio.load(response.data);
 
   const topicDetails = parseTopicDetails($);
-  const { replyList, replyCount, lastReplyDatetime } = parseReplyInfo($);
+  const {
+    replyList,
+    replyCount,
+    lastReplyDatetime,
+    maxPage,
+    currPage,
+  } = parseReplyInfo($);
 
   const once = $(`input[name='once']`).attr('value') || '';
 
@@ -191,7 +218,7 @@ export const fetchTopicDetails = async (id: number, page: number = 1) => {
 
   const userBoxInfo = parser.parseUserBox(userBox);
 
-  return { topic, replyList, once, ...userBoxInfo };
+  return { topic, replyList, maxPage, currPage, once, ...userBoxInfo };
 };
 
 export interface IReplyResponse {

@@ -10,42 +10,86 @@ import { RootState } from '..';
 import { historyActions } from './history';
 import { userActions } from './user';
 
-export const fetchTopicDetails = createAsyncThunk(
-  'topic/fetchTopicDetails',
-  async (params: { topicId: number; page: number }, thunkApi) => {
-    const response = await topicCrawler.fetchTopicDetails(
-      params.topicId,
-      params.page,
-    );
-    const {
-      topic: currentTopic,
+export const fetchHottestTopic = createAsyncThunk(
+  'topic/fetchHottestTopic',
+  async () => {
+    const reponse = await topicService.fetchHottestTopic();
+    return reponse.data;
+  },
+);
+
+export const fetchLatestTopic = createAsyncThunk(
+  'topic/fetchLatestTopic',
+  async () => {
+    const reponse = await topicService.fetchLatestTopic();
+    return reponse.data;
+  },
+);
+
+export const fetchTopicById = createAsyncThunk(
+  'topic/fetchTopicById',
+  async (topicId: number) => {
+    const response = await topicService.fetchTopicById(topicId);
+    return response.data;
+  },
+);
+
+export const fetchTopicByTab = createAsyncThunk(
+  'topic/fetchTopicByTab',
+  async (params: { tab: string; refresh: boolean }) => {
+    const { tab } = params;
+    const response = await topicCrawler.fetchTopicByTab(tab);
+    return response;
+  },
+);
+
+export const fetchRepliesById = createAsyncThunk(
+  'topic/fetchRepliesById',
+  async (topicId: number) => {
+    const response = await topicService.fetchReplyById(topicId);
+    return response.data;
+  },
+);
+
+export const fetchTopicDetails = createAsyncThunk<
+  topicCrawler.ITopicDetailsResponse,
+  { topicId: number },
+  { state: RootState }
+>('topic/fetchTopicDetails', async (params, thunkApi) => {
+  const nextPage = thunkApi.getState().topic.currPage + 1;
+
+  const response = await topicCrawler.fetchTopicDetails(
+    params.topicId,
+    nextPage,
+  );
+  const {
+    topic: currentTopic,
+    unread,
+    myFavNodeCount,
+    myFavTopicCount,
+    myFollowingCount,
+  } = response;
+
+  thunkApi.dispatch(
+    historyActions.add({
+      id: currentTopic.id,
+      title: currentTopic.title,
+      author: currentTopic.author,
+      avatar: currentTopic.avatar,
+      nodeTitle: currentTopic.nodeTitle,
+      recordedAt: new Date().getTime(),
+    }),
+  );
+  thunkApi.dispatch(
+    userActions.setUserBox({
       unread,
       myFavNodeCount,
       myFavTopicCount,
       myFollowingCount,
-    } = response;
-
-    thunkApi.dispatch(
-      historyActions.add({
-        id: currentTopic.id,
-        title: currentTopic.title,
-        author: currentTopic.author,
-        avatar: currentTopic.avatar,
-        nodeTitle: currentTopic.nodeTitle,
-        recordedAt: new Date().getTime(),
-      }),
-    );
-    thunkApi.dispatch(
-      userActions.setUserBox({
-        unread,
-        myFavNodeCount,
-        myFavTopicCount,
-        myFollowingCount,
-      }),
-    );
-    return response;
-  },
-);
+    }),
+  );
+  return response;
+});
 
 interface IThanksReplyThunkResponse extends IThanksReplyResponse {
   index: number;
@@ -88,7 +132,6 @@ export const replyTopic = createAsyncThunk<
 });
 
 interface TopicState {
-  topicList: Array<ITopic>;
   currentTopic: ITopic;
   replyList: Array<IReply>;
   pending: TPending;
@@ -96,10 +139,11 @@ interface TopicState {
   once: string;
   replyContent: string;
   isReplying: boolean;
+  currPage: number;
+  maxPage: number | undefined;
 }
 
 const initialState: TopicState = {
-  topicList: [] as Array<ITopic>,
   currentTopic: {} as ITopic,
   replyList: [] as Array<IReply>,
   pending: 'idle',
@@ -107,6 +151,8 @@ const initialState: TopicState = {
   once: '',
   replyContent: '',
   isReplying: false,
+  currPage: 0,
+  maxPage: undefined,
 };
 
 export const topicSlice = createSlice({
@@ -116,19 +162,30 @@ export const topicSlice = createSlice({
     setReplyContent: (state, action: PayloadAction<string>) => {
       state.replyContent = action.payload;
     },
+    resetTopic: (state) => {
+      state.currentTopic = {} as ITopic;
+      state.replyList = [];
+      state.currPage = 0;
+      state.maxPage = undefined;
+    },
   },
   extraReducers: (builder) => {
     builder
       .addCase(fetchTopicDetails.pending, (state, _) => {
-        state.currentTopic = {} as ITopic;
-        state.replyList = [];
         state.pending = 'pending';
       })
       .addCase(fetchTopicDetails.fulfilled, (state, action) => {
+        if (action.payload.currPage === 1) {
+          state.replyList = action.payload.replyList;
+        } else {
+          state.replyList = state.replyList.concat(action.payload.replyList);
+        }
+
         state.currentTopic = action.payload.topic;
-        state.replyList = action.payload.replyList;
         state.once = action.payload.once;
         state.pending = 'succeeded';
+        state.currPage += 1;
+        state.maxPage = action.payload.maxPage;
       })
       .addCase(thanksReplyById.fulfilled, (state, action) => {
         const { index, success, once } = action.payload;

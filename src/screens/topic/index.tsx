@@ -43,17 +43,36 @@ const Topic = () => {
   const isLogged = useAppSelector((state) => state.user.isLogged);
   const replyContent = useAppSelector((state) => state.topic.replyContent);
   const isReplying = useAppSelector((state) => state.topic.isReplying);
+  const maxPage = useAppSelector((state) => state.topic.maxPage);
+  const currPage = useAppSelector((state) => state.topic.currPage);
 
-  const currentTopic = { ...route.params.topic, ...topicDetails };
+  const [currentTopic, setCurrentTopic] = useState<ITopic>({} as ITopic);
+  const [noMore, setNoMore] = useState(false);
+  const [
+    onEndReachedCalledDuringMomentum,
+    setOnEndReachedCalledDuringMomentum,
+  ] = useState(true);
+
+  useEffect(() => {
+    setCurrentTopic({ ...route.params.topic, ...topicDetails });
+  }, [route, topicDetails]);
+
+  useEffect(() => {
+    setNoMore(currPage >= (maxPage || 1));
+  }, [maxPage, currPage]);
 
   useEffect(() => {
     const { topic } = route.params;
+
     dispatch(
       fetchTopicDetails({
         topicId: topic.id,
-        page: 1,
       }),
     );
+
+    return () => {
+      dispatch(topicActions.resetTopic());
+    };
   }, [dispatch, route.params]);
 
   const [contentHeight, setContentHeight] = useState(42);
@@ -75,6 +94,8 @@ const Topic = () => {
     }
     return (
       <>
+        <LoadingModal visible={isReplying} />
+
         <View>
           <View style={styles.titleContainer}>
             <Text style={styles.title}>{currentTopic.title}</Text>
@@ -102,20 +123,18 @@ const Topic = () => {
         {currentTopic.supplementList && (
           <View style={styles.supplementList}>
             {currentTopic.supplementList?.map((supplement, index) => (
-              <>
-                <View
-                  style={styles.supplement}
-                  key={`topic-${currentTopic.id}-supplement-${index}`}>
-                  <View style={[styles.supplementHeader, Layout.row]}>
-                    <Text style={styles.supplementInfo}>
-                      {`附言 ${index + 1} · ${dayjs(
-                        supplement.createdAt,
-                      ).fromNow()}`}
-                    </Text>
-                  </View>
-                  <HTML source={{ html: supplement.content || '<p></p>' }} />
+              <View
+                style={styles.supplement}
+                key={`topic-${currentTopic.id}-supplement-${index}`}>
+                <View style={[styles.supplementHeader, Layout.row]}>
+                  <Text style={styles.supplementInfo}>
+                    {`附言 ${index + 1} · ${dayjs(
+                      supplement.createdAt,
+                    ).fromNow()}`}
+                  </Text>
                 </View>
-              </>
+                <HTML source={{ html: supplement.content || '<p></p>' }} />
+              </View>
             ))}
           </View>
         )}
@@ -126,12 +145,22 @@ const Topic = () => {
         <View style={Common.divider} />
       </>
     );
-  }, [currentTopic]);
+  }, [isReplying, currentTopic]);
+
+  const ListFooterComponent = React.useMemo(() => {
+    return (
+      <>
+        <View style={styles.listFooter}>
+          <Text style={styles.listFooterText}>
+            {noMore ? '没有更多的回复了' : '加载中'}
+          </Text>
+        </View>
+      </>
+    );
+  }, [noMore]);
 
   return (
-    <View style={styles.container}>
-      <LoadingModal visible={isReplying} />
-
+    <>
       <FlatList
         nestedScrollEnabled
         data={replyList}
@@ -151,6 +180,21 @@ const Topic = () => {
             }
           />
         )}
+        onEndReached={() => {
+          if (!onEndReachedCalledDuringMomentum) {
+            setOnEndReachedCalledDuringMomentum(true);
+            if (currPage < (maxPage || 1)) {
+              dispatch(
+                fetchTopicDetails({
+                  topicId: topicDetails.id,
+                }),
+              );
+            }
+          }
+        }}
+        onEndReachedThreshold={noMore ? null : 0.01}
+        ListFooterComponent={() => ListFooterComponent}
+        onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
       />
       {isLogged && (
         <View style={[Layout.row, styles.bottomBar]}>
@@ -171,17 +215,13 @@ const Topic = () => {
           </TouchableOpacity>
         </View>
       )}
-    </View>
+    </>
   );
 };
 
 export default Topic;
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: Colors.white,
-    flex: 1,
-  },
   titleContainer: {
     flexDirection: 'row',
   },
@@ -210,6 +250,8 @@ const styles = StyleSheet.create({
   },
   replyList: {
     padding: 12,
+    backgroundColor: Colors.white,
+    flexGrow: 1,
   },
   supplementList: {
     marginTop: 8,
@@ -252,5 +294,14 @@ const styles = StyleSheet.create({
   },
   sendButton: {
     marginLeft: 8,
+  },
+  listFooter: {
+    marginVertical: 16,
+    marginBottom: 30,
+    alignItems: 'center',
+  },
+  listFooterText: {
+    color: Colors.secondaryText,
+    fontSize: 12,
   },
 });
