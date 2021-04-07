@@ -3,6 +3,7 @@ import { Colors } from '@/theme/colors';
 import React from 'react';
 import {
   FlatList,
+  FlatListProps,
   RefreshControl,
   StyleProp,
   StyleSheet,
@@ -10,40 +11,30 @@ import {
 } from 'react-native';
 import Topic from './topic';
 
-interface IProps {
-  data: Array<ITopic>;
-  isRefreshing: boolean;
-  listEmptyComponent: JSX.Element;
-  ListHeaderComponent?: JSX.Element;
-  contentContainerStyle?: StyleProp<ViewStyle>;
+// Construct a type with the properties of T except for those in type K.
+interface IProps extends Omit<FlatListProps<ITopic>, 'renderItem'> {
   itemStyle?: StyleProp<ViewStyle>;
 }
 
 const TopicsComponent = ({
-  data,
-  isRefreshing,
-  listEmptyComponent,
-  ListHeaderComponent,
+  refreshing,
   contentContainerStyle = {},
   itemStyle = {},
+  ...props
 }: IProps) => {
   return (
     <FlatList
       contentContainerStyle={[styles.topicList, contentContainerStyle]}
-      data={data}
       keyExtractor={(item) => `topic_${item.id}`}
       renderItem={({ item }) => <Topic item={item} style={itemStyle} />}
       refreshControl={
         <RefreshControl
-          refreshing={isRefreshing}
+          refreshing={refreshing || false}
           colors={[Colors.vi]}
           tintColor={Colors.vi}
         />
       }
-      ListEmptyComponent={() => listEmptyComponent}
-      ListHeaderComponent={() =>
-        ListHeaderComponent ? ListHeaderComponent : null
-      }
+      {...props}
     />
   );
 };

@@ -37,8 +37,8 @@ const TabbarIndex = () => {
       <Header />
       <Topics
         data={topicList}
-        isRefreshing={isRefreshing}
-        listEmptyComponent={listEmptyComponent}
+        refreshing={isRefreshing}
+        ListEmptyComponent={listEmptyComponent}
       />
     </View>
   );

@@ -71,8 +71,8 @@ const NodeTopic = () => {
     <View style={styles.container}>
       <Topics
         data={topicList}
-        isRefreshing={isRefreshing}
-        listEmptyComponent={listEmptyComponent}
+        refreshing={isRefreshing}
+        ListEmptyComponent={listEmptyComponent}
         ListHeaderComponent={listHeaderComponent}
         contentContainerStyle={styles.listContainer}
         itemStyle={styles.itemStyle}
