@@ -75,7 +75,7 @@ const parseTopicDetails = ($: cheerio.Root) => {
 
   const collectUrl = $('.topic_buttons').find('.tb').eq(0).attr('href') || '';
 
-  const isCollect = collectUrl.indexOf('unfavourite') !== -1;
+  const isCollect = collectUrl.indexOf('unfavorite') !== -1;
 
   const votes = $('.votes').find('a');
 
