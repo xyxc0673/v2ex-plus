@@ -40,4 +40,5 @@ export interface ITopic {
   likes?: number;
   thanks?: number;
   lastReplyDatetime?: string;
+  csrfToken?: string;
 }

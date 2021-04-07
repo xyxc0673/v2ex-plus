@@ -3,6 +3,7 @@ import { ISupplement, ITopic } from '@/interfaces/topic';
 import cheerio from 'cheerio';
 import * as parser from './parser';
 import instance from '../request';
+import { getUrlParams } from '@/utils/tools';
 
 export const fetchTopicByTab = async (
   tab: string = 'all',
@@ -77,6 +78,8 @@ const parseTopicDetails = ($: cheerio.Root) => {
 
   const isCollect = collectUrl.indexOf('unfavorite') !== -1;
 
+  const csrfToken = getUrlParams(collectUrl).get('t') || '';
+
   const votes = $('.votes').find('a');
 
   const vote = parseInt($(votes.get(0)).text() || '0', 10);
@@ -126,6 +129,7 @@ const parseTopicDetails = ($: cheerio.Root) => {
     nodeTitle,
     avatar,
     author,
+    csrfToken,
   };
 };
 
