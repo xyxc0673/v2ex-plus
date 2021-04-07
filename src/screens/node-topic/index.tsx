@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, Image } from 'react-native';
 import { useAppDispatch, useAppSelector } from '@/utils/hooks';
 import { Colors } from '@/theme/colors';
@@ -25,17 +25,24 @@ const NodeTopic = () => {
   const topicCount = useAppSelector((state) => state.nodeTopic.topicCount);
   const nodeIntro = useAppSelector((state) => state.nodeTopic.nodeIntro);
   const nodeIcon = useAppSelector((state) => state.nodeTopic.nodeIcon);
+  const currPage = useAppSelector((state) => state.nodeTopic.currPage);
+  const maxPage = useAppSelector((state) => state.nodeTopic.maxPage) || 1;
+  const [noMore, setNoMore] = useState(false);
 
   const route = useRoute<RouteProp<ParamList, 'NodeTopic'>>();
 
   useEffect(() => {
     const { nodeName } = route.params;
-    dispatch(fetchTopicsByNode({ tab: nodeName, refresh: false }));
+    dispatch(fetchTopicsByNode({ tab: nodeName, refresh: true }));
 
     return () => {
       dispatch(nodeTopicAction.resetNodeTopic());
     };
   }, [dispatch, route]);
+
+  useEffect(() => {
+    setNoMore(currPage >= (maxPage || 1));
+  }, [currPage, maxPage]);
 
   const listEmptyComponent = React.useMemo(() => {
     return (
@@ -67,6 +74,18 @@ const NodeTopic = () => {
     );
   }, [nodeIntro, topicCount, nodeIcon, route]);
 
+  const ListFooterComponent = React.useMemo(() => {
+    return (
+      <>
+        <View style={styles.listFooter}>
+          <Text style={styles.listFooterText}>
+            {noMore ? '没有更多的主题了' : '加载中'}
+          </Text>
+        </View>
+      </>
+    );
+  }, [noMore]);
+
   return (
     <View style={styles.container}>
       <Topics
@@ -76,6 +95,15 @@ const NodeTopic = () => {
         ListHeaderComponent={listHeaderComponent}
         contentContainerStyle={styles.listContainer}
         itemStyle={styles.itemStyle}
+        onEndReached={() => {
+          if (currPage >= maxPage) {
+            return;
+          }
+          const { nodeName } = route.params;
+          dispatch(fetchTopicsByNode({ tab: nodeName, refresh: false }));
+        }}
+        onEndReachedThreshold={noMore ? null : 0.01}
+        ListFooterComponent={ListFooterComponent}
       />
     </View>
   );
@@ -133,5 +161,14 @@ const styles = StyleSheet.create({
   },
   itemStyle: {
     paddingHorizontal: 16,
+  },
+  listFooter: {
+    marginVertical: 16,
+    marginBottom: 30,
+    alignItems: 'center',
+  },
+  listFooterText: {
+    color: Colors.secondaryText,
+    fontSize: 12,
   },
 });

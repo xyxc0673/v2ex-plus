@@ -2,15 +2,18 @@ import { TPending } from '@/interfaces/pending';
 import { ITopic } from '@/interfaces/topic';
 import { topicCrawler } from '@/services/crawler';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { RootState } from '..';
 
-export const fetchTopicsByNode = createAsyncThunk(
-  'nodeTopic/fetchTopicsByNode',
-  async (params: { tab: string; refresh: boolean }) => {
-    const { tab } = params;
-    const response = await topicCrawler.fetchTopicsByNode(tab);
-    return response;
-  },
-);
+export const fetchTopicsByNode = createAsyncThunk<
+  topicCrawler.ITopicNodeResponse,
+  { tab: string; refresh: boolean },
+  { state: RootState }
+>('nodeTopic/fetchTopicsByNode', async (params, thunkApi) => {
+  const { tab, refresh } = params;
+  const nextPage = refresh ? 1 : thunkApi.getState().nodeTopic.currPage + 1;
+  const response = await topicCrawler.fetchTopicsByNode(tab, nextPage);
+  return response;
+});
 
 interface TopicState {
   topicList: Array<ITopic>;
@@ -20,7 +23,7 @@ interface TopicState {
   nodeIcon: string;
   nodeIntro: string;
   maxPage: number | undefined;
-  currentPage: number;
+  currPage: number;
 }
 
 const initialState: TopicState = {
@@ -31,7 +34,7 @@ const initialState: TopicState = {
   nodeIcon: '',
   nodeIntro: '',
   maxPage: undefined,
-  currentPage: 0,
+  currPage: 0,
 };
 
 export const nodeTopicSlice = createSlice({
@@ -45,7 +48,6 @@ export const nodeTopicSlice = createSlice({
       .addCase(fetchTopicsByNode.pending, (state, action) => {
         if (!action.meta.arg.refresh) {
           state.pending = 'pending';
-          state.topicList = [];
         }
         state.isRefreshing = action.meta.arg.refresh;
       })
@@ -57,13 +59,18 @@ export const nodeTopicSlice = createSlice({
           nodeIntro,
           maxPage,
         } = action.payload;
-        state.topicList = topicList;
+        if (state.currPage === 0) {
+          state.topicList = topicList;
+        } else {
+          state.topicList = state.topicList.concat(topicList);
+        }
         state.topicCount = topicCount;
         state.nodeIcon = nodeIcon;
         state.nodeIntro = nodeIntro;
         state.maxPage = maxPage;
         state.pending = 'succeeded';
         state.isRefreshing = false;
+        state.currPage += 1;
       });
     5;
   },
