@@ -14,7 +14,7 @@ const Common = StyleSheet.create({
     fontSize: 10,
   },
   divider: {
-    height: 1,
+    height: 0.5,
     width: '100%',
     backgroundColor: Colors.lightGrey,
     marginVertical: 8,
