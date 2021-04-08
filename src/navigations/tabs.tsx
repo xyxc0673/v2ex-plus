@@ -82,7 +82,6 @@ const badgeSize = 18;
 
 const styles = StyleSheet.create({
   badge: {
-    width: badgeSize,
     height: badgeSize,
     fontSize: badgeSize - 6,
     fontWeight: 'bold',
