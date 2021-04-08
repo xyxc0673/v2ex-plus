@@ -1,8 +1,10 @@
 import {
+  favouriteTopic,
   fetchTopicDetails,
   replyTopic,
   thanksReplyById,
   topicActions,
+  unfavouriteTopic,
 } from '@/store/reducers/topic';
 import { Colors } from '@/theme/colors';
 import Common from '@/theme/common';
@@ -42,7 +44,9 @@ const Topic = () => {
   const replyList = useAppSelector((state) => state.topic.replyList);
   const isLogged = useAppSelector((state) => state.user.isLogged);
   const replyContent = useAppSelector((state) => state.topic.replyContent);
-  const isReplying = useAppSelector((state) => state.topic.isReplying);
+  const showLoadingModal = useAppSelector(
+    (state) => state.topic.showLoadingModal,
+  );
   const maxPage = useAppSelector((state) => state.topic.maxPage);
   const currPage = useAppSelector((state) => state.topic.currPage);
 
@@ -94,7 +98,7 @@ const Topic = () => {
     }
     return (
       <>
-        <LoadingModal visible={isReplying} />
+        <LoadingModal visible={showLoadingModal} />
 
         <View>
           <View style={styles.titleContainer}>
@@ -145,7 +149,7 @@ const Topic = () => {
         <View style={Common.divider} />
       </>
     );
-  }, [isReplying, currentTopic]);
+  }, [showLoadingModal, currentTopic]);
 
   const ListFooterComponent = React.useMemo(() => {
     return (
@@ -158,6 +162,14 @@ const Topic = () => {
       </>
     );
   }, [noMore]);
+
+  const handleLike = () => {
+    if (currentTopic.isCollect) {
+      dispatch(unfavouriteTopic(null));
+    } else {
+      dispatch(favouriteTopic(null));
+    }
+  };
 
   return (
     <>
@@ -212,6 +224,18 @@ const Topic = () => {
           />
           <TouchableOpacity style={styles.sendButton} onPress={handleReply}>
             <Image source={Images.send} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.sendButton, Layout.row]}
+            onPress={handleLike}>
+            <Image
+              source={
+                currentTopic.isCollect ? Images.starFilled : Images.starOutline
+              }
+            />
+            {currentTopic.likes! > 0 && (
+              <Text style={styles.likeText}>{currentTopic.likes}</Text>
+            )}
           </TouchableOpacity>
         </View>
       )}
@@ -293,7 +317,13 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   sendButton: {
-    marginLeft: 8,
+    marginLeft: 16,
+    alignItems: 'center',
+  },
+  likeText: {
+    color: Colors.secondaryText,
+    fontSize: 14,
+    marginLeft: 4,
   },
   listFooter: {
     marginVertical: 16,

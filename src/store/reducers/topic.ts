@@ -131,6 +131,39 @@ export const replyTopic = createAsyncThunk<
   return response;
 });
 
+export const favouriteTopic = createAsyncThunk<
+  {
+    isCollect: boolean;
+    csrfToken: string;
+  },
+  null,
+  { state: RootState }
+>('topic/favouriteTopic', async (_, thunkApi) => {
+  const { currentTopic } = thunkApi.getState().topic;
+  const response = await topicCrawler.favouriteTopic(
+    currentTopic.id,
+    currentTopic.csrfToken!,
+  );
+  return response;
+});
+
+export const unfavouriteTopic = createAsyncThunk<
+  {
+    isCollect: boolean;
+    csrfToken: string;
+  },
+  null,
+  { state: RootState }
+>('topic/unfavouriteTopic', async (_, thunkApi) => {
+  const { currentTopic } = thunkApi.getState().topic;
+  const response = await topicCrawler.unfavouriteTopic(
+    currentTopic.id,
+    currentTopic.csrfToken!,
+  );
+  thunkApi.dispatch(fetchTopicById(currentTopic.id));
+  return response;
+});
+
 interface TopicState {
   currentTopic: ITopic;
   replyList: Array<IReply>;
@@ -138,9 +171,9 @@ interface TopicState {
   isRefreshing: boolean;
   once: string;
   replyContent: string;
-  isReplying: boolean;
   currPage: number;
   maxPage: number | undefined;
+  showLoadingModal: boolean;
 }
 
 const initialState: TopicState = {
@@ -150,9 +183,9 @@ const initialState: TopicState = {
   isRefreshing: false,
   once: '',
   replyContent: '',
-  isReplying: false,
   currPage: 0,
   maxPage: undefined,
+  showLoadingModal: false,
 };
 
 export const topicSlice = createSlice({
@@ -196,7 +229,7 @@ export const topicSlice = createSlice({
         state.once = once;
       })
       .addCase(replyTopic.pending, (state, _) => {
-        state.isReplying = true;
+        state.showLoadingModal = true;
       })
       .addCase(replyTopic.fulfilled, (state, action) => {
         const { topic, replyList } = action.payload;
@@ -206,8 +239,31 @@ export const topicSlice = createSlice({
           state.currentTopic = topic;
         }
         state.once = action.payload.once;
-        state.isReplying = false;
+        state.showLoadingModal = false;
         state.replyContent = '';
+      })
+      .addCase(favouriteTopic.pending, (state, _) => {
+        state.showLoadingModal = true;
+      })
+      .addCase(unfavouriteTopic.pending, (state, _) => {
+        state.showLoadingModal = true;
+      })
+      .addCase(favouriteTopic.fulfilled, (state, action) => {
+        const { isCollect, csrfToken } = action.payload;
+        state.currentTopic.csrfToken = csrfToken;
+        state.currentTopic.likes! += +1;
+        state.currentTopic.isCollect = isCollect;
+        state.showLoadingModal = false;
+      })
+      .addCase(unfavouriteTopic.fulfilled, (state, action) => {
+        const { isCollect, csrfToken } = action.payload;
+        state.currentTopic.csrfToken = csrfToken;
+        state.currentTopic.likes! -= 1;
+        state.currentTopic.isCollect = isCollect;
+        state.showLoadingModal = false;
+      })
+      .addDefaultCase((state) => {
+        state.showLoadingModal = false;
       });
     5;
   },

@@ -4,6 +4,7 @@ import cheerio from 'cheerio';
 import * as parser from './parser';
 import instance from '../request';
 import { getUrlParams } from '@/utils/tools';
+import { config } from '@/config';
 
 export const fetchTopicByTab = async (
   tab: string = 'all',
@@ -272,4 +273,34 @@ export const replyByTopicId = async (
   };
 
   return { problemList, replyList, topic, once: newOnce };
+};
+
+export const favouriteTopic = async (topicId: number, token: string) => {
+  const url = `favorite/topic/${topicId}?t=${token}`;
+  const entireUrl = `${config.V2EX_BASE_URL}t/${topicId}`;
+  const response = await instance.get(url, { headers: { Referer: entireUrl } });
+  const $ = cheerio.load(response.data);
+
+  const collectUrl = $('.topic_buttons').find('.tb').eq(0).attr('href') || '';
+
+  const isCollect = collectUrl.indexOf('unfavorite') !== -1;
+
+  const csrfToken = getUrlParams(collectUrl).get('t') || '';
+
+  return { isCollect, csrfToken };
+};
+
+export const unfavouriteTopic = async (topicId: number, token: string) => {
+  const url = `unfavorite/topic/${topicId}?t=${token}`;
+  const entireUrl = `${config.V2EX_BASE_URL}t/${topicId}`;
+  const response = await instance.get(url, { headers: { Referer: entireUrl } });
+  const $ = cheerio.load(response.data);
+
+  const collectUrl = $('.topic_buttons').find('.tb').eq(0).attr('href') || '';
+
+  const isCollect = collectUrl.indexOf('unfavorite') !== -1;
+
+  const csrfToken = getUrlParams(collectUrl).get('t') || '';
+
+  return { isCollect, csrfToken };
 };
