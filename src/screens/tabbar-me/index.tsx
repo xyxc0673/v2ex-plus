@@ -67,7 +67,9 @@ const TabbarMe = () => {
             <Text style={styles.gridItemValue}>{myFollowingCount}</Text>
             <Text style={styles.gridItemTitle}>关注的人</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.gridItem}>
+          <TouchableOpacity
+            style={styles.gridItem}
+            onPress={() => navigate('favTopic', {})}>
             <Text style={styles.gridItemValue}>{myFavTopicCount}</Text>
             <Text style={styles.gridItemTitle}>收藏主题</Text>
           </TouchableOpacity>

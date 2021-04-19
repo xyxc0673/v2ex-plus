@@ -47,6 +47,25 @@ export const fetchTopicsByNode = async (
   return { topicList, topicCount, nodeIcon, nodeIntro, maxPage };
 };
 
+export interface ITopicCollectionResponse {
+  topicList: ITopic[];
+  maxPage: number;
+}
+
+export const fetchTopicsCollection = async (
+  page: number = 1,
+): Promise<ITopicCollectionResponse> => {
+  const response = await instance.get(`my/topics?p=${page}`);
+  const $ = cheerio.load(response.data);
+  const list = $('#Main > .box:nth-child(3) > .cell.item');
+
+  const topicList = parser.parseTopicList($, list);
+
+  const maxPage = parseInt($('.page_input').attr('max') || '1', 10);
+
+  return { topicList, maxPage };
+};
+
 const parseTopicDetails = ($: cheerio.Root) => {
   const title = $('h1').text();
   const content = $('.topic_content').html() || '';

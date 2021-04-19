@@ -15,6 +15,17 @@ export const fetchTopicsByNode = createAsyncThunk<
   return response;
 });
 
+export const fetchTopicsCollection = createAsyncThunk<
+  topicCrawler.ITopicCollectionResponse,
+  { tab: string; refresh: boolean },
+  { state: RootState }
+>('nodeTopic/fetchTopicsCollection', async (params, thunkApi) => {
+  const { refresh } = params;
+  const nextPage = refresh ? 1 : thunkApi.getState().nodeTopic.currPage + 1;
+  const response = await topicCrawler.fetchTopicsCollection(nextPage);
+  return response;
+});
+
 interface TopicState {
   topicList: Array<ITopic>;
   pending: TPending;
@@ -71,8 +82,25 @@ export const nodeTopicSlice = createSlice({
         state.pending = 'succeeded';
         state.isRefreshing = false;
         state.currPage += 1;
+      })
+      .addCase(fetchTopicsCollection.pending, (state, action) => {
+        if (!action.meta.arg.refresh) {
+          state.pending = 'pending';
+        }
+        state.isRefreshing = action.meta.arg.refresh;
+      })
+      .addCase(fetchTopicsCollection.fulfilled, (state, action) => {
+        const { topicList, maxPage } = action.payload;
+        if (state.currPage === 0) {
+          state.topicList = topicList;
+        } else {
+          state.topicList = state.topicList.concat(topicList);
+        }
+        state.maxPage = maxPage;
+        state.pending = 'succeeded';
+        state.isRefreshing = false;
+        state.currPage += 1;
       });
-    5;
   },
 });
 
