@@ -381,3 +381,34 @@ export const fetchMyNodes = async () => {
 
   return favNodeList;
 };
+
+export interface IFollowing {
+  avatar: string;
+  username: string;
+}
+
+export const fetchMyFollowing = async () => {
+  const response = await instance.get(`/my/following`);
+  const $ = cheerio.load(response.data);
+
+  const followingSelector = $('#Rightbar > .box:nth-child(6) > div');
+
+  const followingList: Array<IFollowing> = [];
+
+  followingSelector.each((index, elem) => {
+    // list header
+    if (index === 0) {
+      return;
+    }
+    console.log('$(elem)', $(elem).html());
+    const avatar = $(elem).find('.avatar').attr('src') || '';
+    const username = $(elem).find('a').last().text();
+
+    followingList.push({
+      avatar: avatar.replace('mini', 'large'),
+      username,
+    });
+  });
+
+  return { followingList };
+};

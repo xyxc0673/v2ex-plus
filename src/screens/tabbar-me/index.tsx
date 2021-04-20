@@ -63,7 +63,9 @@ const TabbarMe = () => {
           </View>
         </TouchableOpacity>
         <View style={styles.grid}>
-          <TouchableOpacity style={styles.gridItem}>
+          <TouchableOpacity
+            style={styles.gridItem}
+            onPress={() => navigate('follow', {})}>
             <Text style={styles.gridItemValue}>{myFollowingCount}</Text>
             <Text style={styles.gridItemTitle}>关注的人</Text>
           </TouchableOpacity>

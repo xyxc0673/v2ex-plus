@@ -5,7 +5,15 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Tabs from './tabs';
 import { defaultTheme } from '@/theme/colors';
-import { FavTopic, History, Login, NodeTopic, Profile, Topic } from '@/screens';
+import {
+  FavTopic,
+  Follow,
+  History,
+  Login,
+  NodeTopic,
+  Profile,
+  Topic,
+} from '@/screens';
 import { navigationRef } from './root';
 
 const Stack = createStackNavigator();
@@ -60,6 +68,13 @@ const ApplicationNavigations = () => {
             component={FavTopic}
             options={{
               title: '收藏的主题',
+            }}
+          />
+          <Stack.Screen
+            name="follow"
+            component={Follow}
+            options={{
+              title: '关注',
             }}
           />
         </Stack.Navigator>
