@@ -15,6 +15,7 @@ import {
   Topic,
 } from '@/screens';
 import { navigationRef } from './root';
+import Toast from 'react-native-toast-message';
 
 const Stack = createStackNavigator();
 
@@ -78,6 +79,7 @@ const ApplicationNavigations = () => {
             }}
           />
         </Stack.Navigator>
+        <Toast ref={(ref) => Toast.setRef(ref)} />
       </NavigationContainer>
     </SafeAreaView>
   );
