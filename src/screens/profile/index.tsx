@@ -15,6 +15,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Topic from './components/topic';
 import Reply from './components/reply';
 import Information from './components/Information';
+import { screenWidth } from '@/utils/adapter';
 
 type ParamList = {
   Detail: {
@@ -30,6 +31,9 @@ const Profile = () => {
   const userInfo = useAppSelector((state) => state.profile.userInfo);
   const userTopicList = useAppSelector((state) => state.profile.userTopicList);
   const userReplyList = useAppSelector((state) => state.profile.userReplyList);
+  const isTopicsHidden = useAppSelector(
+    (state) => state.profile.isTopicsHidden,
+  );
   const user = useAppSelector((state) => state.user.user);
 
   const navigation = useNavigation();
@@ -98,6 +102,23 @@ const Profile = () => {
             contentContainerStyle={[styles.tabContent]}
             keyExtractor={(item) => `user_topic_${item.id}`}
             renderItem={({ item }) => <Topic item={item} />}
+            ListEmptyComponent={() => {
+              if (isTopicsHidden) {
+                return (
+                  <View style={styles.emptyWrapper}>
+                    <Text
+                      style={
+                        styles.emptyText
+                      }>{`根据 ${userInfo.username} 的设置，主题列表被隐藏`}</Text>
+                  </View>
+                );
+              }
+              return (
+                <View style={styles.emptyWrapper}>
+                  <Text style={styles.emptyText}>空空如也</Text>
+                </View>
+              );
+            }}
           />
         </Tabs.Tab>
         <Tabs.Tab name="Reply" label="回复">
@@ -183,5 +204,13 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.lightGrey,
     flexGrow: 1,
     marginTop: 8,
+  },
+  emptyWrapper: {
+    width: screenWidth,
+    paddingVertical: 32,
+  },
+  emptyText: {
+    textAlign: 'center',
+    color: Colors.secondaryText,
   },
 });

@@ -339,6 +339,8 @@ export const fetchUserProfile = async (username: string) => {
 
   const id = parseInt(no, 10);
 
+  const isHidden = $('.topic_content').text().indexOf('主题列表被隐藏') !== -1;
+
   const profile: IUser = {
     id,
     username,
@@ -354,7 +356,7 @@ export const fetchUserProfile = async (username: string) => {
     workTitle,
   };
 
-  return { once, profile };
+  return { once, profile, isHidden };
 };
 
 export const fetchMyNodes = async () => {

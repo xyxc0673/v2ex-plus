@@ -41,6 +41,7 @@ type ProfileState = {
   userTopicCount: number;
   userReplyCount: number;
   once: string | undefined;
+  isTopicsHidden: boolean;
 };
 
 const initialState: ProfileState = {
@@ -50,6 +51,7 @@ const initialState: ProfileState = {
   userTopicCount: 0,
   userReplyCount: 0,
   once: undefined,
+  isTopicsHidden: false,
 };
 
 export const profileSlice = createSlice({
@@ -63,6 +65,7 @@ export const profileSlice = createSlice({
       .addCase(fetchUserProfile.fulfilled, (state, action) => {
         state.userInfo = action.payload.profile;
         state.once = action.payload.once;
+        state.isTopicsHidden = action.payload.isHidden;
       })
       .addCase(fetchUserTopics.fulfilled, (state, action) => {
         state.userTopicList = action.payload.topicList;
