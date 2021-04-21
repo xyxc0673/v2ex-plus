@@ -6,6 +6,8 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IMyNode } from '@/interfaces/node';
 import { Alert } from '@/utils';
 import { goBack } from '@/navigations/root';
+import Toast from 'react-native-toast-message';
+import dayjs from 'dayjs';
 
 export const fetchUserInfoById = createAsyncThunk(
   'user/fetchUserInfoById',
@@ -76,6 +78,17 @@ export const fetchMyNodes = createAsyncThunk('user/fetchMyNodes', async () => {
   return response;
 });
 
+export const dailyMission = createAsyncThunk(
+  'user/dailyMission',
+  async (sign: boolean = true) => {
+    const response = await userCrawler.dailySignIn(sign);
+
+    return response;
+  },
+);
+
+const SIGN_DATE_FORMAT = 'DD/MM/YYYY';
+
 export const userSlice = createSlice({
   name: 'user',
   initialState: {
@@ -91,6 +104,9 @@ export const userSlice = createSlice({
     myFavNodeCount: 0,
     myFavTopicCount: 0,
     myFollowingCount: 0,
+    isSigned: false,
+    signDays: 0,
+    signDate: '',
   },
   reducers: {
     setUserBox: (state, action: PayloadAction<parser.IUserBox>) => {
@@ -137,9 +153,25 @@ export const userSlice = createSlice({
       })
       .addCase(fetchMyNodes.fulfilled, (state, action) => {
         state.myNodeList = action.payload;
-      });
+      })
+      .addCase(dailyMission.fulfilled, (state, action) => {
+        const { isSigned, days } = action.payload;
 
-    5;
+        const today = dayjs().format(SIGN_DATE_FORMAT);
+
+        // only show toast when signed at first time today
+        if (isSigned && state.signDate !== today) {
+          Toast.show({
+            text1: '签到成功！',
+            text2: `连续签到 ${days} 天`,
+            type: 'success',
+          });
+        }
+
+        state.signDate = today;
+        state.isSigned = isSigned;
+        state.signDays = days;
+      });
   },
 });
 

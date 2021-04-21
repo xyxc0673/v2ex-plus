@@ -414,3 +414,36 @@ export const fetchMyFollowing = async () => {
 
   return { followingList };
 };
+
+export const dailySignIn = async (sign: boolean) => {
+  const response = await instance.get('/mission/daily');
+
+  let $ = cheerio.load(response.data);
+
+  let isSigned = $('#Main').text().indexOf('每日登录奖励已领取') !== -1;
+
+  const onceHtml = $('#Top .tools').html() || '';
+  const once = RegExp('once\\=(\\d+)').exec(onceHtml)![1];
+
+  const dayHtml = $('#Main > .box > .cell').last().html() || '';
+  let daysText = RegExp(/已连续登录 (\d+?) 天/).exec(dayHtml)![1];
+
+  let days = parseInt(daysText, 10);
+
+  if (!isSigned && sign) {
+    const signResponse = await instance.get(
+      `/mission/daily/redeem?once=${once}`,
+    );
+
+    $ = cheerio.load(signResponse.data);
+
+    isSigned =
+      $('.message').text().indexOf('今天的登录奖励已经领取过了哦') !== -1;
+
+    if (isSigned) {
+      days += 1;
+    }
+  }
+
+  return { isSigned, days };
+};

@@ -1,13 +1,16 @@
 import { Avatar, Header } from '@/components';
 import { navigate } from '@/navigations/root';
+import { dailyMission } from '@/store/reducers/user';
 import { Colors } from '@/theme/colors';
 import Images from '@/theme/images';
 import Layout from '@/theme/layout';
 import { useAppSelector } from '@/utils/hooks';
 import * as React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { useDispatch } from 'react-redux';
 
 const TabbarMe = () => {
+  const dispatch = useDispatch();
   const isLogged = useAppSelector((state) => state.user.isLogged);
   const balance = useAppSelector((state) => state.user.balance);
   const user = useAppSelector((state) => state.user.user);
@@ -16,6 +19,8 @@ const TabbarMe = () => {
     (state) => state.user.myFollowingCount,
   );
   const myFavTopicCount = useAppSelector((state) => state.user.myFavTopicCount);
+  const isSigned = useAppSelector((state) => state.user.isSigned);
+  const signDays = useAppSelector((state) => state.user.signDays);
 
   return (
     <View>
@@ -82,6 +87,20 @@ const TabbarMe = () => {
             <Text style={styles.gridItemTitle}>已读主题</Text>
           </TouchableOpacity>
         </View>
+        {isLogged && (
+          <View style={styles.list}>
+            <TouchableOpacity
+              style={styles.listItem}
+              onPress={() => !isSigned && dispatch(dailyMission(true))}>
+              <Text style={styles.listItemText}>
+                {isSigned ? '今日已签到' : '立即签到'}
+              </Text>
+              <Text style={styles.listItemRightText}>
+                连续签到 {signDays} 天
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
         <View style={styles.list}>
           <TouchableOpacity style={styles.listItem}>
             <Text style={styles.listItemText}>应用设置</Text>
@@ -150,6 +169,7 @@ const styles = StyleSheet.create({
     paddingRight: 4,
     paddingVertical: 2,
   },
+
   balanceItem: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -199,6 +219,10 @@ const styles = StyleSheet.create({
   },
   listItemText: {
     fontSize: 16,
+  },
+  listItemRightText: {
+    fontSize: 12,
+    color: Colors.secondaryText,
   },
   listItemArrow: {
     width: 16,
