@@ -29,6 +29,9 @@ import { ITopic } from '@/interfaces/topic';
 import Layout from '@/theme/layout';
 import { Alert } from '@/utils';
 import Images from '@/theme/images';
+import { IReply } from '@/interfaces/reply';
+import { RelatedReply } from './components';
+import { bottomSheetRef } from './components/related-reply';
 
 type ParamList = {
   Detail: {
@@ -38,6 +41,8 @@ type ParamList = {
 
 const Topic = () => {
   const route = useRoute<RouteProp<ParamList, 'Detail'>>();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const dispatch = useAppDispatch();
   const topicDetails = useAppSelector((state) => state.topic.currentTopic);
@@ -49,6 +54,9 @@ const Topic = () => {
   );
   const maxPage = useAppSelector((state) => state.topic.maxPage);
   const currPage = useAppSelector((state) => state.topic.currPage);
+  const relatedReplyList = useAppSelector(
+    (state) => state.topic.relatedReplyList,
+  );
 
   const [currentTopic, setCurrentTopic] = useState<ITopic>({} as ITopic);
   const [noMore, setNoMore] = useState(false);
@@ -91,6 +99,25 @@ const Topic = () => {
   const handleReply = useCallback(() => {
     dispatch(replyTopic({ topicId: topicDetails.id }));
   }, [dispatch, topicDetails]);
+
+  // 关闭相关回复弹窗时，清除数据
+  const handleSheetChanges = useCallback(
+    (index: number) => {
+      if (index === 0) {
+        setIsModalOpen(false);
+        dispatch(topicActions.resetRelatedReplys());
+      }
+    },
+    [dispatch],
+  );
+
+  const handleLike = () => {
+    if (currentTopic.isCollect) {
+      dispatch(unfavouriteTopic(null));
+    } else {
+      dispatch(favouriteTopic(null));
+    }
+  };
 
   const renderHeader = React.useMemo(() => {
     if (!currentTopic.id) {
@@ -163,12 +190,29 @@ const Topic = () => {
     );
   }, [noMore]);
 
-  const handleLike = () => {
-    if (currentTopic.isCollect) {
-      dispatch(unfavouriteTopic(null));
-    } else {
-      dispatch(favouriteTopic(null));
-    }
+  const renderReply = (item: IReply, index: number) => {
+    return (
+      <Reply
+        key={item.id}
+        item={item}
+        topicAuthor={topicDetails.author}
+        onThanks={() =>
+          Alert.confirm({
+            message: `确认花费 10 个铜币向 @${item.author} 的这条回复发送感谢？`,
+            onConfirm: () =>
+              dispatch(thanksReplyById({ replyId: item.id, index })),
+          })
+        }
+        onMentionedPress={(mentionedUsername) => {
+          if (isModalOpen) {
+            return;
+          }
+          bottomSheetRef.current?.snapTo(1);
+          dispatch(topicActions.getRelatedReplys({ index, mentionedUsername }));
+          setIsModalOpen(true);
+        }}
+      />
+    );
   };
 
   return (
@@ -179,19 +223,7 @@ const Topic = () => {
         keyExtractor={(item) => `reply_${item.id}`}
         ListHeaderComponent={renderHeader}
         contentContainerStyle={styles.replyList}
-        renderItem={({ item, index }) => (
-          <Reply
-            item={item}
-            topicAuthor={topicDetails.author}
-            onThanks={() =>
-              Alert.confirm({
-                message: `确认花费 10 个铜币向 @${item.author} 的这条回复发送感谢？`,
-                onConfirm: () =>
-                  dispatch(thanksReplyById({ replyId: item.id, index })),
-              })
-            }
-          />
-        )}
+        renderItem={({ item, index }) => renderReply(item, index)}
         onEndReached={() => {
           if (!onEndReachedCalledDuringMomentum) {
             setOnEndReachedCalledDuringMomentum(true);
@@ -239,6 +271,11 @@ const Topic = () => {
           </TouchableOpacity>
         </View>
       )}
+      <RelatedReply
+        data={relatedReplyList}
+        renderReply={renderReply}
+        onChange={handleSheetChanges}
+      />
     </>
   );
 };
@@ -307,8 +344,8 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.29,
     shadowRadius: 4.65,
-
-    elevation: 8,
+    borderTopColor: Colors.lightGrey,
+    borderTopWidth: 1,
   },
   input: {
     flex: 1,

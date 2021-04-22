@@ -13,9 +13,15 @@ interface IProps {
   item: IReply;
   onThanks: () => void;
   topicAuthor: string;
+  onMentionedPress: (username: string) => void;
 }
 
-const Reply = ({ item: reply, onThanks, topicAuthor }: IProps) => {
+const Reply = ({
+  item: reply,
+  onThanks,
+  topicAuthor,
+  onMentionedPress,
+}: IProps) => {
   return (
     <View style={styles.reply}>
       <View style={styles.replyHeader}>
@@ -42,6 +48,11 @@ const Reply = ({ item: reply, onThanks, topicAuthor }: IProps) => {
           <HTML
             source={{ html: reply.content || '<p></p>' }}
             containerStyle={styles.content}
+            onLinkPress={(event, href) => {
+              if (href.slice(0, 8) === '/member/') {
+                onMentionedPress && onMentionedPress(href.slice(8));
+              }
+            }}
           />
         </View>
       </View>

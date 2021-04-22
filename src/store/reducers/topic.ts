@@ -174,6 +174,7 @@ interface TopicState {
   currPage: number;
   maxPage: number | undefined;
   showLoadingModal: boolean;
+  relatedReplyList?: Array<IReply>;
 }
 
 const initialState: TopicState = {
@@ -200,6 +201,21 @@ export const topicSlice = createSlice({
       state.replyList = [];
       state.currPage = 0;
       state.maxPage = undefined;
+    },
+    resetRelatedReplys: (state) => {
+      state.relatedReplyList = [];
+    },
+    getRelatedReplys: (
+      state,
+      action: PayloadAction<{ index: number; mentionedUsername: string }>,
+    ) => {
+      const { index, mentionedUsername } = action.payload;
+      const prevReplyList = state.replyList.slice(0, index + 1);
+      const filteredReplyList = prevReplyList.filter(
+        (reply) => reply.author === mentionedUsername,
+      );
+      filteredReplyList.push(state.replyList[index]);
+      state.relatedReplyList = filteredReplyList;
     },
   },
   extraReducers: (builder) => {
