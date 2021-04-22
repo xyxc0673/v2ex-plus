@@ -8,6 +8,7 @@ import { Alert } from '@/utils';
 import { goBack } from '@/navigations/root';
 import Toast from 'react-native-toast-message';
 import dayjs from 'dayjs';
+import { CONSTANTS } from '@/config';
 
 export const fetchUserInfoById = createAsyncThunk(
   'user/fetchUserInfoById',
@@ -87,8 +88,6 @@ export const dailyMission = createAsyncThunk(
   },
 );
 
-const SIGN_DATE_FORMAT = 'DD/MM/YYYY';
-
 export const userSlice = createSlice({
   name: 'user',
   initialState: {
@@ -157,7 +156,7 @@ export const userSlice = createSlice({
       .addCase(dailyMission.fulfilled, (state, action) => {
         const { isSigned, days } = action.payload;
 
-        const today = dayjs().format(SIGN_DATE_FORMAT);
+        const today = dayjs().format(CONSTANTS.SIGN_DATE_FORMAT);
 
         // only show toast when signed at first time today
         if (isSigned && state.signDate !== today) {

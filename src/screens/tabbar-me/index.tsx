@@ -1,11 +1,13 @@
 import { Avatar, Header } from '@/components';
+import { CONSTANTS } from '@/config';
 import { navigate } from '@/navigations/root';
 import { dailyMission } from '@/store/reducers/user';
 import { Colors } from '@/theme/colors';
 import Images from '@/theme/images';
 import Layout from '@/theme/layout';
 import { useAppSelector } from '@/utils/hooks';
-import * as React from 'react';
+import dayjs from 'dayjs';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -21,6 +23,15 @@ const TabbarMe = () => {
   const myFavTopicCount = useAppSelector((state) => state.user.myFavTopicCount);
   const isSigned = useAppSelector((state) => state.user.isSigned);
   const signDays = useAppSelector((state) => state.user.signDays);
+  const signDate = useAppSelector((state) => state.user.signDate);
+
+  const [isSignedToday, setIsSignedToday] = useState(false);
+
+  useEffect(() => {
+    setIsSignedToday(
+      isSigned && signDate === dayjs().format(CONSTANTS.SIGN_DATE_FORMAT),
+    );
+  }, [isSigned, signDate]);
 
   return (
     <View>
@@ -91,9 +102,9 @@ const TabbarMe = () => {
           <View style={styles.list}>
             <TouchableOpacity
               style={styles.listItem}
-              onPress={() => !isSigned && dispatch(dailyMission(true))}>
+              onPress={() => !isSignedToday && dispatch(dailyMission(true))}>
               <Text style={styles.listItemText}>
-                {isSigned ? '今日已签到' : '立即签到'}
+                {isSignedToday ? '今日已签到' : '立即签到'}
               </Text>
               <Text style={styles.listItemRightText}>
                 连续签到 {signDays} 天
