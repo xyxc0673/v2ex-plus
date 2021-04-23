@@ -14,12 +14,15 @@ import Topic from './topic';
 // Construct a type with the properties of T except for those in type K.
 interface IProps extends Omit<FlatListProps<ITopic>, 'renderItem'> {
   itemStyle?: StyleProp<ViewStyle>;
+  isRefreshing: boolean;
+  onControlRefresh: () => void;
 }
 
 const TopicsComponent = ({
-  refreshing,
+  isRefreshing,
   contentContainerStyle = {},
   itemStyle = {},
+  onControlRefresh,
   ...props
 }: IProps) => {
   return (
@@ -29,9 +32,10 @@ const TopicsComponent = ({
       renderItem={({ item }) => <Topic item={item} style={itemStyle} />}
       refreshControl={
         <RefreshControl
-          refreshing={refreshing || false}
+          refreshing={isRefreshing}
           colors={[Colors.vi]}
           tintColor={Colors.vi}
+          onRefresh={onControlRefresh}
         />
       }
       {...props}
@@ -45,5 +49,6 @@ export default Topics;
 const styles = StyleSheet.create({
   topicList: {
     paddingHorizontal: 16,
+    paddingVertical: 8,
   },
 });

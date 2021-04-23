@@ -1,4 +1,3 @@
-import { TPending } from '@/interfaces/pending';
 import { IReply } from '@/interfaces/reply';
 import { ITopic } from '@/interfaces/topic';
 import { topicService } from '@/services';
@@ -32,18 +31,20 @@ export const fetchTopicByTab = createAsyncThunk(
 
 interface TopicState {
   topicList: Array<ITopic>;
+  topicListMap: Record<string, Array<ITopic>>;
   currentTopic: ITopic;
   replyList: Array<IReply>;
-  pending: TPending;
-  isRefreshing: boolean;
+  pending: string;
+  isRefreshing: string;
 }
 
 const initialState: TopicState = {
   topicList: [] as Array<ITopic>,
+  topicListMap: {} as Record<string, Array<ITopic>>,
   currentTopic: {} as ITopic,
   replyList: [] as Array<IReply>,
-  pending: 'idle',
-  isRefreshing: false,
+  pending: 'default',
+  isRefreshing: 'default',
 };
 
 export const homeTopicSlice = createSlice({
@@ -53,16 +54,20 @@ export const homeTopicSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchTopicByTab.pending, (state, action) => {
+        const tab = action.meta.arg.tab;
         if (!action.meta.arg.refresh) {
-          state.pending = 'pending';
-          state.topicList = [];
+          state.pending = tab;
+        } else {
+          state.isRefreshing = tab;
         }
-        state.isRefreshing = action.meta.arg.refresh;
       })
       .addCase(fetchTopicByTab.fulfilled, (state, action) => {
-        state.topicList = action.payload;
-        state.pending = 'succeeded';
-        state.isRefreshing = false;
+        const tab = action.meta.arg.tab;
+        state.topicListMap = Object.assign({}, state.topicListMap, {
+          [tab]: action.payload,
+        });
+        state.pending = 'default';
+        state.isRefreshing = 'default';
       });
     5;
   },

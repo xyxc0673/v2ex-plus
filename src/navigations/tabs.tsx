@@ -1,14 +1,10 @@
 import * as React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import {
-  TabbarIndex,
-  TabbarNotice,
-  TabbarMe,
-  TabbarNode,
-} from '@/screens/index';
+import { TabbarNotice, TabbarMe, TabbarNode } from '@/screens/index';
 import { Image, StyleSheet } from 'react-native';
 import Images from '@/theme/images';
 import { useAppSelector } from '@/utils/hooks';
+import TopicTabs from './topic-tabs';
 
 const Tab = createBottomTabNavigator();
 
@@ -32,7 +28,7 @@ const Tabs = () => {
       }}>
       <Tab.Screen
         name="index"
-        component={TabbarIndex}
+        component={TopicTabs}
         options={{
           title: '首页',
           tabBarIcon: ({ focused }) =>

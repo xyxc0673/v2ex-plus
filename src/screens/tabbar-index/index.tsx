@@ -1,44 +1,56 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { View, StyleSheet, ActivityIndicator } from 'react-native';
-import { Header } from '@/components';
 import { fetchTopicByTab } from '@/store/reducers/home-topic';
 import { useAppDispatch, useAppSelector } from '@/utils/hooks';
 import { Colors } from '@/theme/colors';
 import { fetchBalance, fetchUserInfo } from '@/store/reducers/user';
 import Topics from './components/topics';
+import { RouteProp, useRoute } from '@react-navigation/core';
+
+type ParamList = {
+  TabbarIndex: {
+    tab: string;
+  };
+};
 
 const TabbarIndex = () => {
   const dispatch = useAppDispatch();
-  const topicList = useAppSelector((state) => state.homeTopic.topicList);
+  const topicListMap = useAppSelector((state) => state.homeTopic.topicListMap);
   const isLogged = useAppSelector((state) => state.user.isLogged);
-  const isLoading = useAppSelector((state) => state.homeTopic.pending);
+  const pending = useAppSelector((state) => state.homeTopic.pending);
   const isRefreshing = useAppSelector((state) => state.homeTopic.isRefreshing);
 
+  const route = useRoute<RouteProp<ParamList, 'TabbarIndex'>>();
+
+  const tab = useMemo(() => route.params?.tab, [route]);
+  const refreshing = useMemo(() => isRefreshing === tab, [tab, isRefreshing]);
+  const data = useMemo(() => topicListMap[tab], [topicListMap, tab]);
+
   useEffect(() => {
-    dispatch(fetchTopicByTab({ tab: 'all', refresh: false }));
+    dispatch(fetchTopicByTab({ tab: tab, refresh: false }));
     if (isLogged) {
       dispatch(fetchUserInfo());
       dispatch(fetchBalance());
     }
-  }, [dispatch, isLogged]);
+  }, [dispatch, isLogged, tab]);
 
   const listEmptyComponent = React.useMemo(() => {
     return (
       <View style={styles.loading}>
-        {isLoading === 'pending' && (
-          <ActivityIndicator color={Colors.vi} size={48} />
-        )}
+        {pending === tab && <ActivityIndicator color={Colors.vi} size={48} />}
       </View>
     );
-  }, [isLoading]);
+  }, [pending, tab]);
 
   return (
     <View style={styles.container}>
-      <Header />
       <Topics
-        data={topicList}
-        refreshing={isRefreshing}
+        data={data}
+        isRefreshing={refreshing}
         ListEmptyComponent={listEmptyComponent}
+        onControlRefresh={() => {
+          dispatch(fetchTopicByTab({ tab: tab, refresh: true }));
+        }}
       />
     </View>
   );
@@ -51,7 +63,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     flex: 1,
   },
-
   loading: {
     marginTop: '50%',
   },
