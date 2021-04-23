@@ -3,7 +3,6 @@ import { View, StyleSheet, ActivityIndicator } from 'react-native';
 import { fetchTopicByTab } from '@/store/reducers/home-topic';
 import { useAppDispatch, useAppSelector } from '@/utils/hooks';
 import { Colors } from '@/theme/colors';
-import { fetchBalance, fetchUserInfo } from '@/store/reducers/user';
 import Topics from './components/topics';
 import { RouteProp, useRoute } from '@react-navigation/core';
 
@@ -16,7 +15,6 @@ type ParamList = {
 const TabbarIndex = () => {
   const dispatch = useAppDispatch();
   const topicListMap = useAppSelector((state) => state.homeTopic.topicListMap);
-  const isLogged = useAppSelector((state) => state.user.isLogged);
   const pending = useAppSelector((state) => state.homeTopic.pending);
   const isRefreshing = useAppSelector((state) => state.homeTopic.isRefreshing);
 
@@ -28,11 +26,7 @@ const TabbarIndex = () => {
 
   useEffect(() => {
     dispatch(fetchTopicByTab({ tab: tab, refresh: false }));
-    if (isLogged) {
-      dispatch(fetchUserInfo());
-      dispatch(fetchBalance());
-    }
-  }, [dispatch, isLogged, tab]);
+  }, [dispatch, tab]);
 
   const listEmptyComponent = React.useMemo(() => {
     return (

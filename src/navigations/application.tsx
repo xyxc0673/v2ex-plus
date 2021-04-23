@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -16,10 +16,22 @@ import {
 } from '@/screens';
 import { navigationRef } from './root';
 import Toast from 'react-native-toast-message';
+import { useAppDispatch, useAppSelector } from '@/utils/hooks';
+import { fetchBalance, fetchUserInfo } from '@/store/reducers/user';
 
 const Stack = createStackNavigator();
 
 const ApplicationNavigations = () => {
+  const dispatch = useAppDispatch();
+  const isLogged = useAppSelector((state) => state.user.isLogged);
+
+  useEffect(() => {
+    if (isLogged) {
+      dispatch(fetchUserInfo());
+      dispatch(fetchBalance());
+    }
+  }, [dispatch, isLogged]);
+
   return (
     <SafeAreaView style={styles.container}>
       <NavigationContainer theme={defaultTheme} ref={navigationRef}>
