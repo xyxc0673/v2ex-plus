@@ -33,7 +33,7 @@ const NodeTopic = () => {
 
   useEffect(() => {
     const { nodeName } = route.params;
-    dispatch(fetchTopicsByNode({ tab: nodeName, refresh: true }));
+    dispatch(fetchTopicsByNode({ tab: nodeName, refresh: false }));
 
     return () => {
       dispatch(nodeTopicAction.resetNodeTopic());
@@ -90,7 +90,12 @@ const NodeTopic = () => {
     <View style={styles.container}>
       <Topics
         data={topicList}
-        refreshing={isRefreshing}
+        isRefreshing={isRefreshing}
+        onControlRefresh={() => {
+          dispatch(
+            fetchTopicsByNode({ tab: route.params.nodeName, refresh: true }),
+          );
+        }}
         ListEmptyComponent={listEmptyComponent}
         ListHeaderComponent={listHeaderComponent}
         contentContainerStyle={styles.listContainer}

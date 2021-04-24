@@ -28,7 +28,7 @@ const FavTopic = () => {
   const route = useRoute<RouteProp<ParamList, 'NodeTopic'>>();
 
   useEffect(() => {
-    dispatch(fetchTopicsCollection({ refresh: true }));
+    dispatch(fetchTopicsCollection({ refresh: false }));
 
     return () => {
       dispatch(nodeTopicAction.resetNodeTopic());
@@ -65,7 +65,10 @@ const FavTopic = () => {
     <View style={styles.container}>
       <Topics
         data={topicList}
-        refreshing={isRefreshing}
+        isRefreshing={isRefreshing}
+        onControlRefresh={() => {
+          dispatch(fetchTopicsCollection({ refresh: true }));
+        }}
         ListEmptyComponent={listEmptyComponent}
         contentContainerStyle={styles.listContainer}
         itemStyle={styles.itemStyle}

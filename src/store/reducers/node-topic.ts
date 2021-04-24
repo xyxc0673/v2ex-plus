@@ -70,7 +70,7 @@ export const nodeTopicSlice = createSlice({
           nodeIntro,
           maxPage,
         } = action.payload;
-        if (state.currPage === 0) {
+        if (state.currPage === 0 || action.meta.arg.refresh) {
           state.topicList = topicList;
         } else {
           state.topicList = state.topicList.concat(topicList);
@@ -91,7 +91,7 @@ export const nodeTopicSlice = createSlice({
       })
       .addCase(fetchTopicsCollection.fulfilled, (state, action) => {
         const { topicList, maxPage } = action.payload;
-        if (state.currPage === 0) {
+        if (state.currPage === 0 || action.meta.arg.refresh) {
           state.topicList = topicList;
         } else {
           state.topicList = state.topicList.concat(topicList);
