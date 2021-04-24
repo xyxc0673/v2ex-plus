@@ -1,4 +1,3 @@
-import { Header } from '@/components';
 import { ICateNodes } from '@/interfaces/node';
 import { navigate } from '@/navigations/root';
 import { fetchIndexNodes } from '@/store/reducers/node';
@@ -40,7 +39,6 @@ const TabbarNode = () => {
 
   return (
     <View style={Layout.fill}>
-      <Header />
       <ScrollView contentContainerStyle={[styles.container]}>
         {allNodeList.map((group) => {
           return (

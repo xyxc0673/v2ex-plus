@@ -1,4 +1,4 @@
-import { Avatar, Header } from '@/components';
+import { Avatar } from '@/components';
 import { CONSTANTS } from '@/config';
 import { navigate } from '@/navigations/root';
 import { dailyMission } from '@/store/reducers/user';
@@ -35,7 +35,6 @@ const TabbarMe = () => {
 
   return (
     <View>
-      <Header />
       <View style={[Layout.fill, styles.container]}>
         <TouchableOpacity
           style={[Layout.fullWidth, Layout.row, styles.userBox]}

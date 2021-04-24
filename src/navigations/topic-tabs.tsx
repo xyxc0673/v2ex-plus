@@ -3,6 +3,7 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import { TabbarIndex } from '@/screens/index';
 import { HOME_NODES } from '@/config/tabs';
 import { useAppSelector } from '@/utils/hooks';
+import { Colors } from '@/theme/colors';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -25,14 +26,28 @@ const TopicTabs = () => {
         activeTintColor: '#200E32',
         inactiveTintColor: '#999999',
         scrollEnabled: true,
-
+        style: {
+          elevation: 0,
+          shadowColor: '#000000',
+          shadowOffset: { width: 0, height: 10 }, // change this for more shadow
+          shadowOpacity: 0.4,
+          shadowRadius: 6,
+          borderBottomWidth: 1,
+          borderColor: Colors.lightGrey,
+          backgroundColor: Colors.lightGrey,
+        },
         tabStyle: {
           width: 60,
           padding: 0,
         },
         labelStyle: {
           padding: 0,
+          fontSize: 16,
         },
+        indicatorStyle: {
+          backgroundColor: Colors.lightGrey,
+        },
+        indicatorContainerStyle: {},
       }}>
       {filterNodes.map((item) => (
         <Tab.Screen

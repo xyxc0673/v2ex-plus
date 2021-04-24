@@ -1,4 +1,3 @@
-import { Header } from '@/components';
 import Loading from '@/components/loading';
 import { fetchUserNotifications } from '@/store/reducers/notification';
 import { Colors } from '@/theme/colors';
@@ -48,7 +47,6 @@ const TabbarNotice = () => {
 
   return (
     <View style={[Layout.fill, styles.screen]}>
-      <Header />
       {!isLogged && <Text style={styles.notLogged}>请登录后再查看</Text>}
       {isLogged && (
         <FlatList
