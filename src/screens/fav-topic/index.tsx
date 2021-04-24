@@ -28,8 +28,7 @@ const FavTopic = () => {
   const route = useRoute<RouteProp<ParamList, 'NodeTopic'>>();
 
   useEffect(() => {
-    const { nodeName } = route.params;
-    dispatch(fetchTopicsCollection({ tab: nodeName, refresh: true }));
+    dispatch(fetchTopicsCollection({ refresh: true }));
 
     return () => {
       dispatch(nodeTopicAction.resetNodeTopic());
@@ -74,8 +73,7 @@ const FavTopic = () => {
           if (currPage >= maxPage) {
             return;
           }
-          const { nodeName } = route.params;
-          dispatch(fetchTopicsCollection({ tab: nodeName, refresh: false }));
+          dispatch(fetchTopicsCollection({ refresh: false }));
         }}
         onEndReachedThreshold={noMore ? null : 0.01}
         ListFooterComponent={ListFooterComponent}

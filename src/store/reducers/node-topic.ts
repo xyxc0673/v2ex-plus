@@ -17,7 +17,7 @@ export const fetchTopicsByNode = createAsyncThunk<
 
 export const fetchTopicsCollection = createAsyncThunk<
   topicCrawler.ITopicCollectionResponse,
-  { tab: string; refresh: boolean },
+  { refresh: boolean },
   { state: RootState }
 >('nodeTopic/fetchTopicsCollection', async (params, thunkApi) => {
   const { refresh } = params;
