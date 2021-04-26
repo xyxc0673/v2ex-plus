@@ -18,6 +18,18 @@ export const fetchTopicByTab = async (
   return topicList;
 };
 
+export const fetchRecentTopics = async (
+  page: number = 1,
+): Promise<Array<ITopic>> => {
+  const response = await instance.get(`/recent?p=${page}`);
+  const $ = cheerio.load(response.data);
+  const list = $('.cell.item');
+
+  const topicList = parser.parseTopicList($, list);
+
+  return topicList;
+};
+
 export interface ITopicNodeResponse {
   topicList: ITopic[];
   topicCount: number;

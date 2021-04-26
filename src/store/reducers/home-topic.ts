@@ -29,6 +29,15 @@ export const fetchTopicByTab = createAsyncThunk(
   },
 );
 
+export const fetchRecentTopics = createAsyncThunk(
+  'homeTopic/fetchRecentTopic',
+  async (params: { page: number }) => {
+    const { page } = params;
+    const response = await topicCrawler.fetchRecentTopics(page);
+    return response;
+  },
+);
+
 interface TopicState {
   topicList: Array<ITopic>;
   topicListMap: Record<string, Array<ITopic>>;
@@ -36,6 +45,7 @@ interface TopicState {
   replyList: Array<IReply>;
   pending: string;
   isRefreshing: string;
+  recentPage: number;
 }
 
 const initialState: TopicState = {
@@ -45,6 +55,7 @@ const initialState: TopicState = {
   replyList: [] as Array<IReply>,
   pending: 'default',
   isRefreshing: 'default',
+  recentPage: 0,
 };
 
 export const homeTopicSlice = createSlice({
@@ -68,8 +79,18 @@ export const homeTopicSlice = createSlice({
         });
         state.pending = 'default';
         state.isRefreshing = 'default';
+      })
+      .addCase(fetchRecentTopics.pending, (state, _) => {
+        state.pending = 'all';
+      })
+      .addCase(fetchRecentTopics.fulfilled, (state, action) => {
+        const oldList = state.topicListMap.all || [];
+        state.topicListMap = Object.assign({}, state.topicListMap, {
+          all: oldList.concat(action.payload),
+        });
+        state.recentPage += 1;
+        state.pending = 'default';
       });
-    5;
   },
 });
 
