@@ -165,9 +165,9 @@ export const userSlice = createSlice({
             text2: `连续签到 ${days} 天`,
             type: 'success',
           });
+          state.signDate = today;
         }
 
-        state.signDate = today;
         state.isSigned = isSigned;
         state.signDays = days;
       });

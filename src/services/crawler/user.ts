@@ -437,8 +437,7 @@ export const dailySignIn = async (sign: boolean) => {
 
     $ = cheerio.load(signResponse.data);
 
-    isSigned =
-      $('.message').text().indexOf('今天的登录奖励已经领取过了哦') !== -1;
+    isSigned = $('.message').text().indexOf('已成功领取每日登录奖励') !== -1;
 
     if (isSigned) {
       days += 1;
