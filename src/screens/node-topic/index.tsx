@@ -1,11 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, Image } from 'react-native';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  Image,
+  TouchableOpacity,
+} from 'react-native';
 import { useAppDispatch, useAppSelector } from '@/utils/hooks';
 import { Colors } from '@/theme/colors';
 import Topics from '../tabbar-index/components/topics';
 import { RouteProp, useRoute } from '@react-navigation/core';
 import {
   fetchTopicsByNode,
+  followNode,
   nodeTopicAction,
 } from '@/store/reducers/node-topic';
 import Layout from '@/theme/layout';
@@ -27,18 +35,24 @@ const NodeTopic = () => {
   const nodeIcon = useAppSelector((state) => state.nodeTopic.nodeIcon);
   const currPage = useAppSelector((state) => state.nodeTopic.currPage);
   const maxPage = useAppSelector((state) => state.nodeTopic.maxPage) || 1;
+  const isNodeFollowed = useAppSelector(
+    (state) => state.nodeTopic.isNodeFollowed,
+  );
+  const nodeCode = useAppSelector((state) => state.nodeTopic.nodeCode);
+  const once = useAppSelector((state) => state.nodeTopic.once);
   const [noMore, setNoMore] = useState(false);
 
   const route = useRoute<RouteProp<ParamList, 'NodeTopic'>>();
 
+  const nodeName = useMemo(() => route.params.nodeName, [route]);
+
   useEffect(() => {
-    const { nodeName } = route.params;
     dispatch(fetchTopicsByNode({ tab: nodeName, refresh: false }));
 
     return () => {
       dispatch(nodeTopicAction.resetNodeTopic());
     };
-  }, [dispatch, route]);
+  }, [dispatch, nodeName]);
 
   useEffect(() => {
     setNoMore(currPage >= (maxPage || 1));
@@ -54,6 +68,13 @@ const NodeTopic = () => {
     );
   }, [isLoading]);
 
+  const handleFollowNode = useCallback(
+    (isFollow: boolean) => {
+      dispatch(followNode({ nodeCode, nodeName, once, isFollow }));
+    },
+    [nodeCode, once, dispatch, nodeName],
+  );
+
   const listHeaderComponent = React.useMemo(() => {
     const { nodeTitle } = route.params;
     return (
@@ -68,11 +89,32 @@ const NodeTopic = () => {
             <Text style={styles.nodeTitle}>{nodeTitle}</Text>
             <Text style={styles.topicCount}>{`${topicCount}主题`}</Text>
           </View>
+          {!isNodeFollowed && (
+            <TouchableOpacity
+              style={styles.follow}
+              onPress={() => handleFollowNode(true)}>
+              <Text style={styles.followText}>关注</Text>
+            </TouchableOpacity>
+          )}
+          {isNodeFollowed && (
+            <TouchableOpacity
+              style={[styles.follow, styles.unfollow]}
+              onPress={() => handleFollowNode(false)}>
+              <Text style={styles.unfollowText}>取消关注</Text>
+            </TouchableOpacity>
+          )}
         </View>
         {nodeIntro !== '' && <Text style={styles.nodeIntro}>{nodeIntro}</Text>}
       </View>
     );
-  }, [nodeIntro, topicCount, nodeIcon, route]);
+  }, [
+    nodeIntro,
+    topicCount,
+    nodeIcon,
+    route,
+    isNodeFollowed,
+    handleFollowNode,
+  ]);
 
   const ListFooterComponent = React.useMemo(() => {
     return (
@@ -151,6 +193,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     backgroundColor: Colors.white,
     paddingHorizontal: 0,
+    paddingVertical: 0,
   },
   nodeIcon: {
     width: 48,
@@ -175,5 +218,23 @@ const styles = StyleSheet.create({
   listFooterText: {
     color: Colors.secondaryText,
     fontSize: 12,
+  },
+  follow: {
+    position: 'absolute',
+    right: 0,
+
+    backgroundColor: Colors.vi,
+    paddingVertical: 6,
+    paddingHorizontal: 16,
+    borderRadius: 4,
+  },
+  unfollow: {
+    backgroundColor: Colors.white,
+  },
+  followText: {
+    color: Colors.white,
+  },
+  unfollowText: {
+    color: Colors.black,
   },
 });

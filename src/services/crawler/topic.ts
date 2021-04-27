@@ -35,7 +35,10 @@ export interface ITopicNodeResponse {
   topicCount: number;
   nodeIcon: string;
   nodeIntro: string;
+  nodeCode: string;
+  once: string;
   maxPage: number;
+  isNodeFollowed: boolean;
 }
 
 export const fetchTopicsByNode = async (
@@ -56,8 +59,89 @@ export const fetchTopicsByNode = async (
 
   const maxPage = parseInt($('.page_input').attr('max') || '1', 10);
 
-  return { topicList, topicCount, nodeIcon, nodeIntro, maxPage };
+  const followButton = $('.cell_ops a');
+
+  let nodeCode = '';
+  let once = '';
+
+  const matchResult = followButton
+    .attr('href')
+    ?.trim()
+    .match(/(\d+)\?once=(\d+)/);
+
+  if (matchResult?.length === 3) {
+    nodeCode = matchResult[1];
+    once = matchResult[2];
+  }
+
+  const isNodeFollowed = followButton.text().indexOf('Unfavorite') !== -1;
+
+  return {
+    topicList,
+    topicCount,
+    nodeIcon,
+    nodeIntro,
+    maxPage,
+    isNodeFollowed,
+    nodeCode,
+    once,
+  };
 };
+
+/**
+ * 关注或者取消关注节点
+ * @param follow 是否关注节点
+ * @param nodeCode 节点代码
+ * @param once
+ * @returns isNodeFollowed 是否关注
+ */
+export const followNode = async (
+  nodeCode: string,
+  nodeName: string,
+  follow: boolean,
+  once: string,
+): Promise<IFollowNodeResponse> => {
+  /*
+  <a href="/unfavorite/node/90?once=74770">
+  Unfavorite
+  </a>
+  */
+  const url = follow ? 'favorite' : 'unfavorite';
+  console.log(
+    `${config.V2EX_BASE_URL}/go/${nodeName}`,
+    `/${url}/node/${nodeCode}?once=${once}`,
+  );
+  const response = await instance.get(`/${url}/node/${nodeCode}?once=${once}`, {
+    headers: { Referer: `${config.V2EX_BASE_URL}go/${nodeName}` },
+  });
+
+  const $ = cheerio.load(response.data);
+  const isNodeFollowed = $('.cell_ops a').text().indexOf('Unfavorite') !== -1;
+
+  let afterOnce = '';
+  console.log(
+    'dd',
+    `${config.V2EX_BASE_URL}/go/${nodeName}`,
+    `/${url}/node/${nodeCode}?once=${once}`,
+    $('.cell_ops a').attr('href'),
+    response.data,
+  );
+  const matchResult = $('.cell_ops a')
+    .attr('href')
+    ?.trim()
+    .match(/(\d+)\?once=(\d+)/);
+
+  if (matchResult?.length === 3) {
+    afterOnce = matchResult[2];
+  }
+
+  return { isNodeFollowed, once: afterOnce };
+};
+
+export interface IFollowNodeResponse {
+  isNodeFollowed: boolean;
+  once: string;
+}
 
 export interface ITopicCollectionResponse {
   topicList: ITopic[];
