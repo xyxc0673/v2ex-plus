@@ -4,12 +4,13 @@ import {
   fetchUserReplies,
   fetchUserTopics,
   profileActions,
+  followUser,
 } from '@/store/reducers/profile';
 import { Colors } from '@/theme/colors';
 import Layout from '@/theme/layout';
 import { useAppDispatch, useAppSelector } from '@/utils/hooks';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { MaterialTabBar, Tabs } from 'react-native-collapsible-tab-view';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Topic from './components/topic';
@@ -35,6 +36,10 @@ const Profile = () => {
     (state) => state.profile.isTopicsHidden,
   );
   const user = useAppSelector((state) => state.user.user);
+  const isUserFollowed = useAppSelector(
+    (state) => state.profile.isUserFollowed,
+  );
+  const once = useAppSelector((state) => state.profile.once);
 
   const navigation = useNavigation();
 
@@ -53,6 +58,21 @@ const Profile = () => {
     };
   }, [dispatch, route.params]);
 
+  const handleFollowUser = useCallback(
+    (isFollow: boolean) => {
+      console.log('handleFollowUser', isFollow);
+      dispatch(
+        followUser({
+          userId: userInfo.id,
+          username: userInfo.username,
+          once,
+          isFollow,
+        }),
+      );
+    },
+    [userInfo, once, dispatch],
+  );
+
   const renderHeader = React.useMemo(() => {
     return (
       <>
@@ -70,8 +90,19 @@ const Profile = () => {
             <View>
               {userInfo.username !== user.username && (
                 <>
-                  <TouchableOpacity style={[styles.btn, styles.btnFollow]}>
-                    <Text style={styles.btnText}>关注</Text>
+                  <TouchableOpacity
+                    style={[
+                      styles.btn,
+                      isUserFollowed ? styles.btnUnfollow : styles.btnFollow,
+                    ]}
+                    onPress={() => handleFollowUser(!isUserFollowed)}>
+                    <Text
+                      style={[
+                        styles.btnText,
+                        isUserFollowed && styles.btnUnfollowText,
+                      ]}>
+                      {isUserFollowed ? '取消关注' : '关注'}
+                    </Text>
                   </TouchableOpacity>
                 </>
               )}
@@ -80,7 +111,7 @@ const Profile = () => {
         </View>
       </>
     );
-  }, [user, userInfo]);
+  }, [user, userInfo, isUserFollowed, handleFollowUser]);
 
   return (
     <View style={[Layout.fill, styles.container]}>
@@ -189,7 +220,12 @@ const styles = StyleSheet.create({
   btnFollow: {
     backgroundColor: Colors.vi,
   },
-
+  btnUnfollow: {
+    backgroundColor: Colors.lightGrey,
+  },
+  btnUnfollowText: {
+    color: Colors.black,
+  },
   tabHeaderContainer: {
     shadowOffset: {
       width: 0,

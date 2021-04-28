@@ -305,9 +305,11 @@ export const fetchUserProfile = async (username: string) => {
 
   const follow = box.find('.super.special.button').attr('onclick') || '';
 
-  const isFollowed = followed || follow;
+  const isUserFollowed = !!followed;
 
-  const onceReg = /once=(\d+)/.exec(isFollowed);
+  const isFollowedOnclick = followed || follow;
+
+  const onceReg = /once=(\d+)/.exec(isFollowedOnclick);
   const once = onceReg && onceReg.length > 0 ? onceReg[1] : '';
 
   const isOnline = box.find('.online').text() === 'ONLINE';
@@ -356,7 +358,7 @@ export const fetchUserProfile = async (username: string) => {
     workTitle,
   };
 
-  return { once, profile, isHidden };
+  return { once, profile, isHidden, isUserFollowed };
 };
 
 export const fetchMyNodes = async () => {
@@ -446,3 +448,51 @@ export const dailySignIn = async (sign: boolean) => {
 
   return { isSigned, days };
 };
+
+/**
+ * 关注或者取消关注用户
+ * @param follow 是否关注用户
+ * @param userId 用户ID
+ * @param once
+ * @returns isUserFollowed 是否关注
+ */
+export const followUser = async (
+  userId: number,
+  username: string,
+  follow: boolean,
+  once: string,
+): Promise<IFollowUserResponse> => {
+  /*
+  <input type="button" value="加入特别关注" onclick="if (confirm('确认要开始关注 Livid？')) { location.href = '/follow/1?once=86430'; }" class="super special button">
+  */
+  const url = follow ? 'follow' : 'unfollow';
+
+  const response = await instance.get(`/${url}/${userId}?once=${once}`, {
+    headers: { Referer: `${config.V2EX_BASE_URL}member/${username}` },
+  });
+
+  const $ = cheerio.load(response.data);
+
+  const unfollowedOnClick = $('.super.inverse.button').attr('onclick') || '';
+
+  const followOnClick = $('.super.special.button').attr('onclick') || '';
+
+  const isUserFollowed = !!unfollowedOnClick;
+
+  const isFollowedOnclick = unfollowedOnClick || followOnClick;
+
+  let afterOnce = '';
+
+  const matchResult = isFollowedOnclick?.trim().match(/once=(\d+)/);
+
+  if (matchResult?.length === 2) {
+    afterOnce = matchResult[1];
+  }
+
+  return { isUserFollowed, once: afterOnce };
+};
+
+export interface IFollowUserResponse {
+  isUserFollowed: boolean;
+  once: string;
+}

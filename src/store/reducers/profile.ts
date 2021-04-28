@@ -3,6 +3,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { IUser } from '@/interfaces/user';
 import { ITopic } from '@/interfaces/topic';
 import { IUserReply } from '@/interfaces/userReply';
+import { RootState } from '..';
 
 export const fetchUserTopics = createAsyncThunk(
   'user/fetchUserTopics',
@@ -34,14 +35,30 @@ export const fetchUserProfile = createAsyncThunk(
   },
 );
 
+export const followUser = createAsyncThunk<
+  userCrawler.IFollowUserResponse,
+  { userId: number; username: string; once: string; isFollow: boolean },
+  { state: RootState }
+>('profile/followUser', async (params) => {
+  const { userId, username, isFollow, once } = params;
+  const response = await userCrawler.followUser(
+    userId,
+    username,
+    isFollow,
+    once,
+  );
+  return response;
+});
+
 type ProfileState = {
   userInfo: IUser;
   userTopicList: Array<ITopic>;
   userReplyList: Array<IUserReply>;
   userTopicCount: number;
   userReplyCount: number;
-  once: string | undefined;
+  once: string;
   isTopicsHidden: boolean;
+  isUserFollowed: boolean;
 };
 
 const initialState: ProfileState = {
@@ -50,8 +67,9 @@ const initialState: ProfileState = {
   userReplyList: [] as Array<IUserReply>,
   userTopicCount: 0,
   userReplyCount: 0,
-  once: undefined,
+  once: '',
   isTopicsHidden: false,
+  isUserFollowed: false,
 };
 
 export const profileSlice = createSlice({
@@ -66,6 +84,7 @@ export const profileSlice = createSlice({
         state.userInfo = action.payload.profile;
         state.once = action.payload.once;
         state.isTopicsHidden = action.payload.isHidden;
+        state.isUserFollowed = action.payload.isUserFollowed;
       })
       .addCase(fetchUserTopics.fulfilled, (state, action) => {
         state.userTopicList = action.payload.topicList;
@@ -74,8 +93,12 @@ export const profileSlice = createSlice({
       .addCase(fetchUserReplies.fulfilled, (state, action) => {
         state.userReplyList = action.payload.replyList;
         state.userReplyCount = action.payload.replyCount;
+      })
+      .addCase(followUser.fulfilled, (state, action) => {
+        const { once, isUserFollowed } = action.payload;
+        state.once = once;
+        state.isUserFollowed = isUserFollowed;
       });
-    5;
   },
 });
 
