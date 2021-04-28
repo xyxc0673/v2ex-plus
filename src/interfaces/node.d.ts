@@ -8,9 +8,9 @@ export interface IMyNode extends IBaseNode {
   icon: string;
 }
 
-export interface ICateNodes {
-  category: string;
-  nodeList: Array<IBaseNode>;
+export interface INodeSection {
+  key: string;
+  data: Array<Array<IBaseNode>>;
 }
 
 export interface INode {

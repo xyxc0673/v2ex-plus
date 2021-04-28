@@ -1,9 +1,9 @@
-import { IBaseNode, ICateNodes } from '@/interfaces/node';
+import { IBaseNode, INodeSection } from '@/interfaces/node';
 import cheerio from 'cheerio';
 import * as parser from './parser';
 import instance from '../request';
 
-export type TIndexNodesResponse = Array<ICateNodes>;
+export type TIndexNodesResponse = Array<INodeSection>;
 
 export const fetchIndexNodes = async (): Promise<TIndexNodesResponse> => {
   const response = await instance.get('/');
@@ -13,7 +13,7 @@ export const fetchIndexNodes = async (): Promise<TIndexNodesResponse> => {
 
   const cateSelector = box.children('div');
 
-  const list = [] as Array<ICateNodes>;
+  const list = [] as Array<INodeSection>;
 
   cateSelector.each((index, elem) => {
     // The first elem is the header
@@ -35,8 +35,8 @@ export const fetchIndexNodes = async (): Promise<TIndexNodesResponse> => {
     });
 
     list.push({
-      category: cate,
-      nodeList,
+      key: cate,
+      data: [nodeList],
     });
   });
 

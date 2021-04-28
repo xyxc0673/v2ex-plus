@@ -11,7 +11,7 @@ import { persistStore, persistReducer } from 'redux-persist';
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['user', 'node', 'history'],
+  whitelist: ['user', 'node', 'history', 'node'],
 };
 
 function createStore() {
