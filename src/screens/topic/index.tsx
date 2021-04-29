@@ -211,6 +211,13 @@ const Topic = () => {
           dispatch(topicActions.getRelatedReplys({ index, mentionedUsername }));
           setIsModalOpen(true);
         }}
+        onReplyPress={(reply) => {
+          let newReplyContent = `@${reply.author} #${reply.no}`;
+          if (replyContent !== '') {
+            newReplyContent = replyContent + `\n@${reply.author} #${reply.no}`;
+          }
+          dispatch(topicActions.setReplyContent(newReplyContent));
+        }}
       />
     );
   };
@@ -253,6 +260,7 @@ const Topic = () => {
             onContentSizeChange={(e) => {
               setContentHeight(e.nativeEvent.contentSize.height);
             }}
+            numberOfLines={6}
           />
           <TouchableOpacity style={styles.sendButton} onPress={handleReply}>
             <Image source={Images.send} />

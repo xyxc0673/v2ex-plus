@@ -19,6 +19,7 @@ const Images = {
   send: require('@/assets/images/send.png'),
   starOutline: require('@/assets/images/star-outline.png'),
   starFilled: require('@/assets/images/star-filled.png'),
+  chatGrey: require('@/assets/images/chat-grey.png'),
 };
 
 export default Images;

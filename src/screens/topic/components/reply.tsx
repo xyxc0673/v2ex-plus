@@ -13,6 +13,7 @@ interface IProps {
   item: IReply;
   onThanks: () => void;
   topicAuthor: string;
+  onReplyPress: (reply: IReply) => void;
   onMentionedPress: (username: string) => void;
 }
 
@@ -20,6 +21,7 @@ const Reply = ({
   item: reply,
   onThanks,
   topicAuthor,
+  onReplyPress,
   onMentionedPress,
 }: IProps) => {
   return (
@@ -66,6 +68,12 @@ const Reply = ({
           />
           <Text style={styles.replyThanksNumber}>{reply.thanks || ''}</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.replyOptBtn}
+          onPress={() => onReplyPress(reply)}>
+          <Image style={styles.replyOptBtnIcon} source={Images.chatGrey} />
+          <Text style={styles.replyThanksNumber}>{reply.thanks || ''}</Text>
+        </TouchableOpacity>
       </View>
       <View style={Common.divider} />
     </View>
@@ -107,6 +115,7 @@ const styles = StyleSheet.create({
   replyOptBtn: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginRight: 8,
   },
   replyOptBtnIcon: {
     width: 16,
