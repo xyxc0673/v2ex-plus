@@ -1,4 +1,4 @@
-package com.v2explus;
+package cn.bythesea.v2explus;
 
 import com.facebook.react.ReactActivity;
 
