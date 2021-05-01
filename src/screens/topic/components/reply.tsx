@@ -72,7 +72,6 @@ const Reply = ({
           style={styles.replyOptBtn}
           onPress={() => onReplyPress(reply)}>
           <Image style={styles.replyOptBtnIcon} source={Images.chatGrey} />
-          <Text style={styles.replyThanksNumber}>{reply.thanks || ''}</Text>
         </TouchableOpacity>
       </View>
       <View style={Common.divider} />
