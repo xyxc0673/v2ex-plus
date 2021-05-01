@@ -28,10 +28,13 @@ const TabbarNode = () => {
     disaptch(fetchIndexNodes());
   }, [isLogged, disaptch]);
 
-  const allNodeList = useMemo(
-    () => [{ key: '我收藏的节点', data: [myNodeList] }, ...cateNodeList],
-    [myNodeList, cateNodeList],
-  );
+  const allNodeList = useMemo(() => {
+    if (isLogged) {
+      return [{ key: '我收藏的节点', data: [myNodeList] }, ...cateNodeList];
+    }
+
+    return [...cateNodeList];
+  }, [isLogged, myNodeList, cateNodeList]);
 
   return (
     <SectionList
