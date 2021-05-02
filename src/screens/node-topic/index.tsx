@@ -40,6 +40,7 @@ const NodeTopic = () => {
   );
   const nodeCode = useAppSelector((state) => state.nodeTopic.nodeCode);
   const once = useAppSelector((state) => state.nodeTopic.once);
+  const isLogged = useAppSelector((state) => state.user.isLogged);
   const [noMore, setNoMore] = useState(false);
 
   const route = useRoute<RouteProp<ParamList, 'NodeTopic'>>();
@@ -89,14 +90,14 @@ const NodeTopic = () => {
             <Text style={styles.nodeTitle}>{nodeTitle}</Text>
             <Text style={styles.topicCount}>{`${topicCount}主题`}</Text>
           </View>
-          {!isNodeFollowed && (
+          {isLogged && !isNodeFollowed && (
             <TouchableOpacity
               style={styles.follow}
               onPress={() => handleFollowNode(true)}>
               <Text style={styles.followText}>关注</Text>
             </TouchableOpacity>
           )}
-          {isNodeFollowed && (
+          {isLogged && isNodeFollowed && (
             <TouchableOpacity
               style={[styles.follow, styles.unfollow]}
               onPress={() => handleFollowNode(false)}>
@@ -114,6 +115,7 @@ const NodeTopic = () => {
     route,
     isNodeFollowed,
     handleFollowNode,
+    isLogged,
   ]);
 
   const ListFooterComponent = React.useMemo(() => {

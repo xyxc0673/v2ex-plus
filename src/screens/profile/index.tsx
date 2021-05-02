@@ -40,6 +40,7 @@ const Profile = () => {
     (state) => state.profile.isUserFollowed,
   );
   const once = useAppSelector((state) => state.profile.once);
+  const isLogged = useAppSelector((state) => state.user.isLogged);
 
   const navigation = useNavigation();
 
@@ -88,7 +89,7 @@ const Profile = () => {
               <View />
             </View>
             <View>
-              {userInfo.username !== user.username && (
+              {isLogged && userInfo.username !== user.username && (
                 <>
                   <TouchableOpacity
                     style={[
@@ -111,7 +112,7 @@ const Profile = () => {
         </View>
       </>
     );
-  }, [user, userInfo, isUserFollowed, handleFollowUser]);
+  }, [user, userInfo, isUserFollowed, handleFollowUser, isLogged]);
 
   return (
     <View style={[Layout.fill, styles.container]}>
