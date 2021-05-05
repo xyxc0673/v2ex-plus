@@ -1,11 +1,19 @@
 import Loading from '@/components/loading';
+import { navigate } from '@/navigations/root';
 import { fetchUserNotifications } from '@/store/reducers/notification';
 import { Colors } from '@/theme/colors';
 import Common from '@/theme/common';
 import Layout from '@/theme/layout';
 import { useAppDispatch, useAppSelector } from '@/utils/hooks';
 import React, { useEffect } from 'react';
-import { View, FlatList, StyleSheet, RefreshControl, Text } from 'react-native';
+import {
+  View,
+  FlatList,
+  StyleSheet,
+  RefreshControl,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
 import Notification from './components/notification';
 
 const TabbarNotice = () => {
@@ -47,7 +55,17 @@ const TabbarNotice = () => {
 
   return (
     <View style={[Layout.fill, styles.screen]}>
-      {!isLogged && <Text style={styles.notLogged}>请登录后再查看</Text>}
+      {!isLogged && (
+        <View style={styles.notLogged}>
+          <Text>空空如也</Text>
+          <TouchableOpacity
+            onPress={() => {
+              navigate('login', null);
+            }}>
+            <Text style={styles.notLoggedText}>点击此处登录 V2EX 账号</Text>
+          </TouchableOpacity>
+        </View>
+      )}
       {isLogged && (
         <FlatList
           contentContainerStyle={styles.container}
@@ -104,5 +122,14 @@ const styles = StyleSheet.create({
   notLogged: {
     marginTop: '50%',
     alignSelf: 'center',
+
+    alignItems: 'center',
+  },
+  notLoggedText: {
+    backgroundColor: Colors.lightGrey,
+    marginTop: 16,
+    padding: 10,
+    borderRadius: 4,
+    fontSize: 12,
   },
 });
