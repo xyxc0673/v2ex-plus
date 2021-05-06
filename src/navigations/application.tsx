@@ -6,7 +6,10 @@ import {
   PartialState,
   Route,
 } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import {
+  CardStyleInterpolators,
+  createStackNavigator,
+} from '@react-navigation/stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Tabs from './tabs';
 import { Colors, defaultTheme } from '@/theme/colors';
@@ -64,7 +67,11 @@ const ApplicationNavigations = () => {
   return (
     <SafeAreaView style={styles.container}>
       <NavigationContainer theme={defaultTheme} ref={navigationRef}>
-        <Stack.Navigator initialRouteName="TabNavigator">
+        <Stack.Navigator
+          initialRouteName="TabNavigator"
+          screenOptions={{
+            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+          }}>
           <Stack.Screen
             name="TabNavigator"
             component={Tabs}
