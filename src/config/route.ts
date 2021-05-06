@@ -11,4 +11,7 @@ export const ROUTES = {
   NODE_TOPIC: 'NODE_TOPIC',
   FAV_TOPIC: 'FAV_TOPIC',
   FOLLOW: 'FOLLOW',
-};
+} as const;
+
+// see https://stackoverflow.com/questions/52393730/typescript-string-literal-union-type-from-enum
+export type ROUTES = typeof ROUTES[keyof typeof ROUTES];

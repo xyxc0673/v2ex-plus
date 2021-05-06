@@ -1,5 +1,6 @@
 // see https://github.com/thecodingmachine/react-native-boilerplate/
 
+import { ROUTES } from '@/config/route';
 import {
   CommonActions,
   NavigationContainerRef,
@@ -12,7 +13,7 @@ export function goBack() {
   navigationRef.current?.goBack();
 }
 
-export function navigate(name: string, params: any) {
+export function navigate(name: ROUTES, params: any) {
   navigationRef.current?.navigate(name, params);
 }
 
