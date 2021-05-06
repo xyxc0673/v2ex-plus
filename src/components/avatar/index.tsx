@@ -1,4 +1,4 @@
-import { useNavigation } from '@react-navigation/native';
+import { navigate } from '@/navigations/root';
 import React from 'react';
 import { Pressable } from 'react-native';
 import FastImage, { Source } from 'react-native-fast-image';
@@ -11,11 +11,9 @@ interface IProps {
 }
 
 const AvatarComponent = ({ username, size = 24, source, onPress }: IProps) => {
-  const navigation = useNavigation();
-
   const _handlePress = () => {
     if (username) {
-      navigation.navigate('profile', { username });
+      navigate('profile', { username });
     }
     onPress && onPress();
   };
