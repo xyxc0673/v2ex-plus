@@ -1,3 +1,4 @@
+import { ROUTES } from '@/config/route';
 import { navigate } from '@/navigations/root';
 import { fetchIndexNodes } from '@/store/reducers/node';
 import { fetchMyNodes } from '@/store/reducers/user';
@@ -47,7 +48,7 @@ const TabbarNode = () => {
             <TouchableOpacity
               key={node.name}
               onPress={() =>
-                navigate('nodeTopic', {
+                navigate(ROUTES.NODE_TOPIC, {
                   nodeName: node.name,
                   nodeTitle: node.title,
                 })

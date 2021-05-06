@@ -1,3 +1,4 @@
+import { ROUTES } from '@/config/route';
 import { IUserReply } from '@/interfaces/userReply';
 import { Colors } from '@/theme/colors';
 import Layout from '@/theme/layout';
@@ -26,7 +27,7 @@ const Reply = ({ item: reply }: IProps) => {
       <TouchableOpacity
         style={styles.topic}
         onPress={() =>
-          navigation.navigate('topic', { topic: { id: reply.topicId } })
+          navigation.navigate(ROUTES.TOPIC, { topic: { id: reply.topicId } })
         }>
         <View style={[Layout.row, styles.topicInfo]}>
           <Text style={styles.topicAuthor}>{reply.author}</Text>

@@ -5,6 +5,7 @@ import { Image, StyleSheet } from 'react-native';
 import Images from '@/theme/images';
 import { useAppSelector } from '@/utils/hooks';
 import TopicTabs from './topic-tabs';
+import { ROUTES } from '@/config/route';
 
 const Tab = createBottomTabNavigator();
 
@@ -27,7 +28,7 @@ const Tabs = () => {
         inactiveTintColor: '#999999',
       }}>
       <Tab.Screen
-        name="index"
+        name={ROUTES.TAB_INDEX}
         component={TopicTabs}
         options={{
           title: '首页',
@@ -36,7 +37,7 @@ const Tabs = () => {
         }}
       />
       <Tab.Screen
-        name="node"
+        name={ROUTES.TAB_NODE}
         component={TabbarNode}
         options={{
           title: '节点',
@@ -45,7 +46,7 @@ const Tabs = () => {
         }}
       />
       <Tab.Screen
-        name="notice"
+        name={ROUTES.TAB_NOTICE}
         component={TabbarNotice}
         options={{
           title: '消息',
@@ -60,7 +61,7 @@ const Tabs = () => {
         }}
       />
       <Tab.Screen
-        name="me"
+        name={ROUTES.TAB_ME}
         component={TabbarMe}
         options={{
           title: '我',

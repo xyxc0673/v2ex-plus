@@ -1,5 +1,6 @@
 import { Avatar } from '@/components';
 import { CONSTANTS } from '@/config';
+import { ROUTES } from '@/config/route';
 import { navigate } from '@/navigations/root';
 import { dailyMission } from '@/store/reducers/user';
 import { Colors } from '@/theme/colors';
@@ -38,7 +39,7 @@ const TabbarMe = () => {
       <View style={[Layout.fill, styles.container]}>
         <TouchableOpacity
           style={[Layout.fullWidth, Layout.row, styles.userBox]}
-          onPress={() => !isLogged && navigate('login', {})}>
+          onPress={() => !isLogged && navigate(ROUTES.LOGIN, {})}>
           <Avatar
             source={user.avatar ? { uri: user.avatar } : Images.profile}
             size={60}
@@ -80,7 +81,7 @@ const TabbarMe = () => {
         <View style={styles.grid}>
           <TouchableOpacity
             style={styles.gridItem}
-            onPress={() => isLogged && navigate('follow', {})}>
+            onPress={() => isLogged && navigate(ROUTES.FOLLOW, {})}>
             <Text style={styles.gridItemValue}>
               {isLogged ? isLogged && myFollowingCount : '-'}
             </Text>
@@ -88,7 +89,7 @@ const TabbarMe = () => {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.gridItem}
-            onPress={() => isLogged && navigate('favTopic', {})}>
+            onPress={() => isLogged && navigate(ROUTES.FAV_TOPIC, {})}>
             <Text style={styles.gridItemValue}>
               {isLogged ? myFavTopicCount : '-'}
             </Text>
@@ -96,7 +97,7 @@ const TabbarMe = () => {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.gridItem}
-            onPress={() => navigate('history', {})}>
+            onPress={() => navigate(ROUTES.HISTORY, {})}>
             <Text style={styles.gridItemValue}>{historyList.length}</Text>
             <Text style={styles.gridItemTitle}>已读主题</Text>
           </TouchableOpacity>

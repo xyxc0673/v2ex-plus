@@ -1,4 +1,5 @@
 import Loading from '@/components/loading';
+import { ROUTES } from '@/config/route';
 import { navigate } from '@/navigations/root';
 import { fetchUserNotifications } from '@/store/reducers/notification';
 import { Colors } from '@/theme/colors';
@@ -60,7 +61,7 @@ const TabbarNotice = () => {
           <Text>空空如也</Text>
           <TouchableOpacity
             onPress={() => {
-              navigate('login', null);
+              navigate(ROUTES.LOGIN, null);
             }}>
             <Text style={styles.notLoggedText}>点击此处登录 V2EX 账号</Text>
           </TouchableOpacity>

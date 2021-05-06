@@ -15,6 +15,7 @@ import { fetchFollowing, followingActions } from '@/store/reducers/following';
 import Layout from '@/theme/layout';
 import Common from '@/theme/common';
 import { navigate } from '@/navigations/root';
+import { ROUTES } from '@/config/route';
 
 type ParamList = {
   NodeTopic: {
@@ -70,7 +71,7 @@ const Follow = () => {
               <TouchableOpacity
                 style={[Layout.row, styles.item]}
                 onPress={() => {
-                  navigate('profile', { username: item.username });
+                  navigate(ROUTES.PROFILE, { username: item.username });
                 }}>
                 <Avatar
                   size={48}

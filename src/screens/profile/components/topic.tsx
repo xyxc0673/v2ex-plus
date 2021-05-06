@@ -1,3 +1,4 @@
+import { ROUTES } from '@/config/route';
 import { ITopic } from '@/interfaces/topic';
 import { Colors } from '@/theme/colors';
 import Common from '@/theme/common';
@@ -19,7 +20,9 @@ const Topic = ({ item: topic }: IProps) => {
     <TouchableOpacity
       key={`user_topic_${topic.id}`}
       style={styles.topic}
-      onPress={() => navigation.navigate('topic', { topic: { id: topic.id } })}>
+      onPress={() =>
+        navigation.navigate(ROUTES.TOPIC, { topic: { id: topic.id } })
+      }>
       <Text style={styles.topicTitle}>{topic.title}</Text>
       <View style={[Layout.row, styles.topicInfo]}>
         <Text style={Common.node}>{topic.nodeTitle}</Text>

@@ -28,6 +28,7 @@ import { useAppDispatch, useAppSelector } from '@/utils/hooks';
 import { fetchBalance, fetchUserInfo } from '@/store/reducers/user';
 
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
+import { ROUTES } from '@/config/route';
 
 // 根据不同的 route 返回不同的标题
 function getHeaderTitle(
@@ -68,12 +69,12 @@ const ApplicationNavigations = () => {
     <SafeAreaView style={styles.container}>
       <NavigationContainer theme={defaultTheme} ref={navigationRef}>
         <Stack.Navigator
-          initialRouteName="TabNavigator"
+          initialRouteName={ROUTES.TABS}
           screenOptions={{
             cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
           }}>
           <Stack.Screen
-            name="TabNavigator"
+            name={ROUTES.TABS}
             component={Tabs}
             options={({ route }) => ({
               headerTitle: getHeaderTitle(route),
@@ -86,49 +87,49 @@ const ApplicationNavigations = () => {
             })}
           />
           <Stack.Screen
-            name="login"
+            name={ROUTES.LOGIN}
             component={Login}
             options={{
               title: '登录',
             }}
           />
           <Stack.Screen
-            name="topic"
+            name={ROUTES.TOPIC}
             component={Topic}
             options={{
               title: '主题正文',
             }}
           />
           <Stack.Screen
-            name="profile"
+            name={ROUTES.PROFILE}
             component={Profile}
             options={{
               title: '',
             }}
           />
           <Stack.Screen
-            name="history"
+            name={ROUTES.HISTORY}
             component={History}
             options={{
               title: '已读主题',
             }}
           />
           <Stack.Screen
-            name="nodeTopic"
+            name={ROUTES.NODE_TOPIC}
             component={NodeTopic}
             options={{
               title: '节点',
             }}
           />
           <Stack.Screen
-            name="favTopic"
+            name={ROUTES.FAV_TOPIC}
             component={FavTopic}
             options={{
               title: '收藏的主题',
             }}
           />
           <Stack.Screen
-            name="follow"
+            name={ROUTES.FOLLOW}
             component={Follow}
             options={{
               title: '关注',

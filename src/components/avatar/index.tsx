@@ -1,3 +1,4 @@
+import { ROUTES } from '@/config/route';
 import { navigate } from '@/navigations/root';
 import React from 'react';
 import { Pressable } from 'react-native';
@@ -13,7 +14,7 @@ interface IProps {
 const AvatarComponent = ({ username, size = 24, source, onPress }: IProps) => {
   const _handlePress = () => {
     if (username) {
-      navigate('profile', { username });
+      navigate(ROUTES.PROFILE, { username });
     }
     onPress && onPress();
   };

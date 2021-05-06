@@ -1,4 +1,5 @@
 import { Avatar } from '@/components';
+import { ROUTES } from '@/config/route';
 import { INotification } from '@/interfaces/notification';
 import { navigate } from '@/navigations/root';
 import { Colors } from '@/theme/colors';
@@ -19,7 +20,7 @@ const TYPE = {
 
 const Notification = ({ item: notification }: IProps) => {
   const openTopic = (topicId: number) => {
-    navigate('topic', { topic: { id: topicId } });
+    navigate(ROUTES.TOPIC, { topic: { id: topicId } });
   };
 
   return (

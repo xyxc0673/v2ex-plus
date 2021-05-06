@@ -1,4 +1,5 @@
 import { Avatar } from '@/components';
+import { ROUTES } from '@/config/route';
 import { ITopic } from '@/interfaces/topic';
 import { Colors } from '@/theme/colors';
 import Common from '@/theme/common';
@@ -25,7 +26,7 @@ const Topic = ({ item: topic, style = {} }: IProps) => {
   const navigation = useNavigation();
 
   const openTopic = () => {
-    navigation.navigate('topic', { topic });
+    navigation.navigate(ROUTES.TOPIC, { topic });
   };
 
   return (

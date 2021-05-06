@@ -1,3 +1,4 @@
+import { ROUTES } from '@/config/route';
 import { IHistory } from '@/interfaces/history';
 import { Colors } from '@/theme/colors';
 import Common from '@/theme/common';
@@ -14,7 +15,7 @@ const RecordComponent = ({ item: topic }: IProps) => {
   const navigation = useNavigation();
 
   const handlePress = useCallback(() => {
-    navigation.navigate('topic', { topic: { ...topic, createdAt: '' } });
+    navigation.navigate(ROUTES.TOPIC, { topic: { ...topic, createdAt: '' } });
   }, [topic, navigation]);
 
   return (
