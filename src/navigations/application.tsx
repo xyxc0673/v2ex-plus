@@ -39,15 +39,15 @@ function getHeaderTitle(
   // If the focused route is not found, we need to assume it's the initial screen
   // This can happen during if there hasn't been any navigation inside the screen
   // In our case, it's "Feed" as that's the first screen inside the navigator
-  const routeName = getFocusedRouteNameFromRoute(route) ?? 'index';
+  const routeName = getFocusedRouteNameFromRoute(route) ?? ROUTES.TAB_INDEX;
   switch (routeName) {
-    case 'index':
+    case ROUTES.TAB_INDEX:
       return 'V2EX';
-    case 'node':
+    case ROUTES.TAB_NODE:
       return '节点';
-    case 'notice':
+    case ROUTES.TAB_NOTICE:
       return '消息';
-    case 'me':
+    case ROUTES.TAB_ME:
       return '我的';
   }
 }
