@@ -1,5 +1,11 @@
 import React, { useEffect, useMemo } from 'react';
-import { View, StyleSheet, ActivityIndicator, Text } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  ActivityIndicator,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
 import {
   fetchRecentTopics,
   fetchTopicByTab,
@@ -8,6 +14,8 @@ import { useAppDispatch, useAppSelector } from '@/utils/hooks';
 import { Colors } from '@/theme/colors';
 import Topics from './components/topics';
 import { RouteProp, useRoute } from '@react-navigation/core';
+import { navigate } from '@/navigations/root';
+import { ROUTES } from '@/config/route';
 
 type ParamList = {
   TabbarIndex: {
@@ -21,6 +29,7 @@ const TabbarIndex = () => {
   const pending = useAppSelector((state) => state.homeTopic.pending);
   const isRefreshing = useAppSelector((state) => state.homeTopic.isRefreshing);
   const recentPage = useAppSelector((state) => state.homeTopic.recentPage);
+  const isLogged = useAppSelector((state) => state.user.isLogged);
 
   const route = useRoute<RouteProp<ParamList, 'TabbarIndex'>>();
 
@@ -28,7 +37,7 @@ const TabbarIndex = () => {
   const refreshing = useMemo(() => isRefreshing === tab, [tab, isRefreshing]);
   const data = useMemo(() => topicListMap[tab], [topicListMap, tab]);
   const isLoading = useMemo(() => pending === tab, [tab, pending]);
-  const hasMoreData = useMemo(() => tab === 'all', [tab]);
+  const hasMoreData = useMemo(() => tab === 'all' && isLogged, [tab, isLogged]);
 
   useEffect(() => {
     dispatch(fetchTopicByTab({ tab: tab, refresh: false }));
@@ -51,6 +60,16 @@ const TabbarIndex = () => {
       );
     }
 
+    if (tab === 'all' && !hasMoreData) {
+      return (
+        <TouchableOpacity
+          style={styles.footer}
+          onPress={() => navigate(ROUTES.LOGIN, null)}>
+          <Text style={styles.footerText}>登录 V2EX 以查看更多的主题</Text>
+        </TouchableOpacity>
+      );
+    }
+
     return (
       <View style={styles.footer}>
         {!hasMoreData && data && (
@@ -58,7 +77,7 @@ const TabbarIndex = () => {
         )}
       </View>
     );
-  }, [hasMoreData, data, isLoading]);
+  }, [hasMoreData, data, isLoading, tab]);
 
   return (
     <View style={styles.container}>
@@ -71,7 +90,7 @@ const TabbarIndex = () => {
         }}
         ListFooterComponent={listFooterComponent}
         onEndReached={() => {
-          if (tab === 'all') {
+          if (hasMoreData) {
             dispatch(fetchRecentTopics({ page: recentPage + 1 }));
           }
         }}
