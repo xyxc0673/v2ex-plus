@@ -26,19 +26,22 @@ type ParamList = {
 const TabbarIndex = () => {
   const dispatch = useAppDispatch();
   const topicListMap = useAppSelector((state) => state.homeTopic.topicListMap);
-  const pending = useAppSelector((state) => state.homeTopic.pending);
-  const isRefreshing = useAppSelector((state) => state.homeTopic.isRefreshing);
   const recentPage = useAppSelector((state) => state.homeTopic.recentPage);
   const isLogged = useAppSelector((state) => state.user.isLogged);
 
   const route = useRoute<RouteProp<ParamList, 'TabbarIndex'>>();
 
   const tab = useMemo(() => route.params?.tab, [route]);
-  const refreshing = useMemo(() => isRefreshing === tab, [tab, isRefreshing]);
-  const data = useMemo(() => topicListMap[tab], [topicListMap, tab]);
-  const isLoading = useMemo(() => pending === tab, [tab, pending]);
+  const refreshing = useMemo(() => topicListMap[tab].refreshing, [
+    tab,
+    topicListMap,
+  ]);
+  const data = useMemo(() => topicListMap[tab].data, [topicListMap, tab]);
+  const isLoading = useMemo(() => topicListMap[tab].pending === 'pending', [
+    tab,
+    topicListMap,
+  ]);
   const hasMoreData = useMemo(() => tab === 'all' && isLogged, [tab, isLogged]);
-
   useEffect(() => {
     dispatch(fetchTopicByTab({ tab: tab, refresh: false }));
   }, [dispatch, tab]);

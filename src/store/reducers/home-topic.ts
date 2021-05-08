@@ -1,25 +1,13 @@
+import { NODE_TABS } from '@/config/tabs';
+import { TPending } from '@/interfaces/pending';
 import { IReply } from '@/interfaces/reply';
 import { ITopic } from '@/interfaces/topic';
-import { topicService } from '@/services';
 import { topicCrawler } from '@/services/crawler';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
-export const fetchHottestTopic = createAsyncThunk(
-  'homeTopic/fetchHottestTopic',
-  async () => {
-    const reponse = await topicService.fetchHottestTopic();
-    return reponse.data;
-  },
-);
-
-export const fetchLatestTopic = createAsyncThunk(
-  'homeTopic/fetchLatestTopic',
-  async () => {
-    const reponse = await topicService.fetchLatestTopic();
-    return reponse.data;
-  },
-);
-
+/**
+ * 通过 tab 获取主题列表
+ */
 export const fetchTopicByTab = createAsyncThunk(
   'homeTopic/fetchTopicByTab',
   async (params: { tab: string; refresh: boolean }) => {
@@ -29,6 +17,9 @@ export const fetchTopicByTab = createAsyncThunk(
   },
 );
 
+/**
+ * 获取最近的主题列表
+ */
 export const fetchRecentTopics = createAsyncThunk(
   'homeTopic/fetchRecentTopic',
   async (params: { page: number }) => {
@@ -38,25 +29,44 @@ export const fetchRecentTopics = createAsyncThunk(
   },
 );
 
+interface IMapData {
+  pending: TPending;
+  refreshing: boolean;
+  error: undefined | string;
+  data: Array<ITopic>;
+}
+
+interface ITopicListMap {
+  [index: string]: IMapData;
+}
+
 interface TopicState {
   topicList: Array<ITopic>;
-  topicListMap: Record<string, Array<ITopic>>;
-  currentTopic: ITopic;
+  topicListMap: ITopicListMap;
   replyList: Array<IReply>;
-  pending: string;
-  isRefreshing: string;
   recentPage: number;
 }
 
-const initialState: TopicState = {
-  topicList: [] as Array<ITopic>,
-  topicListMap: {} as Record<string, Array<ITopic>>,
-  currentTopic: {} as ITopic,
-  replyList: [] as Array<IReply>,
-  pending: 'default',
-  isRefreshing: 'default',
-  recentPage: 0,
-};
+const initialState: TopicState = (() => {
+  const map: ITopicListMap = {};
+
+  // 遍历首页节点生成默认的数据
+  Object.values(NODE_TABS).forEach((tab) => {
+    map[tab] = {
+      pending: 'pending',
+      refreshing: false,
+      error: undefined,
+      data: [] as Array<ITopic>,
+    };
+  });
+
+  return {
+    topicList: [] as Array<ITopic>,
+    topicListMap: map,
+    replyList: [] as Array<IReply>,
+    recentPage: 0,
+  };
+})();
 
 export const homeTopicSlice = createSlice({
   name: 'homeTopic',
@@ -67,29 +77,27 @@ export const homeTopicSlice = createSlice({
       .addCase(fetchTopicByTab.pending, (state, action) => {
         const tab = action.meta.arg.tab;
         if (!action.meta.arg.refresh) {
-          state.pending = tab;
+          state.topicListMap[tab].pending = 'pending';
         } else {
-          state.isRefreshing = tab;
+          state.topicListMap[tab].refreshing = true;
         }
       })
       .addCase(fetchTopicByTab.fulfilled, (state, action) => {
         const tab = action.meta.arg.tab;
-        state.topicListMap = Object.assign({}, state.topicListMap, {
-          [tab]: action.payload,
-        });
-        state.pending = 'default';
-        state.isRefreshing = 'default';
+        state.topicListMap[tab].data = action.payload;
+        state.topicListMap[tab].pending = 'succeeded';
+        state.topicListMap[tab].refreshing = false;
       })
       .addCase(fetchRecentTopics.pending, (state, _) => {
-        state.pending = 'all';
+        // 添加数据到 NODE_TABS.ALL 节点中
+        state.topicListMap.all.pending = 'pending';
       })
       .addCase(fetchRecentTopics.fulfilled, (state, action) => {
-        const oldList = state.topicListMap.all || [];
-        state.topicListMap = Object.assign({}, state.topicListMap, {
-          all: oldList.concat(action.payload),
-        });
+        // 添加数据到 NODE_TABS.ALL 节点中
+        const oldList = state.topicListMap.all.data;
+        state.topicListMap.all.data = oldList.concat(action.payload);
         state.recentPage += 1;
-        state.pending = 'default';
+        state.topicListMap.all.pending = 'succeeded';
       });
   },
 });
