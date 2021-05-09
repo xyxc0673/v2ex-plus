@@ -4,6 +4,7 @@ import { Colors } from '@/theme/colors';
 import Common from '@/theme/common';
 import Images from '@/theme/images';
 import Layout from '@/theme/layout';
+import { screenWidth } from '@/utils/adapter';
 import dayjs from 'dayjs';
 import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -15,6 +16,7 @@ interface IProps {
   topicAuthor: string;
   onReplyPress: (reply: IReply) => void;
   onMentionedPress: (username: string) => void;
+  screenPadding: number;
 }
 
 const Reply = ({
@@ -23,6 +25,7 @@ const Reply = ({
   topicAuthor,
   onReplyPress,
   onMentionedPress,
+  screenPadding,
 }: IProps) => {
   return (
     <View style={styles.reply}>
@@ -50,6 +53,7 @@ const Reply = ({
           <HTML
             source={{ html: reply.content || '<p></p>' }}
             containerStyle={styles.content}
+            contentWidth={screenWidth - screenPadding * 2}
             onLinkPress={(event, href) => {
               if (href.slice(0, 8) === '/member/') {
                 onMentionedPress && onMentionedPress(href.slice(8));

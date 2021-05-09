@@ -14,6 +14,8 @@ import dayjs from 'dayjs';
 import React, { useCallback, useEffect, useState } from 'react';
 import HTML from 'react-native-render-html';
 
+const screenPadding = 12;
+
 import {
   FlatList,
   Image,
@@ -32,6 +34,7 @@ import Images from '@/theme/images';
 import { IReply } from '@/interfaces/reply';
 import { RelatedReply } from './components';
 import { bottomSheetRef } from './components/related-reply';
+import { screenWidth } from '@/utils/adapter';
 
 type ParamList = {
   Detail: {
@@ -150,7 +153,10 @@ const Topic = () => {
         </View>
         <View style={Common.divider} />
 
-        <HTML source={{ html: currentTopic.content || '<p></p>' }} />
+        <HTML
+          source={{ html: currentTopic.content || '<p></p>' }}
+          contentWidth={screenWidth - screenPadding * 2}
+        />
         {currentTopic.supplementList && (
           <View style={styles.supplementList}>
             {currentTopic.supplementList?.map((supplement, index) => (
@@ -196,6 +202,7 @@ const Topic = () => {
         key={item.id}
         item={item}
         topicAuthor={topicDetails.author}
+        screenPadding={screenPadding}
         onThanks={() =>
           Alert.confirm({
             message: `确认花费 10 个铜币向 @${item.author} 的这条回复发送感谢？`,
@@ -318,7 +325,7 @@ const styles = StyleSheet.create({
     marginTop: 40,
   },
   replyList: {
-    padding: 12,
+    padding: screenPadding,
     backgroundColor: Colors.white,
     flexGrow: 1,
   },
