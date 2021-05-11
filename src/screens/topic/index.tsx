@@ -15,6 +15,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import HTML from 'react-native-render-html';
 
 const screenPadding = 12;
+const supplementPadding = 8;
 
 import {
   FlatList,
@@ -170,7 +171,12 @@ const Topic = () => {
                     ).fromNow()}`}
                   </Text>
                 </View>
-                <HTML source={{ html: supplement.content || '<p></p>' }} />
+                <HTML
+                  source={{ html: supplement.content || '<p></p>' }}
+                  contentWidth={
+                    screenWidth - screenPadding * 2 - supplementPadding * 2
+                  }
+                />
               </View>
             ))}
           </View>
