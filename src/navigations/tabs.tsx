@@ -18,6 +18,8 @@ const renderIcon = (
   return <Image source={icon} />;
 };
 
+const labelMargin = 5;
+
 const Tabs = () => {
   const unread = useAppSelector((state) => state.user.unread);
 
@@ -26,6 +28,15 @@ const Tabs = () => {
       tabBarOptions={{
         activeTintColor: '#200E32',
         inactiveTintColor: '#999999',
+        adaptive: false,
+        style: {
+          shadowOpacity: 0, // remove shadow on iOS
+          elevation: 0, // remove shadow on Android,
+        },
+        labelStyle: {
+          marginTop: -labelMargin,
+          marginBottom: labelMargin,
+        },
       }}>
       <Tab.Screen
         name={ROUTES.TAB_INDEX}
