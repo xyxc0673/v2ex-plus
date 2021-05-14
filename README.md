@@ -1,9 +1,29 @@
 <p align="center">
-  <img src="https://i.loli.net/2021/05/11/PCgiGYR74Aqu9xD.png" alt="V2EX+" border="0" />
+  <img src="logo.png" alt="V2EX+" border="0" />
 </p>
 
 # V2EX Plus(V2EX+)
 V2EX Plus，亦简称为 V2EX+，是使用 React Native 实现的又一款 [V2EX](https://www.v2ex.com/) 社区的客户端。
+
+## 预览
+<p style="margin-bottom: 20px">
+  <img style="width: 250px;" src="screenshots/1.jpg" alt="V2EX+" border="0" />
+  <img style="width: 250px;" src="screenshots/2.jpg" alt="V2EX+" border="0" />
+  <img style="width: 250px;" src="screenshots/3.jpg" alt="V2EX+" border="0" />
+</p>
+
+<p style="margin-bottom:: 20px">
+  <img style="width: 250px;" src="screenshots/4.jpg" alt="V2EX+" border="0" />
+  <img style="width: 250px;" src="screenshots/5.jpg" alt="V2EX+" border="0" />
+  <img style="width: 250px;" src="screenshots/6.jpg" alt="V2EX+" border="0" />
+</p>
+
+<p style="margin-bottom:: 20px">
+  <img style="width: 250px;" src="screenshots/7.jpg" alt="V2EX+" border="0" />
+  <img style="width: 250px;" src="screenshots/8.jpg" alt="V2EX+" border="0" />
+  <img style="width: 250px;" src="screenshots/9.jpg" alt="V2EX+" border="0" />
+
+</p>
 
 ## 功能
 参考了市面上已有的 App，结合个人的需求，目前已开发的功能点如下：
