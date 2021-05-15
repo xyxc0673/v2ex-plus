@@ -9,3 +9,4 @@ export { default as History } from './history';
 export { default as NodeTopic } from './node-topic';
 export { default as FavTopic } from './fav-topic';
 export { default as Follow } from './follow';
+export { default as About } from './about';

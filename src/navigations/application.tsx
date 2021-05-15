@@ -14,6 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Tabs from './tabs';
 import { Colors, defaultTheme } from '@/theme/colors';
 import {
+  About,
   FavTopic,
   Follow,
   History,
@@ -133,6 +134,13 @@ const ApplicationNavigations = () => {
             component={Follow}
             options={{
               title: '关注',
+            }}
+          />
+          <Stack.Screen
+            name={ROUTES.ABOUT}
+            component={About}
+            options={{
+              title: '关于',
             }}
           />
         </Stack.Navigator>

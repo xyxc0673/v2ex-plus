@@ -1,5 +1,6 @@
 const Images = {
   logo: require('@/assets/images/logo.png'),
+  icon: require('@/assets/images/icon.png'),
   home: require('@/assets/images/home.png'),
   homeInactive: require('@/assets/images/home-inactive.png'),
   discovery: require('@/assets/images/discovery.png'),
