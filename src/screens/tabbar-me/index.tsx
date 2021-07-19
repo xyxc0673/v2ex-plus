@@ -138,7 +138,11 @@ const TabbarMe = () => {
               source={Images.arrowRightGrey}
             />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.listItem}>
+          <TouchableOpacity
+            style={styles.listItem}
+            onPress={() => {
+              navigate(ROUTES.ABOUT, null);
+            }}>
             <Text style={styles.listItemText}>关于应用</Text>
             <Image
               style={styles.listItemArrow}
