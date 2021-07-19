@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { StatusBar, StyleSheet } from 'react-native';
+import { StatusBar } from 'react-native';
 import {
   NavigationContainer,
   NavigationState,
@@ -10,7 +10,6 @@ import {
   CardStyleInterpolators,
   createStackNavigator,
 } from '@react-navigation/stack';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import Tabs from './tabs';
 import { Colors, defaultTheme } from '@/theme/colors';
 import {
@@ -67,97 +66,86 @@ const ApplicationNavigations = () => {
   }, [dispatch, isLogged]);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <NavigationContainer theme={defaultTheme} ref={navigationRef}>
-        <Stack.Navigator
-          initialRouteName={ROUTES.TABS}
-          screenOptions={{
-            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-          }}>
-          <Stack.Screen
-            name={ROUTES.TABS}
-            component={Tabs}
-            options={({ route }) => ({
-              headerTitle: getHeaderTitle(route),
-              headerStyle: {
-                shadowOpacity: 0, // remove shadow on iOS
-                elevation: 0, // remove shadow on Android,
-                backgroundColor: Colors.lightGrey,
-                height: 50,
-              },
-            })}
-          />
-          <Stack.Screen
-            name={ROUTES.LOGIN}
-            component={Login}
-            options={{
-              title: '登录',
-            }}
-          />
-          <Stack.Screen
-            name={ROUTES.TOPIC}
-            component={Topic}
-            options={{
-              title: '主题正文',
-            }}
-          />
-          <Stack.Screen
-            name={ROUTES.PROFILE}
-            component={Profile}
-            options={{
-              title: '',
-            }}
-          />
-          <Stack.Screen
-            name={ROUTES.HISTORY}
-            component={History}
-            options={{
-              title: '已读主题',
-            }}
-          />
-          <Stack.Screen
-            name={ROUTES.NODE_TOPIC}
-            component={NodeTopic}
-            options={{
-              title: '节点',
-            }}
-          />
-          <Stack.Screen
-            name={ROUTES.FAV_TOPIC}
-            component={FavTopic}
-            options={{
-              title: '收藏的主题',
-            }}
-          />
-          <Stack.Screen
-            name={ROUTES.FOLLOW}
-            component={Follow}
-            options={{
-              title: '关注',
-            }}
-          />
-          <Stack.Screen
-            name={ROUTES.ABOUT}
-            component={About}
-            options={{
-              title: '关于',
-            }}
-          />
-        </Stack.Navigator>
-        <Toast ref={(ref) => Toast.setRef(ref)} />
-        <StatusBar
-          backgroundColor={Colors.lightGrey}
-          barStyle={'dark-content'}
+    <NavigationContainer theme={defaultTheme} ref={navigationRef}>
+      <Stack.Navigator
+        initialRouteName={ROUTES.TABS}
+        screenOptions={{
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}>
+        <Stack.Screen
+          name={ROUTES.TABS}
+          component={Tabs}
+          options={({ route }) => ({
+            headerTitle: getHeaderTitle(route),
+            headerStyle: {
+              shadowOpacity: 0, // remove shadow on iOS
+              elevation: 0, // remove shadow on Android,
+              backgroundColor: Colors.lightGrey,
+              height: 50,
+            },
+          })}
         />
-      </NavigationContainer>
-    </SafeAreaView>
+        <Stack.Screen
+          name={ROUTES.LOGIN}
+          component={Login}
+          options={{
+            title: '登录',
+          }}
+        />
+        <Stack.Screen
+          name={ROUTES.TOPIC}
+          component={Topic}
+          options={{
+            title: '主题正文',
+          }}
+        />
+        <Stack.Screen
+          name={ROUTES.PROFILE}
+          component={Profile}
+          options={{
+            title: '',
+          }}
+        />
+        <Stack.Screen
+          name={ROUTES.HISTORY}
+          component={History}
+          options={{
+            title: '已读主题',
+          }}
+        />
+        <Stack.Screen
+          name={ROUTES.NODE_TOPIC}
+          component={NodeTopic}
+          options={{
+            title: '节点',
+          }}
+        />
+        <Stack.Screen
+          name={ROUTES.FAV_TOPIC}
+          component={FavTopic}
+          options={{
+            title: '收藏的主题',
+          }}
+        />
+        <Stack.Screen
+          name={ROUTES.FOLLOW}
+          component={Follow}
+          options={{
+            title: '关注',
+          }}
+        />
+        <Stack.Screen
+          name={ROUTES.ABOUT}
+          component={About}
+          options={{
+            title: '关于',
+          }}
+        />
+      </Stack.Navigator>
+      <Toast ref={(ref) => Toast.setRef(ref)} />
+      <StatusBar backgroundColor={Colors.lightGrey} barStyle={'dark-content'} />
+    </NavigationContainer>
   );
 };
 
 export default ApplicationNavigations;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
