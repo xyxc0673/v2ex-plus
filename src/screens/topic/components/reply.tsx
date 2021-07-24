@@ -8,6 +8,7 @@ import { screenWidth } from '@/utils/adapter';
 import dayjs from 'dayjs';
 import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { openUrl } from 'react-native-markdown-display';
 import HTML from 'react-native-render-html';
 
 interface IProps {
@@ -57,6 +58,8 @@ const Reply = ({
             onLinkPress={(event, href) => {
               if (href.slice(0, 8) === '/member/') {
                 onMentionedPress && onMentionedPress(href.slice(8));
+              } else {
+                openUrl(href);
               }
             }}
           />
