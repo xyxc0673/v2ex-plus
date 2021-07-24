@@ -10,6 +10,9 @@ import Toast from 'react-native-toast-message';
 import dayjs from 'dayjs';
 import { CONSTANTS } from '@/config';
 
+/**
+ * 通过 ID 获取用户信息
+ */
 export const fetchUserInfoById = createAsyncThunk(
   'user/fetchUserInfoById',
   async (userId: number) => {
@@ -18,6 +21,9 @@ export const fetchUserInfoById = createAsyncThunk(
   },
 );
 
+/**
+ * 获取登录参数
+ */
 export const fetchLoginParams = createAsyncThunk(
   'user/fetchLoginParams',
   async () => {
@@ -26,6 +32,9 @@ export const fetchLoginParams = createAsyncThunk(
   },
 );
 
+/**
+ * 通过账号密码登录
+ */
 export const loginByUsername = createAsyncThunk(
   'user/loginByUsername',
   async (
@@ -47,6 +56,7 @@ export const loginByUsername = createAsyncThunk(
     if (response.isLogged) {
       goBack();
     } else {
+      // 根据返回的错误信息弹出提示
       const problemText = response.problemList.reduce(
         (prev, curr) => `${prev}\n${curr}`,
       );
@@ -61,11 +71,17 @@ export const loginByUsername = createAsyncThunk(
   },
 );
 
+/**
+ * 获取余额
+ */
 export const fetchBalance = createAsyncThunk('user/fetchBalance', async () => {
   const response = await userCrawler.fetchBalance();
   return response;
 });
 
+/**
+ * 获取登录用户的信息
+ */
 export const fetchUserInfo = createAsyncThunk(
   'user/fetchUserInfo',
   async () => {
@@ -74,11 +90,17 @@ export const fetchUserInfo = createAsyncThunk(
   },
 );
 
+/**
+ * 获取收藏的节点
+ */
 export const fetchMyNodes = createAsyncThunk('user/fetchMyNodes', async () => {
   const response = await userCrawler.fetchMyNodes();
   return response;
 });
 
+/**
+ * 签到
+ */
 export const dailyMission = createAsyncThunk(
   'user/dailyMission',
   async (sign: boolean = true) => {
@@ -91,23 +113,26 @@ export const dailyMission = createAsyncThunk(
 export const userSlice = createSlice({
   name: 'user',
   initialState: {
-    loginParams: {} as ILoginParams,
-    isLogged: false,
-    cookies: [] as Array<string>,
-    balance: {} as IBalance,
-    user: {} as userCrawler.IUserInfo,
-    once: '',
-    myNodeList: [] as Array<IMyNode>,
-    loginProblemList: [] as Array<string>,
-    unread: 0,
-    myFavNodeCount: 0,
-    myFavTopicCount: 0,
-    myFollowingCount: 0,
-    isSigned: false,
-    signDays: 0,
-    signDate: '',
+    loginParams: {} as ILoginParams, // 登录参数
+    isLogged: false, // 是否登录
+    cookies: [] as Array<string>, // 登录成功的 cookies
+    balance: {} as IBalance, // 余额
+    user: {} as userCrawler.IUserInfo, // 登录用户的信息
+    once: '', // csrf 值
+    myNodeList: [] as Array<IMyNode>, // 收藏的节点
+    loginProblemList: [] as Array<string>, // 登录失败的问题
+    unread: 0, // 未读消息数
+    myFavNodeCount: 0, // 收藏节点数
+    myFavTopicCount: 0, // 收藏主题数
+    myFollowingCount: 0, // 关注人数
+    isSigned: false, // 是否签到
+    signDays: 0, // 连续签到天数
+    signDate: '', // 最近 App 的签到日期
   },
   reducers: {
+    /**
+     * 用于更新一些用户信息
+     */
     setUserBox: (state, action: PayloadAction<parser.IUserBox>) => {
       const {
         unread,
