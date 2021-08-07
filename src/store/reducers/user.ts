@@ -28,6 +28,11 @@ export const fetchLoginParams = createAsyncThunk(
   'user/fetchLoginParams',
   async () => {
     const response = await userCrawler.getLoginParams();
+    if (response.isCoolingdown) {
+      Alert.alert({
+        message: `由于当前 IP 在短时间内的登录尝试次数太多，目前暂时不能继续尝试。\n你可能会需要等待至多 1 天的时间再继续尝试。`,
+      });
+    }
     return response;
   },
 );
@@ -59,6 +64,7 @@ export const loginByUsername = createAsyncThunk(
       // 根据返回的错误信息弹出提示
       const problemText = response.problemList.reduce(
         (prev, curr) => `${prev}\n${curr}`,
+        '',
       );
       Alert.alert({
         message: `登录失败，请检查以下问题:\n${problemText}`,
@@ -66,6 +72,37 @@ export const loginByUsername = createAsyncThunk(
           thunkApi.dispatch(fetchLoginParams());
         },
       });
+    }
+    return response;
+  },
+);
+
+/**
+ * 通过账号密码登录
+ */
+export const do2fa = createAsyncThunk(
+  'user/do2fa',
+  async (
+    loginData: {
+      captcha: string;
+      once: string;
+    },
+    thunkApi,
+  ) => {
+    const { captcha, once } = loginData;
+    const response = await userCrawler.do2FA(captcha, once);
+    if (response.isLogged) {
+      goBack();
+    } else {
+      // 根据返回的错误信息弹出提示
+      if (!response.isLogged) {
+        Alert.alert({
+          message: `登录失败，请检查以下问题:\n${response.errorMsg}`,
+          onPress: () => {
+            thunkApi.dispatch(fetchLoginParams());
+          },
+        });
+      }
     }
     return response;
   },
@@ -110,25 +147,29 @@ export const dailyMission = createAsyncThunk(
   },
 );
 
+const initialState = {
+  loginParams: {} as ILoginParams, // 登录参数
+  isLogged: false, // 是否登录
+  cookies: [] as Array<string>, // 登录成功的 cookies
+  balance: {} as IBalance, // 余额
+  user: {} as userCrawler.IUserInfo, // 登录用户的信息
+  once: '', // csrf 值
+  myNodeList: [] as Array<IMyNode>, // 收藏的节点
+  loginProblemList: [] as Array<string>, // 登录失败的问题
+  unread: 0, // 未读消息数
+  myFavNodeCount: 0, // 收藏节点数
+  myFavTopicCount: 0, // 收藏主题数
+  myFollowingCount: 0, // 关注人数
+  isSigned: false, // 是否签到
+  signDays: 0, // 连续签到天数
+  signDate: '', // 最近 App 的签到日期
+  is2faRequired: false,
+  isCoolingdown: false,
+};
+
 export const userSlice = createSlice({
   name: 'user',
-  initialState: {
-    loginParams: {} as ILoginParams, // 登录参数
-    isLogged: false, // 是否登录
-    cookies: [] as Array<string>, // 登录成功的 cookies
-    balance: {} as IBalance, // 余额
-    user: {} as userCrawler.IUserInfo, // 登录用户的信息
-    once: '', // csrf 值
-    myNodeList: [] as Array<IMyNode>, // 收藏的节点
-    loginProblemList: [] as Array<string>, // 登录失败的问题
-    unread: 0, // 未读消息数
-    myFavNodeCount: 0, // 收藏节点数
-    myFavTopicCount: 0, // 收藏主题数
-    myFollowingCount: 0, // 关注人数
-    isSigned: false, // 是否签到
-    signDays: 0, // 连续签到天数
-    signDate: '', // 最近 App 的签到日期
-  },
+  initialState: initialState,
   reducers: {
     /**
      * 用于更新一些用户信息
@@ -146,16 +187,24 @@ export const userSlice = createSlice({
       state.myFavTopicCount = myFavTopicCount;
       state.myFollowingCount = myFollowingCount;
     },
+    logout: () => initialState,
   },
   extraReducers: (builder) => {
     builder
       .addCase(fetchLoginParams.fulfilled, (state, action) => {
-        state.loginParams = action.payload;
+        state.loginParams = action.payload.params;
+        state.isCoolingdown = action.payload.isCoolingdown;
       })
       .addCase(loginByUsername.fulfilled, (state, action) => {
         state.isLogged = action.payload.isLogged;
         state.cookies = action.payload.cookies;
         state.loginProblemList = action.payload.problemList;
+        state.is2faRequired = action.payload.is2faRequired;
+        state.once = action.payload.once;
+      })
+      .addCase(do2fa.fulfilled, (state, action) => {
+        state.isLogged = action.payload.isLogged;
+        state.isCoolingdown = action.payload.isCoolingdown;
       })
       .addCase(fetchBalance.fulfilled, (state, action) => {
         const {

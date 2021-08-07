@@ -11,14 +11,20 @@ import { ISocial } from '@/interfaces/social';
 import { config } from '@/config';
 import { IMyNode } from '@/interfaces/node';
 
-export const getLoginParams = async (): Promise<ILoginParams> => {
+export const getLoginParams = async (): Promise<{
+  params: ILoginParams;
+  isCoolingdown: boolean;
+}> => {
   const response = await instance.get('/signin', {
     headers: loginFormHeaders,
   });
 
   const $ = cheerio.load(response.data);
+  console.log('getLoginParams re', response.data);
 
   const inputList = $('input.sl');
+
+  const isCoolingdown = response.data?.indexOf('登录受限') !== -1;
 
   const params = {
     username: '',
@@ -36,7 +42,7 @@ export const getLoginParams = async (): Promise<ILoginParams> => {
 
   params.once = $('input[name=once]').attr('value') || '';
 
-  return params;
+  return { params, isCoolingdown };
 };
 
 export const login = async (
@@ -58,11 +64,23 @@ export const login = async (
     headers: loginFormHeaders,
   });
 
-  const isLogged = response.data?.indexOf('确定要从 V2EX 登出？') !== -1;
+  const somethingWrong =
+    response.data?.indexOf('登录有点问题，请重试一次') !== -1;
+
+  const is2faRequired =
+    response.data?.indexOf(
+      '你的 V2EX 账号已经开启了两步验证，请输入验证码继续',
+    ) !== -1;
+
+  const isLogged =
+    !is2faRequired &&
+    !somethingWrong &&
+    response.data?.indexOf('确定要从 V2EX 登出？') !== -1;
 
   let cookies = [] as Array<string>;
   let userInfo = parser.getUserInfo(response.data);
   const problemList: Array<string> = [];
+  let once = '';
 
   if (isLogged) {
     cookies = response.headers['set-cookie'];
@@ -75,9 +93,38 @@ export const login = async (
     problemSelector.each((_, elem) => {
       problemList.push($(elem).text());
     });
+
+    once = $('input[name=once]').attr('value') || '';
   }
 
-  return { isLogged, cookies, userInfo, problemList };
+  return { isLogged, cookies, userInfo, problemList, is2faRequired, once };
+};
+
+export const do2FA = async (code: string, once: string) => {
+  const data = {
+    code: code,
+    once: once,
+  };
+
+  const response = await instance.post('/2fa', null, {
+    params: data,
+  });
+
+  const isCoolingdown = response.data?.indexOf('登录受限') !== -1;
+
+  const $ = cheerio.load(response.data);
+  const errorMsg = $('.message').text();
+
+  const isLogged =
+    !isCoolingdown &&
+    response.data?.indexOf(
+      '你的 V2EX 账号已经开启了两步验证，请输入验证码继续',
+    ) === -1;
+
+  console.log('do2FA', response);
+  console.log('errorMsg', errorMsg);
+
+  return { isLogged, errorMsg, isCoolingdown };
 };
 
 /**
