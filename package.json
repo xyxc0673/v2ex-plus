@@ -22,7 +22,7 @@
     "cheerio": "^1.0.0-rc.5",
     "dayjs": "^1.10.4",
     "react": "16.13.1",
-    "react-native": "0.63.4",
+    "react-native": "0.64.2",
     "react-native-collapsible-tab-view": "^4.1.0",
     "react-native-fast-image": "^8.3.4",
     "react-native-flipper": "^0.80.0",
